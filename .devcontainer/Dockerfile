@@ -35,3 +35,10 @@ RUN SNIPPET="export HISTFILE=/commandhistory/.zsh_history" \
 
 # Start SSH agent
 RUN echo 'eval "$(ssh-agent -s)"' >> "/home/$USERNAME/.zshrc"
+
+# Ngrok
+WORKDIR /home/$USERNAME
+RUN curl -O https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz \
+    && tar -xvzf ngrok-v3-stable-linux-amd64.tgz \
+    && mv ngrok /usr/local/bin/ \
+    && rm ngrok-v3-stable-linux-amd64.tgz
