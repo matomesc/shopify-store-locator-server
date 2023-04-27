@@ -1,6 +1,51 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import '@shopify/polaris/build/esm/styles.css';
+import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
+import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
+import enTranslations from '@shopify/polaris/locales/en.json';
+import { LinkWrapper } from '@/client/components/LinkWrapper';
+import { NavBar } from '@/client/components/NavBar';
+import 'reflect-metadata';
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  const router = useRouter();
+
+  if (router.pathname.startsWith('/admin')) {
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return <Component {...pageProps} />;
+  }
+
+  if (router.pathname === '/') {
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return <Component {...pageProps} />;
+  }
+
+  return (
+    <AppBridgeProvider
+      config={{
+        apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
+        host: String(router.query.host),
+        forceRedirect: true,
+      }}
+      router={{
+        history: {
+          replace: (path) => {
+            router.push(path).catch((err) => {
+              console.log(err);
+            });
+          },
+        },
+        location: router.asPath,
+      }}
+    >
+      <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
+        <Frame>
+          <NavBar />
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          <Component {...pageProps} />
+        </Frame>
+      </PolarisAppProvider>
+    </AppBridgeProvider>
+  );
 }

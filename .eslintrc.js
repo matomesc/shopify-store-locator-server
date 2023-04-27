@@ -16,4 +16,12 @@ module.exports = {
     'next/core-web-vitals',
     'plugin:prettier/recommended',
   ],
+  rules: {
+    'no-console': 'off',
+    'class-methods-use-this': 'off',
+    'import/prefer-default-export': 'off',
+    'react/function-component-definition': ['error', {
+      namedComponents: ['function-declaration', 'arrow-function']
+    }]
+  }
 };
