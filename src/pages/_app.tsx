@@ -1,5 +1,5 @@
 import '@shopify/polaris/build/esm/styles.css';
-import type { AppProps } from 'next/app';
+import type { AppProps, AppType } from 'next/app';
 import { useRouter } from 'next/router';
 import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
 import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
@@ -7,8 +7,9 @@ import enTranslations from '@shopify/polaris/locales/en.json';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import 'reflect-metadata';
+import { trpc } from '@/utils/trpc';
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
   if (router.pathname.startsWith('/admin')) {
@@ -19,6 +20,12 @@ export default function App({ Component, pageProps }: AppProps) {
   if (router.pathname === '/') {
     // eslint-disable-next-line react/jsx-props-no-spreading
     return <Component {...pageProps} />;
+  }
+
+  if (typeof window !== 'undefined') {
+    // Store the shopify host param value so that it can be picked up by trpc
+    // see src/utils/trpc.ts
+    localStorage.setItem('shopifyHost', String(router.query.host));
   }
 
   return (
@@ -48,4 +55,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </PolarisAppProvider>
     </AppBridgeProvider>
   );
-}
+};
+
+export default trpc.withTRPC(App);

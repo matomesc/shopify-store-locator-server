@@ -22,6 +22,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/function-component-definition': ['error', {
       namedComponents: ['function-declaration', 'arrow-function']
-    }]
+    }],
+    '@typescript-eslint/require-await': 'off'
   }
 };

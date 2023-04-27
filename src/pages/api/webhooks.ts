@@ -9,11 +9,11 @@ interface WebhookParams {
   res: NextApiResponse;
 }
 
-function handleCustomersDataRequest({ res }: WebhookParams) {
+async function handleCustomersDataRequest({ res }: WebhookParams) {
   res.status(200).json({});
 }
 
-function handleCustomersRedact({ res }: WebhookParams) {
+async function handleCustomersRedact({ res }: WebhookParams) {
   res.status(200).json({});
 }
 
@@ -61,10 +61,10 @@ export default async function handler(
 
   switch (topic) {
     case 'customers/data_request':
-      handleCustomersDataRequest({ body, shopDomain, res });
+      await handleCustomersDataRequest({ body, shopDomain, res });
       break;
     case 'customers/redact':
-      handleCustomersRedact({ body, shopDomain, res });
+      await handleCustomersRedact({ body, shopDomain, res });
       break;
     case 'shop/redact':
       await handleShopRedact({ body, shopDomain, res });

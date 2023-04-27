@@ -3,11 +3,16 @@ import { prisma } from '@/server/lib/prisma';
 import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
 import { AlphaCard, Page } from '@shopify/polaris';
+import { trpc } from '@/utils/trpc';
 
 const Dashboard: NextPage = () => {
+  const hello = trpc.hello.useQuery({ text: 'Hello' });
+  if (!hello.data) {
+    return <div>Loading...</div>;
+  }
   return (
     <Page fullWidth>
-      <AlphaCard>Dashboard</AlphaCard>
+      <AlphaCard>Dashboard {hello.data.greeting}</AlphaCard>
     </Page>
   );
 };
