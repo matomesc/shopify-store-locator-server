@@ -22,7 +22,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     );
   }
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && router.query.host) {
     // Store the shopify host param value so that it can be picked up by trpc
     // see src/utils/trpc.ts
     localStorage.setItem('shopifyHost', String(router.query.host));
