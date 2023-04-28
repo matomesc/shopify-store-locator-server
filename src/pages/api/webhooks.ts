@@ -17,12 +17,7 @@ async function handleCustomersRedact({ res }: WebhookParams) {
   res.status(200).json({});
 }
 
-async function handleShopRedact({ shopDomain, res }: WebhookParams) {
-  await prisma.shop.delete({
-    where: {
-      domain: shopDomain,
-    },
-  });
+async function handleShopRedact({ res }: WebhookParams) {
   res.status(200).json({});
 }
 
