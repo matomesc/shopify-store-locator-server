@@ -12,14 +12,14 @@ import { trpc } from '@/utils/trpc';
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  if (router.pathname.startsWith('/admin')) {
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    return <Component {...pageProps} />;
-  }
-
   if (router.pathname === '/') {
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    return <Component {...pageProps} />;
+    // Don't use AppBridgeProvider when rendering the homepage
+    return (
+      <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <Component {...pageProps} />
+      </PolarisAppProvider>
+    );
   }
 
   if (typeof window !== 'undefined') {
