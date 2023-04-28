@@ -32,7 +32,10 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     <AppBridgeProvider
       config={{
         apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
-        host: String(router.query.host),
+        host:
+          typeof window !== 'undefined'
+            ? String(localStorage.getItem('shopifyHost'))
+            : '',
         forceRedirect: true,
       }}
       router={{
