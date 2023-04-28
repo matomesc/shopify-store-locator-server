@@ -15,7 +15,8 @@
 				"mhutchie.git-graph",
 				"eamodio.gitlens",
 				"ms-vscode.vscode-typescript-next",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"Prisma.prisma"
 			]
 		}
 	},
