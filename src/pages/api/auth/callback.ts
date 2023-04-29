@@ -5,7 +5,7 @@ import { config } from '@/server/config';
 import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
 import { container } from 'tsyringe';
-import { ShopService } from '@/server/services/ShopService';
+import { ShopifyService } from '@/server/services/ShopifyService';
 
 export default async function handler(
   req: NextApiRequest,
@@ -35,8 +35,8 @@ export default async function handler(
 
   if ((shop && shop.uninstalledAt) || !shop) {
     // Setup app/uninstalled webhook
-    const shopService = container.resolve(ShopService);
-    await shopService.createAppUninstalledWebhook(
+    const shopifyService = container.resolve(ShopifyService);
+    await shopifyService.createAppUninstalledWebhook(
       shopDomain,
       result.access_token,
     );

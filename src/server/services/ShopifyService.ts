@@ -3,7 +3,7 @@ import { singleton } from 'tsyringe';
 import { config } from '../config';
 
 @singleton()
-export class ShopService {
+export class ShopifyService {
   public async createAppUninstalledWebhook(
     shopDomain: string,
     accessToken: string,
