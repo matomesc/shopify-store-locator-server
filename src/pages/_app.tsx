@@ -28,6 +28,11 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     localStorage.setItem('shopifyHost', String(router.query.host));
   }
 
+  if (typeof window !== 'undefined' && router.query.shop) {
+    // Store the shopify shop param value so we can reference it later
+    localStorage.setItem('shopifyShop', String(router.query.shop));
+  }
+
   return (
     <AppBridgeProvider
       config={{
