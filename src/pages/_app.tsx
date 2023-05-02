@@ -6,7 +6,6 @@ import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
-import 'reflect-metadata';
 import { trpc } from '@/utils/trpc';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {

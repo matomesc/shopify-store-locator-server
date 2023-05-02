@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --require reflect-metadata ./node_modules/.bin/next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node --require reflect-metadata ./node_modules/.bin/next start",
     "lint": "next lint",
     "commit": "lint-staged && cz",
     "ngrok": "ngrok start --all --config ngrok.yml"
