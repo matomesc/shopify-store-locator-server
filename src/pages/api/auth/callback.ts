@@ -1,6 +1,5 @@
 import { verifyShopifyRequest } from '@/server/lib/shopify';
 import { NextApiRequest, NextApiResponse } from 'next';
-import got from 'got';
 import { config } from '@/server/config';
 import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
@@ -20,12 +19,12 @@ export default async function handler(
 
   const shopDomain = String(req.query.shop);
   const code = String(req.query.code);
+  const shopifyService = container.resolve(ShopifyService);
 
-  const result = await got
-    .post(
-      `https://${shopDomain}/admin/oauth/access_token?client_id=${config.NEXT_PUBLIC_SHOPIFY_CLIENT_ID}&client_secret=${config.SHOPIFY_CLIENT_SECRET}&code=${code}`,
-    )
-    .json<{ access_token: string; scope: string }>();
+  const result = await shopifyService.exchangeCodeForAccessToken({
+    shopDomain,
+    code,
+  });
 
   let shop = await prisma.shop.findFirst({
     where: {
@@ -35,11 +34,11 @@ export default async function handler(
 
   if ((shop && shop.uninstalledAt) || !shop) {
     // Setup app/uninstalled webhook
-    const shopifyService = container.resolve(ShopifyService);
-    await shopifyService.createAppUninstalledWebhook(
+    await shopifyService.createWebhook({
       shopDomain,
-      result.access_token,
-    );
+      accessToken: result.access_token,
+      topic: 'app/uninstalled',
+    });
   }
 
   if (shop && shop.uninstalledAt) {
