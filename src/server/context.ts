@@ -20,6 +20,7 @@ export async function createContext({
     const payload = jwt.verify(
       req.headers.authorization.split(' ')[1],
       config.SHOPIFY_CLIENT_SECRET,
+      { clockTolerance: 10 },
     ) as JwtPayload;
     // eslint-disable-next-line prefer-destructuring
     shop = payload.dest.split('://')[1];
