@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const Config = z.object({
+  APP_ENV: z.string(),
   BASE_URL: z.string(),
   NEXT_PUBLIC_SHOPIFY_CLIENT_ID: z.string(),
   SHOPIFY_CLIENT_SECRET: z.string(),
