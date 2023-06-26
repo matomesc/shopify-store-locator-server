@@ -1,4 +1,4 @@
-import { LinkLikeComponentProps } from '@shopify/polaris/build/ts/latest/src/utilities/link';
+import { LinkLikeComponentProps } from '@shopify/polaris/build/ts/src/utilities/link';
 import React from 'react';
 import Link from 'next/link';
 

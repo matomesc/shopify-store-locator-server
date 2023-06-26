@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import { prisma } from '@/server/lib/prisma';
 import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
-import { AlphaCard, Page } from '@shopify/polaris';
+import { Card, Page } from '@shopify/polaris';
 import { trpc } from '@/utils/trpc';
 
 const Dashboard: NextPage = () => {
@@ -12,7 +12,7 @@ const Dashboard: NextPage = () => {
   }
   return (
     <Page fullWidth>
-      <AlphaCard>Dashboard {hello.data.greeting}</AlphaCard>
+      <Card>Dashboard {hello.data.greeting}</Card>
     </Page>
   );
 };

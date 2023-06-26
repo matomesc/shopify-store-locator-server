@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlphaCard, Page, Tabs } from '@shopify/polaris';
+import { Card, Page, Tabs } from '@shopify/polaris';
 import { useRouter } from 'next/router';
 
 const tabs = [
@@ -19,7 +19,7 @@ export const NavBar: React.FC = () => {
 
   return (
     <Page fullWidth>
-      <AlphaCard padding="0">
+      <Card padding="0">
         <Tabs
           selected={selected}
           onSelect={(selectedTab) => {
@@ -32,7 +32,7 @@ export const NavBar: React.FC = () => {
             return { id: tab.name, content: tab.name };
           })}
         />
-      </AlphaCard>
+      </Card>
     </Page>
   );
 };

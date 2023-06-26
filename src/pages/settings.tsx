@@ -1,10 +1,10 @@
-import { AlphaCard, Page } from '@shopify/polaris';
+import { Card, Page } from '@shopify/polaris';
 import { GetServerSideProps, NextPage } from 'next';
 
 const Settings: NextPage = () => {
   return (
     <Page fullWidth>
-      <AlphaCard>Settings</AlphaCard>
+      <Card>Settings</Card>
     </Page>
   );
 };
