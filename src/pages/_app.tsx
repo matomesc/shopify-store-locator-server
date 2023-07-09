@@ -7,6 +7,7 @@ import enTranslations from '@shopify/polaris/locales/en.json';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/utils/trpc';
+import { getCookie } from 'cookies-next';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -21,25 +22,11 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     );
   }
 
-  if (typeof window !== 'undefined' && router.query.host) {
-    // Store the shopify host param value so that it can be picked up by trpc
-    // see src/utils/trpc.ts
-    localStorage.setItem('shopifyHost', String(router.query.host));
-  }
-
-  if (typeof window !== 'undefined' && router.query.shop) {
-    // Store the shopify shop param value so we can reference it later
-    localStorage.setItem('shopifyShop', String(router.query.shop));
-  }
-
   return (
     <AppBridgeProvider
       config={{
         apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
-        host:
-          typeof window !== 'undefined'
-            ? String(localStorage.getItem('shopifyHost'))
-            : '',
+        host: String(getCookie('shopifyHost')),
         forceRedirect: true,
       }}
       router={{

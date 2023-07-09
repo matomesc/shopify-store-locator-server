@@ -4,6 +4,7 @@ import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
 import { Card, Page } from '@shopify/polaris';
 import { trpc } from '@/utils/trpc';
+import { setCookie } from 'cookies-next';
 
 const Dashboard: NextPage = () => {
   const hello = trpc.hello.useQuery({ text: 'Hello' });
@@ -20,6 +21,26 @@ const Dashboard: NextPage = () => {
 export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  if (ctx.query.shop) {
+    setCookie('shopifyShop', ctx.query.shop, {
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'none',
+      secure: true,
+      req: ctx.req,
+      res: ctx.res,
+    });
+  }
+
+  if (ctx.query.host) {
+    setCookie('shopifyHost', ctx.query.host, {
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'none',
+      secure: true,
+      req: ctx.req,
+      res: ctx.res,
+    });
+  }
+
   if (ctx.query.shop) {
     const shopDomain = String(ctx.query.shop);
     const shop = await prisma.shop.findFirst({
@@ -46,15 +67,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       }&state=${Date.now()}`;
 
       if (ctx.query.embedded === '1') {
-        const params = new URLSearchParams();
-        Object.keys(ctx.query).forEach((key) => {
-          params.set(key, String(ctx.query[key]));
-        });
         return {
           redirect: {
             destination: `/redirect?redirectUrl=${encodeURIComponent(
               redirectUrl,
-            )}&${params.toString()}`,
+            )}`,
             permanent: false,
           },
         };

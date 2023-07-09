@@ -2,6 +2,7 @@ import { httpBatchLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
 import createApp from '@shopify/app-bridge';
 import { getSessionToken } from '@shopify/app-bridge/utilities';
+import { getCookie } from 'cookies-next';
 import type { AppRouter } from '../server/routers/_app';
 
 export const trpc = createTRPCNext<AppRouter>({
@@ -18,7 +19,7 @@ export const trpc = createTRPCNext<AppRouter>({
           async headers() {
             const app = createApp({
               apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
-              host: String(localStorage.getItem('shopifyHost')),
+              host: String(getCookie('shopifyHost')),
             });
             const token = await getSessionToken(app);
             return {

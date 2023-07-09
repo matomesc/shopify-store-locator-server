@@ -1,5 +1,5 @@
 import { Card, Page } from '@shopify/polaris';
-import { GetServerSideProps, NextPage } from 'next';
+import { NextPage } from 'next';
 
 const Settings: NextPage = () => {
   return (
@@ -10,11 +10,3 @@ const Settings: NextPage = () => {
 };
 
 export default Settings;
-
-// Add getServerSideProps so that the useRouter hook is ready
-// eslint-disable-next-line @typescript-eslint/require-await
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {},
-  };
-};
