@@ -4,10 +4,10 @@ import { useRouter } from 'next/router';
 import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
 import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
+import { getCookie } from 'cookies-next';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/utils/trpc';
-import { getCookie } from 'cookies-next';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();

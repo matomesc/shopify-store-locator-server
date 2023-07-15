@@ -13,7 +13,6 @@ module.exports = {
     'airbnb-typescript',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'next/core-web-vitals',
     'plugin:prettier/recommended',
   ],
   rules: {
@@ -23,6 +22,9 @@ module.exports = {
     'react/function-component-definition': ['error', {
       namedComponents: ['function-declaration', 'arrow-function']
     }],
-    '@typescript-eslint/require-await': 'off'
+    '@typescript-eslint/require-await': 'off',
+    'import/extensions': 'off',
+    'react/react-in-jsx-scope': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn'
   }
 };

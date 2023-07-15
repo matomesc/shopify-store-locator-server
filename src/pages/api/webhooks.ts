@@ -1,7 +1,7 @@
-import { prisma } from '@/server/lib/prisma';
-import { verifyShopifyWebhook } from '@/server/lib/shopify';
 import { NextApiRequest, NextApiResponse } from 'next';
 import getRawBody from 'raw-body';
+import { prisma } from '@/server/lib/prisma';
+import { verifyShopifyWebhook } from '@/server/lib/shopify';
 
 interface WebhookParams {
   body: unknown;

@@ -1,9 +1,9 @@
-import { verifyShopifyRequest } from '@/server/lib/shopify';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { container } from 'tsyringe';
+import { verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
 import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
-import { container } from 'tsyringe';
 import { ShopifyService } from '@/server/services/ShopifyService';
 
 export default async function handler(

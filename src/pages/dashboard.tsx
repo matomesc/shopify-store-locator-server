@@ -1,10 +1,10 @@
 import { GetServerSideProps, NextPage } from 'next';
+import { Card, Page } from '@shopify/polaris';
+import { setCookie } from 'cookies-next';
 import { prisma } from '@/server/lib/prisma';
 import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
-import { Card, Page } from '@shopify/polaris';
 import { trpc } from '@/utils/trpc';
-import { setCookie } from 'cookies-next';
 
 const Dashboard: NextPage = () => {
   const hello = trpc.hello.useQuery({ text: 'Hello' });
