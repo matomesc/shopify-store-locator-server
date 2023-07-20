@@ -8,6 +8,7 @@ import { getCookie } from 'cookies-next';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/utils/trpc';
+import { CookieWatcher } from '@/client/components/CookieWatcher';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
@@ -41,6 +42,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
       }}
     >
       <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
+        <CookieWatcher />
         <Frame>
           <NavBar />
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
