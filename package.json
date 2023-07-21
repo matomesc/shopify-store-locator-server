@@ -23,7 +23,6 @@
     "@trpc/next": "^10.34.0",
     "@trpc/react-query": "^10.34.0",
     "@trpc/server": "^10.34.0",
-    "cookies-next": "^2.1.2",
     "got": "^12.6.1",
     "jsonwebtoken": "^9.0.1",
     "next": "13.4.10",

@@ -1,6 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { Card, Page } from '@shopify/polaris';
-import { setCookie } from 'cookies-next';
 import { prisma } from '@/server/lib/prisma';
 import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
@@ -21,28 +20,10 @@ const Dashboard: NextPage = () => {
 export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  if (ctx.query.shop) {
-    setCookie('shopifyShop', ctx.query.shop, {
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: 'none',
-      secure: true,
-      req: ctx.req,
-      res: ctx.res,
-    });
-  }
-
-  if (ctx.query.host) {
-    setCookie('shopifyHost', ctx.query.host, {
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: 'none',
-      secure: true,
-      req: ctx.req,
-      res: ctx.res,
-    });
-  }
-
-  if (ctx.query.shop) {
+  if (ctx.query.shop && ctx.query.host) {
     const shopDomain = String(ctx.query.shop);
+    const host = String(ctx.query.host);
+
     const shop = await prisma.shop.findFirst({
       where: {
         domain: shopDomain,
@@ -71,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           redirect: {
             destination: `/redirect?redirectUrl=${encodeURIComponent(
               redirectUrl,
-            )}`,
+            )}&shop=${shopDomain}&host=${host}`,
             permanent: false,
           },
         };

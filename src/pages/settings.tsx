@@ -1,5 +1,5 @@
 import { Card, Page } from '@shopify/polaris';
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 
 const Settings: NextPage = () => {
   return (
@@ -10,3 +10,9 @@ const Settings: NextPage = () => {
 };
 
 export default Settings;
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};

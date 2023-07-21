@@ -4,14 +4,22 @@ import { useRouter } from 'next/router';
 import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
 import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
-import { getCookie } from 'cookies-next';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/utils/trpc';
-import { CookieWatcher } from '@/client/components/CookieWatcher';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
+
+  if (typeof window !== 'undefined') {
+    if (router.query.host) {
+      window.shopifyHost = String(router.query.host);
+    }
+
+    if (router.query.shop) {
+      window.shopifyShop = String(router.query.shop);
+    }
+  }
 
   if (router.pathname === '/') {
     // Don't use AppBridgeProvider when rendering the homepage
@@ -27,7 +35,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     <AppBridgeProvider
       config={{
         apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
-        host: String(getCookie('shopifyHost')),
+        host: typeof window !== 'undefined' ? window.shopifyHost : '',
         forceRedirect: true,
       }}
       router={{
@@ -42,7 +50,6 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
       }}
     >
       <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
-        <CookieWatcher />
         <Frame>
           <NavBar />
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
