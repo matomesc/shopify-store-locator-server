@@ -3,6 +3,8 @@ import { z } from 'zod';
 const Config = z.object({
   APP_ENV: z.string(),
   BASE_URL: z.string(),
+  DATABASE_URL: z.string(),
+  DATABASE_CONNECTION_LIMIT: z.number({ coerce: true }),
   NEXT_PUBLIC_SHOPIFY_CLIENT_ID: z.string(),
   SHOPIFY_CLIENT_SECRET: z.string(),
   SHOPIFY_SCOPE: z.string(),
