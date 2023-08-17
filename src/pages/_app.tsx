@@ -11,16 +11,6 @@ import { trpc } from '@/utils/trpc';
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
-  if (typeof window !== 'undefined') {
-    if (router.query.host) {
-      window.shopifyHost = String(router.query.host);
-    }
-
-    if (router.query.shop) {
-      window.shopifyShop = String(router.query.shop);
-    }
-  }
-
   if (router.pathname === '/') {
     // Don't use AppBridgeProvider when rendering the homepage
     return (
@@ -29,6 +19,25 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
         <Component {...pageProps} />
       </PolarisAppProvider>
     );
+  }
+
+  if (typeof window !== 'undefined') {
+    if (router.query.host) {
+      window.shopifyHost = String(router.query.host);
+    }
+
+    if (router.query.shop) {
+      window.shopifyShop = String(router.query.shop);
+    }
+
+    if (!window.shopifyHost || !window.shopifyShop) {
+      return (
+        <div>
+          Missing `host` or `shop` query parameters. Make sure the app is opened
+          from the Shopify Admin.
+        </div>
+      );
+    }
   }
 
   return (
