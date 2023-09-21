@@ -32,15 +32,6 @@ export default async function handler(
     },
   });
 
-  if ((shop && shop.uninstalledAt) || !shop) {
-    // Setup app/uninstalled webhook
-    await shopifyService.createWebhook({
-      shopDomain,
-      accessToken: result.access_token,
-      topic: 'app/uninstalled',
-    });
-  }
-
   if (shop && shop.uninstalledAt) {
     shop = await prisma.shop.update({
       where: {
@@ -71,6 +62,19 @@ export default async function handler(
         scope: result.scope,
         installedAt: new Date(),
       },
+    });
+  }
+
+  // Setup app/uninstalled webhook
+  const { webhooks } = await shopifyService.getWebhooks({
+    shopDomain,
+    accessToken: shop.accessToken,
+  });
+  if (!webhooks.find((w) => w.topic === 'app/uninstalled')) {
+    await shopifyService.createWebhook({
+      shopDomain,
+      accessToken: result.access_token,
+      topic: 'app/uninstalled',
     });
   }
 

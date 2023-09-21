@@ -8,6 +8,16 @@ const ExchangeCodeForAccessTokenResponse = z.object({
   scope: z.string(),
 });
 
+const GetWebhooksResponse = z.object({
+  webhooks: z.array(
+    z.object({
+      id: z.number(),
+      address: z.string(),
+      topic: z.string(),
+    }),
+  ),
+});
+
 @singleton()
 export class ShopifyService {
   public async exchangeCodeForAccessToken({
@@ -26,6 +36,28 @@ export class ShopifyService {
       .json();
 
     const parsed = ExchangeCodeForAccessTokenResponse.parse(json);
+    return parsed;
+  }
+
+  public async getWebhooks({
+    shopDomain,
+    accessToken,
+  }: {
+    shopDomain: string;
+    accessToken: string;
+  }) {
+    const json = await got
+      .get(
+        `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/webhooks.json`,
+        {
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+          },
+        },
+      )
+      .json();
+
+    const parsed = GetWebhooksResponse.parse(json);
     return parsed;
   }
 
