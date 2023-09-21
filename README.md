@@ -36,10 +36,16 @@ web: yarn start
 release: yarn prisma migrate deploy
 ```
 
-Lastly ensure that `engines.node` is set in package.json:
+Next ensure that `engines.node` is set in package.json:
 
 ```js
 "engines": {
   "node": "20.x"
 }
+```
+
+Finally, set the `cacheDirectories`:
+
+```js
+"cacheDirectories": [".next/cache"]
 ```
