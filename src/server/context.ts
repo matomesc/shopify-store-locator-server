@@ -12,7 +12,6 @@ interface JwtPayload {
 
 export async function createContext({
   req,
-  res,
 }: trpcNext.CreateNextContextOptions) {
   let shop: string | null = null;
 

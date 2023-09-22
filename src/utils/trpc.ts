@@ -5,7 +5,7 @@ import { getSessionToken } from '@shopify/app-bridge/utilities';
 import type { AppRouter } from '../server/routers/_app';
 
 export const trpc = createTRPCNext<AppRouter>({
-  config({ ctx }) {
+  config(/* { ctx } */) {
     return {
       links: [
         httpBatchLink({
