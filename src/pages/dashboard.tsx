@@ -7,9 +7,23 @@ import { trpc } from '@/utils/trpc';
 
 const Dashboard: NextPage = () => {
   const hello = trpc.hello.useQuery({ text: 'Hello' });
-  if (!hello.data) {
-    return <div>Loading...</div>;
+
+  if (hello.isLoading) {
+    return (
+      <Page fullWidth>
+        <div>Loading...</div>
+      </Page>
+    );
   }
+
+  if (hello.isError) {
+    return (
+      <Page fullWidth>
+        <div>Error</div>
+      </Page>
+    );
+  }
+
   return (
     <Page fullWidth>
       <Card>Dashboard {hello.data.greeting}</Card>
