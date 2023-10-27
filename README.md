@@ -27,7 +27,7 @@ When upgrading `@shopify/polaris` don't forget to:
 
 - run `yarn build` to type check the project
 - verify `@shopify/polaris` css tokens usage by searching for the string `--p-` and ensuring
-it exists on 
+it exists on <https://polaris.shopify.com/tokens>
 
 ## Shopify configuration
 
