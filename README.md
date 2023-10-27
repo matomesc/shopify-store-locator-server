@@ -2,7 +2,11 @@
 
 ## Development
 
+### Commiting
+
 Commit your changes using `yarn commit` and answer the comitizen prompt.
+
+### Next.js
 
 Every page has to be SSR so that the Next.js router is ready on page load to
 be used inside `_app.tsx` rather than using `router.isReady` inside `useEffect`
@@ -16,6 +20,14 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 ```
+
+### Upgrading @shopify/polaris
+
+When upgrading `@shopify/polaris` don't forget to:
+
+- run `yarn build` to type check the project
+- verify `@shopify/polaris` css tokens usage by searching for the string `--p-` and ensuring
+it exists on 
 
 ## Shopify configuration
 
