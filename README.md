@@ -1,5 +1,22 @@
 # Shopify NextJS Starter
 
+## Development
+
+Commit your changes using `yarn commit` and answer the comitizen prompt.
+
+Every page has to be SSR so that the Next.js router is ready on page load to
+be used inside `_app.tsx` rather than using `router.isReady` inside `useEffect`
+(see <https://nextjs.org/docs/pages/api-reference/functions/use-router#router-object>):
+
+```ts
+// Add this to every page
+export const getServerSideProps: GetServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
+```
+
 ## Shopify configuration
 
 Configure the Shopify app:
