@@ -4,24 +4,23 @@ import { useRouter } from 'next/router';
 import { Provider as AppBridgeProvider } from '@shopify/app-bridge-react';
 import { Frame, AppProvider as PolarisAppProvider } from '@shopify/polaris';
 import enTranslations from '@shopify/polaris/locales/en.json';
+import { useEffect, useState } from 'react';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/utils/trpc';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
+  const [state, setState] = useState({
+    loading: true,
+    missingParams: false,
+  });
 
-  if (router.pathname === '/') {
-    // Don't use AppBridgeProvider when rendering the homepage
-    return (
-      <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <Component {...pageProps} />
-      </PolarisAppProvider>
-    );
-  }
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
 
-  if (typeof window !== 'undefined') {
     if (router.query.host) {
       window.shopifyHost = String(router.query.host);
     }
@@ -31,13 +30,43 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
     }
 
     if (!window.shopifyHost || !window.shopifyShop) {
-      return (
-        <div>
-          Missing `host` or `shop` query parameters. Make sure the app is opened
-          from the Shopify Admin.
-        </div>
-      );
+      setState((prevState) => {
+        return {
+          ...prevState,
+          missingParams: true,
+        };
+      });
     }
+
+    setState((prevState) => {
+      return {
+        ...prevState,
+        loading: false,
+      };
+    });
+  }, [router.isReady, router.query.host, router.query.shop]);
+
+  if (state.loading) {
+    return <div />;
+  }
+
+  if (state.missingParams) {
+    return (
+      <div>
+        Missing `host` or `shop` query parameters. Make sure the app is opened
+        from the Shopify Admin.
+      </div>
+    );
+  }
+
+  if (router.pathname === '/') {
+    // Don't use AppBridgeProvider when rendering the homepage
+    return (
+      <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <Component {...pageProps} />
+      </PolarisAppProvider>
+    );
   }
 
   return (
