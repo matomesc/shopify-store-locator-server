@@ -13,7 +13,7 @@ interface JwtPayload {
 export async function createContext({
   req,
 }: trpcNext.CreateNextContextOptions) {
-  let shop: string | null = null;
+  let shopDomain: string | null = null;
 
   if (req.headers.authorization) {
     try {
@@ -23,14 +23,14 @@ export async function createContext({
         { clockTolerance: 30 },
       ) as JwtPayload;
       // eslint-disable-next-line prefer-destructuring
-      shop = payload.dest.split('://')[1];
+      shopDomain = payload.dest.split('://')[1];
     } catch (err) {
-      shop = null;
+      shopDomain = null;
     }
   }
 
   return {
-    shop,
+    shopDomain,
   };
 }
 export type Context = inferAsyncReturnType<typeof createContext>;
