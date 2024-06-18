@@ -10,7 +10,7 @@ if (!globalThis.prismaClient) {
   globalThis.prismaClient = new PrismaClient({
     datasources: {
       db: {
-        url: `${config.DATABASE_URL}?connection_limit=${config.DATABASE_CONNECTION_LIMIT}`,
+        url: config.DATABASE_URL,
       },
     },
   });

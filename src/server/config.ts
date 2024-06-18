@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
 const Config = z.object({
-  APP_ENV: z.string(),
+  NODE_ENV: z.enum(['development', 'production']),
+  PORT: z.coerce.number(),
+  NEXT_PUBLIC_APP_ENV: z.enum(['development', 'staging', 'production']),
   BASE_URL: z.string(),
   DATABASE_URL: z.string(),
-  DATABASE_CONNECTION_LIMIT: z.number({ coerce: true }),
   NEXT_PUBLIC_SHOPIFY_CLIENT_ID: z.string(),
   SHOPIFY_CLIENT_SECRET: z.string(),
   SHOPIFY_SCOPE: z.string(),
