@@ -10,15 +10,15 @@ interface WebhookParams {
 }
 
 async function handleCustomersDataRequest({ res }: WebhookParams) {
-  res.status(200).json({});
+  res.status(200).json({ ok: true });
 }
 
 async function handleCustomersRedact({ res }: WebhookParams) {
-  res.status(200).json({});
+  res.status(200).json({ ok: true });
 }
 
 async function handleShopRedact({ res }: WebhookParams) {
-  res.status(200).json({});
+  res.status(200).json({ ok: true });
 }
 
 async function handleAppUninstalled({ shopDomain, res }: WebhookParams) {
