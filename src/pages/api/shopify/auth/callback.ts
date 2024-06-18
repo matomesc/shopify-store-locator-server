@@ -56,6 +56,8 @@ export default async function handler(
         uninstalledAt: null,
         accessToken: result.access_token,
         accessTokenScope: result.scope,
+        planId: 'free',
+        showPlanModal: true,
       },
     });
   } else if (shop && !shop.uninstalledAt) {
@@ -75,6 +77,8 @@ export default async function handler(
         accessToken: result.access_token,
         accessTokenScope: result.scope,
         installedAt: new Date(),
+        planId: 'free',
+        showPlanModal: true,
       },
     });
   }
