@@ -10,11 +10,11 @@ export const appRouter = router({
       }),
     )
     .query(({ input, ctx }) => {
-      if (!ctx.shop) {
+      if (!ctx.shopDomain) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
       return {
-        greeting: `${input.text} ${ctx.shop}`,
+        greeting: `${input.text} ${ctx.shopDomain}`,
       };
     }),
 });

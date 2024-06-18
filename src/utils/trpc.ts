@@ -1,7 +1,8 @@
 import { httpBatchLink } from '@trpc/client';
 import { createTRPCNext } from '@trpc/next';
-import createApp from '@shopify/app-bridge';
-import { getSessionToken } from '@shopify/app-bridge/utilities';
+// Import ShopifyGlobal interface so window.shopify is defined
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ShopifyGlobal } from '@shopify/app-bridge-react';
 import type { AppRouter } from '../server/routers/_app';
 
 export const trpc = createTRPCNext<AppRouter>({
@@ -16,11 +17,7 @@ export const trpc = createTRPCNext<AppRouter>({
           url: `/api/trpc`,
           // You can pass any HTTP headers you wish here
           async headers() {
-            const app = createApp({
-              apiKey: String(process.env.NEXT_PUBLIC_SHOPIFY_CLIENT_ID),
-              host: window.shopifyHost,
-            });
-            const token = await getSessionToken(app);
+            const token = await window.shopify.idToken();
             return {
               authorization: `Bearer ${token}`,
             };

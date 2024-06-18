@@ -34,9 +34,8 @@ const Dashboard: NextPage = () => {
 export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  if (ctx.query.shop && ctx.query.host) {
+  if (ctx.query.shop) {
     const shopDomain = String(ctx.query.shop);
-    const host = String(ctx.query.host);
 
     const shop = await prisma.shop.findFirst({
       where: {
@@ -66,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           redirect: {
             destination: `/redirect?redirectUrl=${encodeURIComponent(
               redirectUrl,
-            )}&shop=${shopDomain}&host=${host}`,
+            )}`,
             permanent: false,
           },
         };

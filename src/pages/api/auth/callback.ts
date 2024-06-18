@@ -17,8 +17,22 @@ export default async function handler(
     return;
   }
 
-  const shopDomain = String(req.query.shop);
-  const code = String(req.query.code);
+  if (typeof req.query.shop !== 'string') {
+    res.status(400).send('Missing shop param');
+    return;
+  }
+
+  if (typeof req.query.code !== 'string') {
+    res.status(400).send('Missing code param');
+    return;
+  }
+
+  if (typeof req.query.host !== 'string') {
+    res.status(400).send('Missing host param');
+    return;
+  }
+
+  const { code, host, shop: shopDomain } = req.query;
   const shopifyService = container.resolve(ShopifyService);
 
   const result = await shopifyService.exchangeCodeForAccessToken({
@@ -78,10 +92,10 @@ export default async function handler(
     });
   }
 
-  const host = String(req.query.host);
+  // Redirect to dashboard
   res.redirect(
     `https://${base64decode(host)}/apps/${
       config.NEXT_PUBLIC_SHOPIFY_CLIENT_ID
-    }/dashboard?shop=${shopDomain}&host=${host}`,
+    }/dashboard`,
   );
 }
