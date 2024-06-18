@@ -1,6 +1,6 @@
 # [Choice] Node.js version (use -bullseye variants on local arm64/Apple Silicon): 18, 16, 14, 18-bullseye, 16-bullseye, 14-bullseye, 18-buster, 16-buster, 14-buster
-ARG VARIANT=20-bullseye
-FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-${VARIANT}
+ARG VARIANT=22-bookworm
+FROM mcr.microsoft.com/devcontainers/javascript-node:${VARIANT}
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
@@ -19,10 +19,10 @@ RUN chsh -s /usr/bin/zsh node
 
 # Persist vscode extensions
 RUN mkdir -p /home/$USERNAME/.vscode-server/extensions \
-        /home/$USERNAME/.vscode-server-insiders/extensions \
+    /home/$USERNAME/.vscode-server-insiders/extensions \
     && chown -R $USERNAME \
-        /home/$USERNAME/.vscode-server \
-        /home/$USERNAME/.vscode-server-insiders
+    /home/$USERNAME/.vscode-server \
+    /home/$USERNAME/.vscode-server-insiders
 
 # History
 RUN SNIPPET="export HISTFILE=/commandhistory/.zsh_history" \
@@ -32,9 +32,6 @@ RUN SNIPPET="export HISTFILE=/commandhistory/.zsh_history" \
     && echo $SNIPPET >> "/home/$USERNAME/.zshrc" \
     && echo "HISTSIZE=10000000" >> "/home/$USERNAME/.zshrc" \
     && echo "SAVEHIST=10000000" >> "/home/$USERNAME/.zshrc"
-
-# Start SSH agent
-RUN echo 'eval "$(ssh-agent -s)"' >> "/home/$USERNAME/.zshrc"
 
 # Ngrok
 WORKDIR /home/$USERNAME
