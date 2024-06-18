@@ -6,9 +6,12 @@
     "node": "20.x"
   },
   "scripts": {
-    "dev": "node --require reflect-metadata ./node_modules/.bin/next dev",
-    "build": "next build",
-    "start": "node --require reflect-metadata ./node_modules/.bin/next start",
+    "dev:next": "node --require reflect-metadata ./node_modules/.bin/next dev",
+    "build:next": "next build",
+    "start:next": "node --require reflect-metadata ./node_modules/.bin/next start",
+    "dev:server": "env-cmd tsc-watch -p tsconfig.server.json --onSuccess \"node --require reflect-metadata --require tsconfig-paths/register --enable-source-maps dist/server/src/server/server.js\"",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start:server": "node --enable-source-maps --require reflect-metadata --require tsconfig-paths/register --optimize_for_size --max_old_space_size=2000 dist/server/src/server/server.js",
     "lint": "next lint",
     "commit": "lint-staged && cz",
     "ngrok": "ngrok start --all --config ngrok.yml"
@@ -25,8 +28,11 @@
     "@trpc/react-query": "^11.0.0-rc.403",
     "@trpc/server": "^11.0.0-rc.403",
     "got": "^12.6.1",
+    "http-terminator": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.4",
+    "pino": "^9.2.0",
+    "pino-pretty": "^11.2.1",
     "prisma": "^5.15.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -43,6 +49,7 @@
     "@typescript-eslint/parser": "^7.13.1",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
+    "env-cmd": "^10.1.0",
     "eslint": "8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -55,6 +62,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.2",
+    "tsc-watch": "^6.2.0",
     "typescript": "5.4.5"
   },
   "packageManager": "yarn@4.3.0"

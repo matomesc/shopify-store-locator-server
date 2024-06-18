@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "dist/server",
+    "lib": [
+      "ES2022"
+    ],
+    "target": "ES2022",
+    "isolatedModules": false,
+    "noEmit": false,
+    "sourceMap": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "./src/server/server.ts"
+  ],
+}
