@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { procedure, router } from '../trpc';
+import { privateProcedure, router } from '../trpc';
 
 export const appRouter = router({
-  hello: procedure
+  hello: privateProcedure
     .input(
       z.object({
         text: z.string().regex(/^Hello$/gi),

@@ -3,7 +3,7 @@ import { createTRPCNext } from '@trpc/next';
 // Import ShopifyGlobal interface so window.shopify is defined
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ShopifyGlobal } from '@shopify/app-bridge-react';
-import type { AppRouter } from '../server/routers/_app';
+import type { AppRouter } from '../server/trpc/routers/_app';
 
 export const trpc = createTRPCNext<AppRouter>({
   config(/* { ctx } */) {

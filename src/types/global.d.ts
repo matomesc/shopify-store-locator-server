@@ -1,8 +1,5 @@
 declare global {
-  interface Window {
-    shopifyShop: string;
-    shopifyHost: string;
-  }
+  interface Window {}
 }
 
 export {};

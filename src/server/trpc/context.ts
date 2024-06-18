@@ -1,7 +1,7 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import jwt from 'jsonwebtoken';
-import { config } from './config';
+import { config } from '../config';
 
 interface JwtPayload {
   /**
