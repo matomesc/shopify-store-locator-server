@@ -5,6 +5,7 @@ import enTranslations from '@shopify/polaris/locales/en.json';
 import { LinkWrapper } from '@/client/components/LinkWrapper';
 import { NavBar } from '@/client/components/NavBar';
 import { trpc } from '@/lib/trpc';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
@@ -12,6 +13,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
       <NavBar />
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Component {...pageProps} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </PolarisAppProvider>
   );
 };
