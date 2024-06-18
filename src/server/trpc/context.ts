@@ -1,4 +1,3 @@
-import { inferAsyncReturnType } from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
@@ -33,4 +32,4 @@ export async function createContext({
     shopDomain,
   };
 }
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;
