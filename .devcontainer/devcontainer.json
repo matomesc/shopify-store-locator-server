@@ -1,10 +1,9 @@
 // Update the VARIANT arg in docker-compose.yml to pick a Node.js version
 {
-	"name": "shopify-nextjs-starter",
+	"name": "neutek-locator",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspace",
-
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
@@ -20,14 +19,14 @@
 			]
 		}
 	},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// This can be used to network with other containers or with the host.
-	"forwardPorts": [3000, 5432],
-
+	"forwardPorts": [
+		3000,
+		5432
+	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "yarn install",
-
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node"
 }
