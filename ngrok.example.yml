@@ -1,8 +1,0 @@
-authtoken: 1dMFEtYkoCi4MZCFU8vQcaN9oPN_6sdV7beWytw5dNjV6ocD4
-tunnels:
-    app:
-        proto: http
-        addr: 3000
-        hostname: matomesc.ngrok.io
-version: "2"
-region: us
