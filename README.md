@@ -1,4 +1,6 @@
-# Shopify NextJS Starter
+# Neutek Locator
+
+Easy store locator management.
 
 ## Development
 
