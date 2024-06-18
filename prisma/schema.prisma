@@ -14,6 +14,17 @@ model Shop {
   accessTokenScope  String
   installedAt       DateTime  @db.Timestamptz(3)
   uninstalledAt     DateTime? @db.Timestamptz(3)
+  planId            String
+  plan              Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
+}
+
+model Plan {
+  id        String  @id
+  name      String
+  price     Decimal
+  enabled   Boolean
+  trialDays Int
+  shops     Shop[]
 }

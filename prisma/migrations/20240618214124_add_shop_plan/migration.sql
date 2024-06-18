@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Shop" ADD COLUMN     "planId" TEXT NOT NULL DEFAULT 'free';
+
+-- AddForeignKey
+ALTER TABLE "Shop" ADD CONSTRAINT "Shop_planId_fkey" FOREIGN KEY ("planId") REFERENCES "Plan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
