@@ -16,13 +16,17 @@ export async function createContext({
   let shop: string | null = null;
 
   if (req.headers.authorization) {
-    const payload = jwt.verify(
-      req.headers.authorization.split(' ')[1],
-      config.SHOPIFY_CLIENT_SECRET,
-      { clockTolerance: 10 },
-    ) as JwtPayload;
-    // eslint-disable-next-line prefer-destructuring
-    shop = payload.dest.split('://')[1];
+    try {
+      const payload = jwt.verify(
+        req.headers.authorization.split(' ')[1],
+        config.SHOPIFY_CLIENT_SECRET,
+        { clockTolerance: 30 },
+      ) as JwtPayload;
+      // eslint-disable-next-line prefer-destructuring
+      shop = payload.dest.split('://')[1];
+    } catch (err) {
+      shop = null;
+    }
   }
 
   return {
