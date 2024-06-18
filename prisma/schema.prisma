@@ -8,12 +8,12 @@ generator client {
 }
 
 model Shop {
-  id            String    @id @default(uuid())
-  domain        String    @unique
-  accessToken   String
-  scope         String
-  installedAt   DateTime  @db.Timestamptz(3)
-  uninstalledAt DateTime? @db.Timestamptz(3)
-  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
+  id                String    @id @default(uuid())
+  domain            String    @unique
+  accessToken       String
+  accessTokenScope  String
+  installedAt       DateTime  @db.Timestamptz(3)
+  uninstalledAt     DateTime? @db.Timestamptz(3)
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }

@@ -55,7 +55,7 @@ export default async function handler(
         installedAt: new Date(),
         uninstalledAt: null,
         accessToken: result.access_token,
-        scope: result.scope,
+        accessTokenScope: result.scope,
       },
     });
   } else if (shop && !shop.uninstalledAt) {
@@ -65,7 +65,7 @@ export default async function handler(
       },
       data: {
         accessToken: result.access_token,
-        scope: result.scope,
+        accessTokenScope: result.scope,
       },
     });
   } else if (!shop) {
@@ -73,7 +73,7 @@ export default async function handler(
       data: {
         domain: shopDomain,
         accessToken: result.access_token,
-        scope: result.scope,
+        accessTokenScope: result.scope,
         installedAt: new Date(),
       },
     });

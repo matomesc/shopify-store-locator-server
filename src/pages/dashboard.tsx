@@ -8,7 +8,7 @@ import { trpc } from '@/lib/trpc';
 const Dashboard: NextPage = () => {
   const hello = trpc.hello.useQuery({ text: 'Hello' });
 
-  if (hello.isLoading) {
+  if (hello.isPending) {
     return (
       <Page fullWidth>
         <div>Loading...</div>
@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     if (
       !shop ||
       shop.uninstalledAt ||
-      !verifyScopes(shop.scope, config.SHOPIFY_SCOPE)
+      !verifyScopes(shop.accessTokenScope, config.SHOPIFY_SCOPE)
     ) {
       const validHmac = verifyShopifyRequest(ctx.query);
 
