@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import getRawBody from 'raw-body';
+import { getRawBody } from '@/server/lib/http';
 import { prisma } from '@/server/lib/prisma';
 import { verifyShopifyWebhook } from '@/server/lib/shopify';
 
@@ -42,7 +42,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const rawBody = await getRawBody(req, { encoding: 'utf8' });
+  const rawBody = (await getRawBody(req)).toString('utf8');
   const hmac = String(req.headers['x-shopify-hmac-sha256']);
   const verified = verifyShopifyWebhook(hmac, rawBody);
   if (!verified) {
