@@ -11,6 +11,7 @@ const Config = z.object({
   SHOPIFY_SCOPE: z.string(),
   SHOPIFY_REDIRECT_URI: z.string(),
   SHOPIFY_API_VERSION: z.string(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string(),
 });
 
 export const config = Config.parse(process.env);
