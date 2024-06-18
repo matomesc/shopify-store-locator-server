@@ -1,6 +1,7 @@
 import got from 'got';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
+import { Plan } from '@prisma/client';
 import { config } from '../config';
 
 const ExchangeCodeForAccessTokenResponse = z.object({
@@ -16,6 +17,30 @@ const GetWebhooksResponse = z.object({
       topic: z.string(),
     }),
   ),
+});
+
+const CreateRecurringApplicationChargeResponse = z.object({
+  recurring_application_charge: z.object({
+    confirmation_url: z.string(),
+  }),
+});
+
+const GetRecurringApplicationChargeResponse = z.object({
+  recurring_application_charge: z.object({
+    name: z.string(),
+    activated_on: z.nullable(z.string()),
+    trial_days: z.number(),
+    status: z.enum([
+      'pending',
+      'accepted',
+      'active',
+      'declined',
+      'expired',
+      'frozen',
+      'cancelled',
+    ]),
+    price: z.string(),
+  }),
 });
 
 @singleton()
@@ -82,6 +107,84 @@ export class ShopifyService {
             address: `${config.BASE_URL}/api/webhooks`,
             format: 'json',
           },
+        },
+      },
+    );
+  }
+
+  public async createRecurringApplicationCharge({
+    shopDomain,
+    accessToken,
+    trialDays,
+    plan,
+  }: {
+    shopDomain: string;
+    accessToken: string;
+    trialDays: number;
+    plan: Plan;
+  }) {
+    const json = await got
+      .post(
+        `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges.json`,
+        {
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+          },
+          json: {
+            recurring_application_charge: {
+              name: `Simple Store Locator Subscription (${plan.name})`,
+              price: plan.price.toNumber(),
+              trial_days: trialDays,
+              return_url: `${config.BASE_URL}/api/billing/callback?shopDomain=${shopDomain}&planId=${plan.id}`,
+              test: config.NEXT_PUBLIC_APP_ENV === 'production' ? null : true,
+            },
+          },
+        },
+      )
+      .json();
+
+    const parsed = CreateRecurringApplicationChargeResponse.parse(json);
+    return parsed;
+  }
+
+  public async getRecurringApplicationCharge({
+    shopDomain,
+    accessToken,
+    chargeId,
+  }: {
+    shopDomain: string;
+    accessToken: string;
+    chargeId: bigint;
+  }) {
+    const json = await got
+      .get(
+        `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges/${chargeId}.json`,
+        {
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+          },
+        },
+      )
+      .json();
+
+    const parsed = GetRecurringApplicationChargeResponse.parse(json);
+    return parsed;
+  }
+
+  public async cancelRecurringApplicationCharge({
+    shopDomain,
+    accessToken,
+    chargeId,
+  }: {
+    shopDomain: string;
+    accessToken: string;
+    chargeId: bigint;
+  }) {
+    await got.delete(
+      `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges/${chargeId}.json`,
+      {
+        headers: {
+          'X-Shopify-Access-Token': accessToken,
         },
       },
     );
