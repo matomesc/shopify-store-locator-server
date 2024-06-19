@@ -18,7 +18,7 @@ model Shop {
   plan              Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
   planChargeId      BigInt?
   lastTrialAt       DateTime? @db.Timestamptz(3)
-  showPlanModal     Boolean
+  showPlansModal    Boolean
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }

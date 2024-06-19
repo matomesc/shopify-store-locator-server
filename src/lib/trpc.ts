@@ -17,10 +17,17 @@ export const trpc = createTRPCNext<AppRouter>({
           url: `/api/trpc`,
           // You can pass any HTTP headers you wish here
           async headers() {
-            const token = await window.shopify.idToken();
-            return {
-              authorization: `Bearer ${token}`,
-            };
+            if (window.shopify) {
+              try {
+                const token = await window.shopify.idToken();
+                return {
+                  authorization: `Bearer ${token}`,
+                };
+              } catch (err) {
+                return {};
+              }
+            }
+            return {};
           },
         }),
       ],

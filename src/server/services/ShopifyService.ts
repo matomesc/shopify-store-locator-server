@@ -132,10 +132,10 @@ export class ShopifyService {
           },
           json: {
             recurring_application_charge: {
-              name: `Simple Store Locator Subscription (${plan.name})`,
+              name: `${plan.name} Subscription`,
               price: plan.price.toNumber(),
               trial_days: trialDays,
-              return_url: `${config.BASE_URL}/api/billing/callback?shopDomain=${shopDomain}&planId=${plan.id}`,
+              return_url: `${config.BASE_URL}/api/shopify/billing/callback?shopDomain=${shopDomain}&planId=${plan.id}`,
               test: config.NEXT_PUBLIC_APP_ENV === 'production' ? null : true,
             },
           },

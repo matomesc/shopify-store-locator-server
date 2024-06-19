@@ -1,8 +1,15 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { privateProcedure, router } from '../trpc';
+import { billingRouter } from './billing';
+import { plansRouter } from './plans';
+import { shopsRouter } from './shops';
 
 export const appRouter = router({
+  shops: shopsRouter,
+  billing: billingRouter,
+  plans: plansRouter,
+
   hello: privateProcedure
     .input(
       z.object({
