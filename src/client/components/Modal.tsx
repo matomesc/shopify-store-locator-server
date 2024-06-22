@@ -51,6 +51,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
         },
       }}
       shouldCloseOnEsc={shouldCloseOnEsc}
+      ariaHideApp={false}
     >
       <div>
         <style jsx>{`

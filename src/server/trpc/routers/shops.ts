@@ -48,6 +48,7 @@ export const shopsRouter = router({
           : null,
         // showSetupBanner: shop.showSetupBanner,
         showPlansModal: shop.showPlansModal,
+        showOnboarding: shop.showOnboarding,
       },
     };
   }),
@@ -87,8 +88,8 @@ export const shopsRouter = router({
           id: shop.id,
         },
         data: {
-          // showSetupBanner: input.showSetupBanner,
           showPlansModal: input.showPlansModal,
+          showOnboarding: input.showOnboarding,
         },
       });
     }),

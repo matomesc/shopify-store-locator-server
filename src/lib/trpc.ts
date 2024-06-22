@@ -3,6 +3,7 @@ import { createTRPCNext } from '@trpc/next';
 // Import ShopifyGlobal interface so window.shopify is defined
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ShopifyGlobal } from '@shopify/app-bridge-react';
+import SuperJSON from 'superjson';
 import type { AppRouter } from '../server/trpc/routers/_app';
 
 export const trpc = createTRPCNext<AppRouter>({
@@ -10,6 +11,7 @@ export const trpc = createTRPCNext<AppRouter>({
     return {
       links: [
         httpBatchLink({
+          transformer: SuperJSON,
           /**
            * If you want to use SSR, you need to use the server's full URL
            * @link https://trpc.io/docs/ssr
@@ -37,4 +39,5 @@ export const trpc = createTRPCNext<AppRouter>({
    * @link https://trpc.io/docs/ssr
    * */
   ssr: false,
+  transformer: SuperJSON,
 });

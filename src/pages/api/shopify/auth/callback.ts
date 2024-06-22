@@ -5,6 +5,7 @@ import { config } from '@/server/config';
 import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
 import { ShopifyService } from '@/server/services/ShopifyService';
+import { SettingsService } from '@/server/services/SettingsService';
 
 export default async function handler(
   req: NextApiRequest,
@@ -58,6 +59,7 @@ export default async function handler(
         accessTokenScope: result.scope,
         planId: 'free',
         showPlansModal: true,
+        showOnboarding: true,
       },
     });
   } else if (shop && !shop.uninstalledAt) {
@@ -79,8 +81,11 @@ export default async function handler(
         installedAt: new Date(),
         planId: 'free',
         showPlansModal: true,
+        showOnboarding: true,
       },
     });
+    const settingsService = container.resolve(SettingsService);
+    await settingsService.upsertSettings(shop.id);
   }
 
   // Setup app/uninstalled webhook

@@ -1,5 +1,13 @@
 import { GetServerSideProps, NextPage } from 'next';
-import { Button, Card, Page } from '@shopify/polaris';
+import {
+  Banner,
+  Button,
+  Card,
+  EmptyState,
+  Layout,
+  Link,
+  Page,
+} from '@shopify/polaris';
 import { prisma } from '@/server/lib/prisma';
 import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
@@ -8,8 +16,10 @@ import { Spinner } from '@/client/components/Spinner';
 import { useEffect, useState } from 'react';
 import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
+import { useRouter } from 'next/router';
 
 const Dashboard: NextPage = () => {
+  const router = useRouter();
   const utils = trpc.useUtils();
   const [state, setState] = useState({
     plansModalOpen: false,
@@ -17,6 +27,8 @@ const Dashboard: NextPage = () => {
   const shopsGetQuery = trpc.shops.get.useQuery();
   const plansGetAllQuery = trpc.plans.getAll.useQuery();
   const shopsUpdateMutation = trpc.shops.update.useMutation();
+  const locationsGetAllQuery = trpc.locations.getAll.useQuery();
+  const settingsGetQuery = trpc.settings.get.useQuery();
   useEffect(() => {
     if (shopsGetQuery.isPending || shopsGetQuery.isError) {
       return;
@@ -34,11 +46,21 @@ const Dashboard: NextPage = () => {
     shopsGetQuery.isPending,
   ]);
 
-  if (shopsGetQuery.isPending || plansGetAllQuery.isPending) {
+  if (
+    shopsGetQuery.isPending ||
+    plansGetAllQuery.isPending ||
+    locationsGetAllQuery.isPending ||
+    settingsGetQuery.isPending
+  ) {
     return <Spinner />;
   }
 
-  if (shopsGetQuery.isError || plansGetAllQuery.isError) {
+  if (
+    shopsGetQuery.isError ||
+    plansGetAllQuery.isError ||
+    locationsGetAllQuery.isError ||
+    settingsGetQuery.isError
+  ) {
     return (
       <Page fullWidth>
         <Card>
@@ -56,6 +78,7 @@ const Dashboard: NextPage = () => {
                 await Promise.all([
                   shopsGetQuery.refetch(),
                   plansGetAllQuery.refetch(),
+                  locationsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -68,8 +91,98 @@ const Dashboard: NextPage = () => {
   }
 
   return (
-    <Page fullWidth title="Dashboard">
-      <Card>Dashboard {shopsGetQuery.data.shop.domain}</Card>
+    <Page
+      fullWidth
+      title="Dashboard"
+      primaryAction={
+        shopsGetQuery.data.shop.showOnboarding ||
+        !settingsGetQuery.data.settings.googleMapsApiKey
+          ? undefined
+          : { content: 'Add location' }
+      }
+      secondaryActions={
+        // eslint-disable-next-line no-nested-ternary
+        shopsGetQuery.data.shop.showOnboarding ||
+        !settingsGetQuery.data.settings.googleMapsApiKey
+          ? []
+          : locationsGetAllQuery.data.locations.length === 0
+            ? [{ content: 'Import' }]
+            : [{ content: 'Import' }, { content: 'Export' }]
+      }
+    >
+      <Layout>
+        <Layout.Section>
+          {!shopsGetQuery.data.shop.showOnboarding &&
+            !settingsGetQuery.data.settings.googleMapsApiKey && (
+              <Banner title="Setup your Google Maps API key now" tone="warning">
+                You have not set a Google Maps API key. Go to{' '}
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <Link url="/setup">setup</Link> to create one.
+              </Banner>
+            )}
+        </Layout.Section>
+        {(shopsGetQuery.data.shop.showOnboarding ||
+          !settingsGetQuery.data.settings.googleMapsApiKey) && (
+          <Layout.Section>
+            <Card>
+              <EmptyState
+                heading="Complete setup to continue"
+                action={{
+                  content: 'Go to setup',
+                  onAction: () => {
+                    router.push('/setup').catch((err) => {
+                      Sentry.captureException(err);
+                    });
+                  },
+                }}
+                image="/checklist.png"
+              >
+                <p>
+                  Once you complete the setup you will be able to import
+                  existing data in csv format or manually add your locations
+                </p>
+              </EmptyState>
+            </Card>
+          </Layout.Section>
+        )}
+        {/* Empty state */}
+        {settingsGetQuery.data.settings.googleMapsApiKey &&
+          !shopsGetQuery.data.shop.showOnboarding &&
+          locationsGetAllQuery.data.locations.length === 0 && (
+            <Layout.Section>
+              <Card>
+                <EmptyState
+                  heading="Create your first location now"
+                  action={{
+                    content: 'Add location',
+                    onAction: () => {
+                      router.push('/locations/create').catch((err) => {
+                        Sentry.captureException(err);
+                      });
+                    },
+                  }}
+                  secondaryAction={{
+                    content: 'Import locations',
+                  }}
+                  image="/emptystate.png"
+                >
+                  <p>
+                    You can import existing data in csv format or manually add
+                    your locations
+                  </p>
+                </EmptyState>
+              </Card>
+            </Layout.Section>
+          )}
+        {/* Locations table */}
+        {settingsGetQuery.data.settings.googleMapsApiKey &&
+          !shopsGetQuery.data.shop.showOnboarding &&
+          locationsGetAllQuery.data.locations.length > 0 && (
+            <Layout.Section>
+              <Card>Dashboard {shopsGetQuery.data.shop.domain}</Card>
+            </Layout.Section>
+          )}
+      </Layout>
       <PlansModal
         open={state.plansModalOpen}
         currentPlanId={shopsGetQuery.data.shop.planId}

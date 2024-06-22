@@ -1,22 +1,27 @@
-import { PlansModal } from '@/client/components/billing/PlansModal';
+import { SettingsForm } from '@/client/components/settings/SettingsForm';
 import { Spinner } from '@/client/components/Spinner';
 import { trpc } from '@/lib/trpc';
-import { Button, Card, Layout, Page, Text } from '@shopify/polaris';
+import { Button, Card, Page } from '@shopify/polaris';
 import { NextPage } from 'next';
-import { useState } from 'react';
 
 const Settings: NextPage = () => {
-  const [state, setState] = useState({
-    plansModalOpen: false,
-  });
   const shopsGetQuery = trpc.shops.get.useQuery();
   const plansGetAllQuery = trpc.plans.getAll.useQuery();
+  const settingsGetQuery = trpc.settings.get.useQuery();
 
-  if (shopsGetQuery.isPending || plansGetAllQuery.isPending) {
+  if (
+    shopsGetQuery.isPending ||
+    plansGetAllQuery.isPending ||
+    settingsGetQuery.isPending
+  ) {
     return <Spinner />;
   }
 
-  if (shopsGetQuery.isError || plansGetAllQuery.isError) {
+  if (
+    shopsGetQuery.isError ||
+    plansGetAllQuery.isError ||
+    settingsGetQuery.isError
+  ) {
     return (
       <Page>
         <Card>
@@ -34,6 +39,7 @@ const Settings: NextPage = () => {
                 await Promise.all([
                   shopsGetQuery.refetch(),
                   plansGetAllQuery.refetch(),
+                  settingsGetQuery.refetch(),
                 ]);
               }}
             >
@@ -46,47 +52,13 @@ const Settings: NextPage = () => {
   }
 
   return (
-    <Page>
-      <Layout>
-        <Layout.AnnotatedSection
-          title="Billing"
-          description="Update your billing plan here"
-        >
-          <Card>
-            Your current plan is{' '}
-            <Text as="span" fontWeight="bold">
-              {shopsGetQuery.data.shop.plan.name}
-            </Text>{' '}
-            @ ${shopsGetQuery.data.shop.planCharge?.price || '0.00'} / month{' '}
-            <Button
-              onClick={() => {
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    plansModalOpen: true,
-                  };
-                });
-              }}
-            >
-              Change plan
-            </Button>
-          </Card>
-          <PlansModal
-            open={state.plansModalOpen}
-            currentPlanId={shopsGetQuery.data.shop.planId}
-            plans={plansGetAllQuery.data.plans}
-            onClose={() => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  plansModalOpen: false,
-                };
-              });
-            }}
-          />
-        </Layout.AnnotatedSection>
-      </Layout>
-    </Page>
+    <SettingsForm
+      shop={shopsGetQuery.data.shop}
+      plans={plansGetAllQuery.data.plans}
+      defaultFormValues={{
+        googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey || '',
+      }}
+    />
   );
 };
 

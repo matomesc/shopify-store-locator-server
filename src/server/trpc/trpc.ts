@@ -1,11 +1,14 @@
 import { initTRPC, TRPCError } from '@trpc/server';
+import SuperJSON from 'superjson';
 import { Context } from './context';
 import { prisma } from '../lib/prisma';
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
 // is common in i18n libraries.
-const t = initTRPC.context<Context>().create();
+const t = initTRPC.context<Context>().create({
+  transformer: SuperJSON,
+});
 
 const isAuthed = t.middleware(async ({ next, ctx }) => {
   if (!ctx.shopDomain) {

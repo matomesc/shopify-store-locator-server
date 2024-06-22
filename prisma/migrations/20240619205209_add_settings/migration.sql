@@ -1,0 +1,16 @@
+-- AlterTable
+ALTER TABLE "Location" ALTER COLUMN "phone" DROP NOT NULL,
+ALTER COLUMN "email" DROP NOT NULL,
+ALTER COLUMN "website" DROP NOT NULL,
+ALTER COLUMN "address2" DROP NOT NULL,
+ALTER COLUMN "city" DROP NOT NULL,
+ALTER COLUMN "state" DROP NOT NULL,
+ALTER COLUMN "zip" DROP NOT NULL;
+
+-- CreateTable
+CREATE TABLE "Settings" (
+    "id" TEXT NOT NULL,
+    "googleMapsApiKey" TEXT,
+
+    CONSTRAINT "Settings_pkey" PRIMARY KEY ("id")
+);

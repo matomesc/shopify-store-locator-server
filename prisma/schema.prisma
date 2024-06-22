@@ -19,8 +19,18 @@ model Shop {
   planChargeId      BigInt?
   lastTrialAt       DateTime? @db.Timestamptz(3)
   showPlansModal    Boolean
+  showOnboarding    Boolean
+  locations         Location[]
+  settings          Settings?
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
+}
+
+model Settings {
+  id                String  @id @default(uuid())
+  shopId            String  @unique
+  shop              Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  googleMapsApiKey  String?
 }
 
 model Plan {
@@ -30,4 +40,25 @@ model Plan {
   enabled   Boolean
   trialDays Int
   shops     Shop[]
+}
+
+model Location {
+  id                String    @id @default(uuid())
+  name              String
+  active            Boolean
+  phone             String
+  email             String
+  website           String
+  address1          String
+  address2          String
+  city              String
+  state             String
+  zip               String
+  country           String
+  lat               Float
+  lng               Float
+  shopId            String
+  shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }

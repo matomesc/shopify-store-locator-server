@@ -1,29 +1,16 @@
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
-import { privateProcedure, router } from '../trpc';
+import { router } from '../trpc';
 import { billingRouter } from './billing';
+import { locationsRouter } from './locations';
 import { plansRouter } from './plans';
+import { settingsRouter } from './settings';
 import { shopsRouter } from './shops';
 
 export const appRouter = router({
   shops: shopsRouter,
   billing: billingRouter,
   plans: plansRouter,
-
-  hello: privateProcedure
-    .input(
-      z.object({
-        text: z.string().regex(/^Hello$/gi),
-      }),
-    )
-    .query(({ input, ctx }) => {
-      if (!ctx.shopDomain) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
-      return {
-        greeting: `${input.text} ${ctx.shopDomain}`,
-      };
-    }),
+  locations: locationsRouter,
+  settings: settingsRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
