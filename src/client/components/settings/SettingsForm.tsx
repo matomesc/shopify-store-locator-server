@@ -156,7 +156,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                     onChange={field.onChange}
                     onBlur={field.onBlur}
                     error={errors.timezone?.message}
-                    helpText="This is used for analytics to display data in your timezone"
+                    helpText="This is used for analytics to display data in your timezone. Choose the location closest to you."
                   />
                 );
               }}
