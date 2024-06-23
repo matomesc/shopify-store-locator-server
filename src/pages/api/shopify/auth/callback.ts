@@ -6,11 +6,12 @@ import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
 import { ShopifyService } from '@/server/services/ShopifyService';
 import { SettingsService } from '@/server/services/SettingsService';
+import { createRouter } from 'next-connect';
+import { errorHandler } from '@/server/lib/api';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.get(async (req, res) => {
   const validHmac = verifyShopifyRequest(req.query);
 
   if (!validHmac) {
@@ -119,4 +120,8 @@ export default async function handler(
       config.NEXT_PUBLIC_SHOPIFY_CLIENT_ID
     }/dashboard`,
   );
-}
+});
+
+export default router.handler({
+  onError: errorHandler,
+});
