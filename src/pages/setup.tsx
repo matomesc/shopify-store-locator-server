@@ -175,7 +175,6 @@ const Setup: NextPage = () => {
                                 You&apos;ll need to sign in to a Google account
                                 to proceed:{' '}
                                 {/* <Link url="https://console.cloud.google.com/google/maps-apis/home"> */}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                 <Link
                                   target="_blank"
                                   url="https://console.cloud.google.com/home/dashboard"
@@ -258,7 +257,6 @@ const Setup: NextPage = () => {
                               </Text>
                               <p>
                                 Go to the{' '}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                 <Link
                                   target="_blank"
                                   url="https://console.cloud.google.com/google/maps-apis/home"
@@ -306,7 +304,6 @@ const Setup: NextPage = () => {
                               </Text>
                               <p>
                                 Go to the{' '}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                 <Link
                                   target="_blank"
                                   url="https://console.cloud.google.com/google/maps-apis/api-list"
@@ -352,7 +349,6 @@ const Setup: NextPage = () => {
                               </Text>
                               <p>
                                 Go to the{' '}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                 <Link
                                   target="_blank"
                                   url="https://console.cloud.google.com/google/maps-apis/credentials"
@@ -364,9 +360,7 @@ const Setup: NextPage = () => {
                                   Show Key
                                 </Text>{' '}
                                 and then copy the key (Step 6.1) and paste it in
-                                the{' '}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                                app <Link url="/settings">Settings</Link>
+                                the app <Link url="/settings">Settings</Link>
                               </p>
                               <div style={{ display: 'flex', gap: '10px' }}>
                                 <Thumbnail
@@ -449,7 +443,6 @@ const Setup: NextPage = () => {
                               </Text>
                               <p>
                                 Go to the{' '}
-                                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                 <Link
                                   target="_blank"
                                   url="https://console.cloud.google.com/billing"
@@ -658,7 +651,6 @@ const Setup: NextPage = () => {
                                   Maps JavaScript API: One map load is used each
                                   time someone visits the page with your store
                                   locator{' '}
-                                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                   <Link
                                     target="_blank"
                                     url="https://developers.google.com/maps/documentation/javascript/usage-and-billing"
@@ -671,7 +663,6 @@ const Setup: NextPage = () => {
                                   Geocoding API: One request is used each time
                                   someone types a search and clicks the search
                                   button (or presses the Enter key).{' '}
-                                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                   <Link
                                     target="_blank"
                                     url="https://developers.google.com/maps/documentation/geocoding/usage-and-billing#pricing-for-product"
@@ -685,7 +676,6 @@ const Setup: NextPage = () => {
                                   typing &quot;N&quot;, &quot;Y&quot;,
                                   &quot;C&quot; to spell &quot;NYC&quot; would
                                   use 3 requests).{' '}
-                                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                                   <Link
                                     target="_blank"
                                     url="https://developers.google.com/maps/documentation/places/web-service/usage-and-billing"

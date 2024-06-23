@@ -28,7 +28,7 @@ const LocationsCreate: NextPage = () => {
             <p>Failed to load data</p>
             <Button
               onClick={async () => {
-                await Promise.all([settingsGetQuery]);
+                await Promise.all([settingsGetQuery.refetch()]);
               }}
             >
               Retry

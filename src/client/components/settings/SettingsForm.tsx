@@ -196,7 +196,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
           description={
             <p>
               Update your Google Maps API key here. You can create one with the
-              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}{' '}
               instructions on the <Link url="/setup">setup page</Link>
             </p>
           }
@@ -213,6 +212,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
+                    error={errors.googleMapsApiKey?.message}
                   />
                 );
               }}

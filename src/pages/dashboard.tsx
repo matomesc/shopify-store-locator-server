@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
+import { LocationsTable } from '@/client/components/locations/LocationsTable';
 
 const Dashboard: NextPage = () => {
   const router = useRouter();
@@ -98,7 +99,14 @@ const Dashboard: NextPage = () => {
         shopsGetQuery.data.shop.showOnboarding ||
         !settingsGetQuery.data.settings.googleMapsApiKey
           ? undefined
-          : { content: 'Add location' }
+          : {
+              content: 'Add location',
+              onAction: () => {
+                router.push('/locations/create').catch((err) => {
+                  Sentry.captureException(err);
+                });
+              },
+            }
       }
       secondaryActions={
         // eslint-disable-next-line no-nested-ternary
@@ -116,7 +124,6 @@ const Dashboard: NextPage = () => {
             !settingsGetQuery.data.settings.googleMapsApiKey && (
               <Banner title="Setup your Google Maps API key now" tone="warning">
                 You have not set a Google Maps API key. Go to{' '}
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
                 <Link url="/setup">setup</Link> to create one.
               </Banner>
             )}
@@ -179,7 +186,11 @@ const Dashboard: NextPage = () => {
           !shopsGetQuery.data.shop.showOnboarding &&
           locationsGetAllQuery.data.locations.length > 0 && (
             <Layout.Section>
-              <Card>Dashboard {shopsGetQuery.data.shop.domain}</Card>
+              <Card padding="0">
+                <LocationsTable
+                  locations={locationsGetAllQuery.data.locations}
+                />
+              </Card>
             </Layout.Section>
           )}
       </Layout>

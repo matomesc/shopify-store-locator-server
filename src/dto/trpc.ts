@@ -52,8 +52,13 @@ export type SettingsUpdateInput = z.infer<typeof SettingsUpdateInput>;
 export type Location = LocationsGetAllOutput['locations'][number];
 export type LocationsGetAllOutput = RouterOutput['locations']['getAll'];
 
-export const LocationsCreateInput = z.object({
+export const LocationsGetByIdInput = z.object({
   id: z.string(),
+});
+export type LocationsGetByIdInput = z.infer<typeof LocationsGetByIdInput>;
+
+export const LocationsCreateInput = z.object({
+  id: z.string().max(100),
   name: z.string().min(1).max(100),
   active: z.boolean(),
   phone: z.string(),
@@ -99,3 +104,13 @@ export const LocationsUpdateInput = z.object({
   lng: z.number(),
 });
 export type LocationsUpdateInput = z.infer<typeof LocationsUpdateInput>;
+
+export const LocationsDeleteInput = z.object({
+  id: z.string(),
+});
+export type LocationsDeleteInput = z.infer<typeof LocationsDeleteInput>;
+
+export const LocationsDeleteManyInput = z.object({
+  ids: z.array(z.string()),
+});
+export type LocationsDeleteManyInput = z.infer<typeof LocationsDeleteManyInput>;

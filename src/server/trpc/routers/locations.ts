@@ -1,5 +1,11 @@
 import { prisma } from '@/server/lib/prisma';
-import { LocationsCreateInput, LocationsUpdateInput } from '@/dto/trpc';
+import {
+  LocationsCreateInput,
+  LocationsDeleteInput,
+  LocationsDeleteManyInput,
+  LocationsGetByIdInput,
+  LocationsUpdateInput,
+} from '@/dto/trpc';
 import { TRPCError } from '@trpc/server';
 import { privateProcedure, router } from '../trpc';
 
@@ -16,6 +22,23 @@ export const locationsRouter = router({
       locations,
     };
   }),
+  getById: privateProcedure
+    .input(LocationsGetByIdInput)
+    .query(async ({ input }) => {
+      const location = await prisma.location.findFirst({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!location) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'LocationNotFound' });
+      }
+
+      return {
+        location,
+      };
+    }),
   create: privateProcedure
     .input(LocationsCreateInput)
     .mutation(async ({ ctx, input }) => {
@@ -53,6 +76,7 @@ export const locationsRouter = router({
       let location = await prisma.location.findFirst({
         where: {
           id: input.id,
+          shopId: shop.id,
         },
       });
 
@@ -85,5 +109,41 @@ export const locationsRouter = router({
       return {
         location,
       };
+    }),
+  delete: privateProcedure
+    .input(LocationsDeleteInput)
+    .mutation(async ({ ctx, input }) => {
+      const { shop } = ctx;
+      const location = await prisma.location.findFirst({
+        where: {
+          id: input.id,
+          shopId: shop.id,
+        },
+      });
+
+      if (!location) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'LocationNotFound' });
+      }
+
+      await prisma.location.delete({
+        where: {
+          id: location.id,
+        },
+      });
+    }),
+  deleteMany: privateProcedure
+    .input(LocationsDeleteManyInput)
+    .mutation(async ({ ctx, input }) => {
+      const { shop } = ctx;
+
+      // This won't throw if no locations are matched
+      await prisma.location.deleteMany({
+        where: {
+          id: {
+            in: input.ids,
+          },
+          shopId: shop.id,
+        },
+      });
     }),
 });

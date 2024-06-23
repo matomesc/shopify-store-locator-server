@@ -3,7 +3,8 @@ import { LocationsCreateInput } from '@/dto/trpc';
 import { trpc } from '@/lib/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Banner,
+  Button,
+  ButtonGroup,
   Card,
   FormLayout,
   Layout,
@@ -22,7 +23,9 @@ import {
   useMap,
   useMapsLibrary,
 } from '@vis.gl/react-google-maps';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Modal } from '../Modal';
 
 export interface LocationFormProps {
   mode: 'create' | 'edit';
@@ -33,10 +36,16 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   mode,
   defaultFormValues,
 }) => {
+  const utils = trpc.useUtils();
+  const router = useRouter();
+  const [state, setState] = useState({
+    deleteModalOpen: false,
+  });
   const map = useMap();
   const placesLibrary = useMapsLibrary('places');
   const locationsCreateMutation = trpc.locations.create.useMutation();
   const locationsUpdateMutation = trpc.locations.update.useMutation();
+  const locationsDeleteMutation = trpc.locations.delete.useMutation();
   const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const {
@@ -85,7 +94,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
         place.address_components.find((c) => {
           return c.types.includes('locality');
         })?.long_name || '';
-      const state =
+      const stateCode =
         place.address_components.find((c) => {
           return c.types.includes('administrative_area_level_1');
         })?.short_name || '';
@@ -107,7 +116,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
 
       setValue('address1', `${streetNumber} ${street}`);
       setValue('city', city);
-      setValue('state', state);
+      setValue('state', stateCode);
       setValue('zip', zip);
       setValue('country', country);
       setValue('lat', lat);
@@ -118,22 +127,35 @@ export const LocationForm: React.FC<LocationFormProps> = ({
     try {
       if (mode === 'create') {
         await locationsCreateMutation.mutateAsync(data);
+        router.push(`/locations/${data.id}/edit`).catch((err) => {
+          Sentry.captureException(err);
+        });
       } else if (mode === 'edit') {
         await locationsUpdateMutation.mutateAsync(data);
       }
+      await Promise.all([
+        utils.locations.getAll.invalidate(),
+        utils.locations.getById.invalidate(),
+      ]);
+      toast('success', 'Location saved');
     } catch (err) {
       // Shouldn't error here
       toast('error', 'Failed to save location');
       Sentry.captureException(err);
-      return;
     }
-
-    toast('success', 'Location saved');
   };
 
   return (
     <Page
       title={mode === 'create' ? 'Add new location' : 'Edit location'}
+      backAction={{
+        content: 'Dashboard',
+        onAction: () => {
+          router.push('/dashboard').catch((err) => {
+            Sentry.captureException(err);
+          });
+        },
+      }}
       primaryAction={{
         content: 'Save',
         onAction: () => {
@@ -142,6 +164,20 @@ export const LocationForm: React.FC<LocationFormProps> = ({
           });
         },
       }}
+      secondaryActions={[
+        {
+          content: 'Delete',
+          destructive: true,
+          onAction: () => {
+            setState((prevState) => {
+              return {
+                ...prevState,
+                deleteModalOpen: true,
+              };
+            });
+          },
+        },
+      ]}
     >
       <Layout>
         <Layout.Section>
@@ -151,14 +187,6 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                 <Text as="h2" variant="headingMd">
                   General
                 </Text>
-              </Layout.Section>
-              <Layout.Section>
-                <Banner title="Visibility">
-                  <p>
-                    These fields are all visible on your storefront. If you
-                    don&apos;t want to show a particular value, leave it blank.
-                  </p>
-                </Banner>
               </Layout.Section>
               <Layout.Section>
                 <FormLayout>
@@ -394,7 +422,9 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                     <div style={{ height: '300px' }}>
                       <Map
                         mapId="map"
-                        defaultZoom={1}
+                        defaultZoom={
+                          watch('lat') === 39 && watch('lng') === 34 ? 1 : 15
+                        }
                         defaultCenter={{
                           lat: watch('lat'),
                           lng: watch('lng'),
@@ -414,8 +444,8 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       </Map>
                     </div>
                     <Text as="p" tone="subdued">
-                      Hint: you can drag the marker to adjust the
-                      location&apos;s position on the map
+                      Hint: you can drag the marker to adjust the position on
+                      the map
                     </Text>
                   </div>
                 </FormLayout>
@@ -446,6 +476,68 @@ export const LocationForm: React.FC<LocationFormProps> = ({
           </Card>
         </Layout.Section>
       </Layout>
+      <Modal
+        open={state.deleteModalOpen}
+        title="Delete location"
+        footer={
+          <ButtonGroup>
+            <Button
+              onClick={() => {
+                setState((prevState) => {
+                  return {
+                    ...prevState,
+                    deleteModalOpen: false,
+                  };
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              tone="critical"
+              onClick={async () => {
+                try {
+                  await locationsDeleteMutation.mutateAsync({
+                    id: watch('id'),
+                  });
+                  await utils.locations.getAll.invalidate();
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      deleteModalOpen: false,
+                    };
+                  });
+                  toast(
+                    'success',
+                    'Location deleted. Redirecting you to the dashboard...',
+                  );
+                  setTimeout(() => {
+                    router.push('/dashboard').catch((err) => {
+                      Sentry.captureException(err);
+                    });
+                  }, 5000);
+                } catch (err) {
+                  toast('error', 'Failed to delete location');
+                  Sentry.captureException(err);
+                }
+              }}
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
+        }
+        height="fit-content"
+        onClose={() => {
+          setState((prevState) => {
+            return {
+              ...prevState,
+              deleteModalOpen: false,
+            };
+          });
+        }}
+      >
+        <p>Are you sure you want to delete this location?</p>
+      </Modal>
     </Page>
   );
 };
