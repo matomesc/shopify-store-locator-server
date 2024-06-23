@@ -28,6 +28,8 @@ async function handleAppUninstalled({ shopDomain, res }: WebhookParams) {
     },
     data: {
       uninstalledAt: new Date(),
+      planId: 'free',
+      planChargeId: null,
     },
   });
   res.status(200).json({});
