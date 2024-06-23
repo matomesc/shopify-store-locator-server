@@ -7,7 +7,9 @@ import { prisma } from '@/server/lib/prisma';
 import { ShopifyService } from '@/server/services/ShopifyService';
 import { SettingsService } from '@/server/services/SettingsService';
 import { createRouter } from 'next-connect';
-import { errorHandler } from '@/server/lib/api';
+import { errorHandler, sendError } from '@/server/lib/api';
+import { GetShopifyAuthCallbackInput } from '@/dto/api';
+import * as Sentry from '@sentry/nextjs';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -15,26 +17,34 @@ router.get(async (req, res) => {
   const validHmac = verifyShopifyRequest(req.query);
 
   if (!validHmac) {
-    res.status(400).send('HMAC mismatch');
+    // We theoretically shouldn't get here
+    sendError(res, 'BadRequest', { message: 'HMAC mismatch' });
+    Sentry.captureMessage('Oauth hmac mismatch', {
+      level: 'error',
+      extra: {
+        query: req.query,
+      },
+    });
     return;
   }
 
-  if (typeof req.query.shop !== 'string') {
-    res.status(400).send('Missing shop param');
+  const input = GetShopifyAuthCallbackInput.safeParse(req.query);
+
+  if (!input.success) {
+    sendError(res, 'BadRequest', {
+      message: 'Invalid input',
+      zodError: input.error,
+    });
+    Sentry.captureMessage('Invalid oauth callback params', {
+      level: 'error',
+      extra: {
+        query: req.query,
+      },
+    });
     return;
   }
 
-  if (typeof req.query.code !== 'string') {
-    res.status(400).send('Missing code param');
-    return;
-  }
-
-  if (typeof req.query.host !== 'string') {
-    res.status(400).send('Missing host param');
-    return;
-  }
-
-  const { code, host, shop: shopDomain } = req.query;
+  const { code, host, shop: shopDomain } = input.data;
   const shopifyService = container.resolve(ShopifyService);
 
   const result = await shopifyService.exchangeCodeForAccessToken({

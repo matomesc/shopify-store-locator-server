@@ -9,3 +9,12 @@ export const GetShopifyBillingCallbackInput = z.object({
   shopDomain: z.string(),
   planId: z.string(),
 });
+
+/**
+ * GET /api/shopify/auth/callback
+ */
+export const GetShopifyAuthCallbackInput = z.object({
+  shop: z.string(),
+  code: z.string(),
+  host: z.string(),
+});
