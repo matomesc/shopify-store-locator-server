@@ -6,20 +6,24 @@ export class SettingsService {
   public async upsertSettings({
     shopId,
     googleMapsApiKey,
+    timezone,
   }: {
     shopId: string;
-    googleMapsApiKey: string | null;
+    googleMapsApiKey: string;
+    timezone: string;
   }) {
     return prisma.settings.upsert({
       where: {
         shopId,
       },
       create: {
-        googleMapsApiKey,
         shopId,
+        googleMapsApiKey,
+        timezone,
       },
       update: {
         googleMapsApiKey,
+        timezone,
       },
     });
   }

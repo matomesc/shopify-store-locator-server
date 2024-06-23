@@ -18,7 +18,8 @@ export const settingsRouter = router({
       const settingsService = container.resolve(SettingsService);
       settings = await settingsService.upsertSettings({
         shopId: shop.id,
-        googleMapsApiKey: null,
+        googleMapsApiKey: '',
+        timezone: '',
       });
     }
 
@@ -41,6 +42,7 @@ export const settingsRouter = router({
       settings = await settingsService.upsertSettings({
         shopId: shop.id,
         googleMapsApiKey: input.googleMapsApiKey,
+        timezone: input.timezone,
       });
 
       return {

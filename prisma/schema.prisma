@@ -30,7 +30,8 @@ model Settings {
   id                String  @id @default(uuid())
   shopId            String  @unique
   shop              Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  googleMapsApiKey  String?
+  googleMapsApiKey  String
+  timezone          String
 }
 
 model Plan {

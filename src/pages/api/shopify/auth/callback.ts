@@ -41,6 +41,11 @@ export default async function handler(
     code,
   });
 
+  const shopifyShop = await shopifyService.getShop({
+    shopDomain,
+    accessToken: result.access_token,
+  });
+
   let shop = await prisma.shop.findFirst({
     where: {
       domain: shopDomain,
@@ -85,7 +90,14 @@ export default async function handler(
       },
     });
     const settingsService = container.resolve(SettingsService);
-    await settingsService.upsertSettings(shop.id);
+    await settingsService.upsertSettings({
+      shopId: shop.id,
+      googleMapsApiKey: '',
+      timezone:
+        Intl.supportedValuesOf('timeZone').find(
+          (value) => value === shopifyShop.shop.iana_timezone,
+        ) || '',
+    });
   }
 
   // Setup app/uninstalled webhook

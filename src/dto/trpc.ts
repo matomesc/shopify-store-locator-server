@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import { countriesByCode } from '@/lib/countries';
+import { timezones } from '@/lib/timezones';
 import type { AppRouter } from '@/server/trpc/routers/_app';
 import type { inferRouterOutputs } from '@trpc/server';
 import { z } from 'zod';
@@ -42,6 +43,9 @@ export type PlansGetAllOutput = RouterOutput['plans']['getAll'];
 
 export const SettingsUpdateInput = z.object({
   googleMapsApiKey: z.string(),
+  timezone: z.string().refine((val) => {
+    return timezones.includes(val) || val === '';
+  }, 'Invalid timezone'),
 });
 export type SettingsUpdateInput = z.infer<typeof SettingsUpdateInput>;
 

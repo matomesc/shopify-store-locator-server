@@ -56,7 +56,8 @@ const Settings: NextPage = () => {
       shop={shopsGetQuery.data.shop}
       plans={plansGetAllQuery.data.plans}
       defaultFormValues={{
-        googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey || '',
+        googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey,
+        timezone: settingsGetQuery.data.settings.timezone,
       }}
     />
   );
