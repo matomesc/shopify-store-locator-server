@@ -29,6 +29,9 @@ export const locationsRouter = router({
         where: {
           id: input.id,
         },
+        include: {
+          searchFilters: true,
+        },
       });
 
       if (!location) {
@@ -61,6 +64,11 @@ export const locationsRouter = router({
           lat: input.lat,
           lng: input.lng,
           shopId: shop.id,
+          searchFilters: {
+            connect: input.searchFilters.map((sf) => {
+              return { id: sf };
+            }),
+          },
         },
       });
 
@@ -103,6 +111,11 @@ export const locationsRouter = router({
           lat: input.lat,
           lng: input.lng,
           shopId: shop.id,
+          searchFilters: {
+            connect: input.searchFilters.map((sf) => {
+              return { id: sf };
+            }),
+          },
         },
       });
 

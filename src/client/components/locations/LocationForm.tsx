@@ -1,5 +1,5 @@
 import { toast } from '@/client/lib/toast';
-import { LocationsCreateInput } from '@/dto/trpc';
+import { LocationsCreateInput, SearchFilter } from '@/dto/trpc';
 import { trpc } from '@/lib/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -26,15 +26,18 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Modal } from '../Modal';
+import { SearchFilters } from './SearchFilters';
 
 export interface LocationFormProps {
   mode: 'create' | 'edit';
   defaultFormValues: LocationsCreateInput;
+  searchFilters: SearchFilter[];
 }
 
 export const LocationForm: React.FC<LocationFormProps> = ({
   mode,
   defaultFormValues,
+  searchFilters,
 }) => {
   const utils = trpc.useUtils();
   const router = useRouter();
@@ -460,6 +463,21 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                 <Text as="h2" variant="headingMd">
                   Search filters
                 </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <Controller
+                  control={control}
+                  name="searchFilters"
+                  render={({ field }) => {
+                    return (
+                      <SearchFilters
+                        searchFilters={searchFilters}
+                        selected={field.value}
+                        onChange={field.onChange}
+                      />
+                    );
+                  }}
+                />
               </Layout.Section>
             </Layout>
           </Card>

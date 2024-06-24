@@ -113,95 +113,102 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           Add search filter
         </Button>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {sortedSearchFilters.map((searchFilter, index) => {
-          return (
-            <SearchFilter
-              key={searchFilter.id}
-              searchFilter={searchFilter}
-              onEdit={() => {
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    editSearchFilter: {
-                      ...prevState.editSearchFilter,
-                      modalOpen: true,
-                      searchFilterId: searchFilter.id,
-                      searchFilterName: searchFilter.name,
-                      searchFilterNameError: '',
-                    },
-                  };
-                });
-              }}
-              onDelete={() => {
-                onChange(
-                  searchFilters.filter((sf) => {
-                    return sf.id !== searchFilter.id;
-                  }),
-                );
-              }}
-              onUp={() => {
-                if (index === 0) {
-                  // Can't move up
-                  return;
-                }
-                const sourceValue = searchFilter;
-                const sourcePosition = searchFilter.position;
-                const destIndex = index - 1;
-                const destValue = sortedSearchFilters[destIndex];
-                const destPosition = destValue.position;
+      {sortedSearchFilters.length === 0 && (
+        <div>
+          <p>You have no search filters. Add your first one.</p>
+        </div>
+      )}
+      {sortedSearchFilters.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {sortedSearchFilters.map((searchFilter, index) => {
+            return (
+              <SearchFilter
+                key={searchFilter.id}
+                searchFilter={searchFilter}
+                onEdit={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      editSearchFilter: {
+                        ...prevState.editSearchFilter,
+                        modalOpen: true,
+                        searchFilterId: searchFilter.id,
+                        searchFilterName: searchFilter.name,
+                        searchFilterNameError: '',
+                      },
+                    };
+                  });
+                }}
+                onDelete={() => {
+                  onChange(
+                    searchFilters.filter((sf) => {
+                      return sf.id !== searchFilter.id;
+                    }),
+                  );
+                }}
+                onUp={() => {
+                  if (index === 0) {
+                    // Can't move up
+                    return;
+                  }
+                  const sourceValue = searchFilter;
+                  const sourcePosition = searchFilter.position;
+                  const destIndex = index - 1;
+                  const destValue = sortedSearchFilters[destIndex];
+                  const destPosition = destValue.position;
 
-                onChange(
-                  searchFilters.map((sf) => {
-                    if (sf.id === sourceValue.id) {
-                      return {
-                        ...sourceValue,
-                        position: destPosition,
-                      };
-                    }
-                    if (sf.id === destValue.id) {
-                      return {
-                        ...destValue,
-                        position: sourcePosition,
-                      };
-                    }
-                    return sf;
-                  }),
-                );
-              }}
-              onDown={() => {
-                if (index === sortedSearchFilters.length - 1) {
-                  // Can't move down
-                  return;
-                }
-                const sourceValue = searchFilter;
-                const sourcePosition = searchFilter.position;
-                const destIndex = index + 1;
-                const destValue = sortedSearchFilters[destIndex];
-                const destPosition = destValue.position;
+                  onChange(
+                    searchFilters.map((sf) => {
+                      if (sf.id === sourceValue.id) {
+                        return {
+                          ...sourceValue,
+                          position: destPosition,
+                        };
+                      }
+                      if (sf.id === destValue.id) {
+                        return {
+                          ...destValue,
+                          position: sourcePosition,
+                        };
+                      }
+                      return sf;
+                    }),
+                  );
+                }}
+                onDown={() => {
+                  if (index === sortedSearchFilters.length - 1) {
+                    // Can't move down
+                    return;
+                  }
+                  const sourceValue = searchFilter;
+                  const sourcePosition = searchFilter.position;
+                  const destIndex = index + 1;
+                  const destValue = sortedSearchFilters[destIndex];
+                  const destPosition = destValue.position;
 
-                onChange(
-                  searchFilters.map((sf) => {
-                    if (sf.id === sourceValue.id) {
-                      return {
-                        ...sourceValue,
-                        position: destPosition,
-                      };
-                    }
-                    if (sf.id === destValue.id) {
-                      return {
-                        ...destValue,
-                        position: sourcePosition,
-                      };
-                    }
-                    return sf;
-                  }),
-                );
-              }}
-            />
-          );
-        })}
-      </div>
+                  onChange(
+                    searchFilters.map((sf) => {
+                      if (sf.id === sourceValue.id) {
+                        return {
+                          ...sourceValue,
+                          position: destPosition,
+                        };
+                      }
+                      if (sf.id === destValue.id) {
+                        return {
+                          ...destValue,
+                          position: sourcePosition,
+                        };
+                      }
+                      return sf;
+                    }),
+                  );
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
       {/* Add search filter modal */}
       <Modal
         open={state.addSearchFilter.modalOpen}

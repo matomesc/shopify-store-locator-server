@@ -8,12 +8,13 @@ import { v4 } from 'uuid';
 
 const LocationsCreate: NextPage = () => {
   const settingsGetQuery = trpc.settings.get.useQuery();
+  const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
 
-  if (settingsGetQuery.isPending) {
+  if (settingsGetQuery.isPending || searchFiltersGetAllQuery.isPending) {
     return <Spinner />;
   }
 
-  if (settingsGetQuery.isError) {
+  if (settingsGetQuery.isError || searchFiltersGetAllQuery.isError) {
     return (
       <Page>
         <Card>
@@ -28,7 +29,10 @@ const LocationsCreate: NextPage = () => {
             <p>Failed to load data</p>
             <Button
               onClick={async () => {
-                await Promise.all([settingsGetQuery.refetch()]);
+                await Promise.all([
+                  settingsGetQuery.refetch(),
+                  searchFiltersGetAllQuery.refetch(),
+                ]);
               }}
             >
               Retry
@@ -77,7 +81,9 @@ const LocationsCreate: NextPage = () => {
           country: '',
           lat: 39,
           lng: 34,
+          searchFilters: [],
         }}
+        searchFilters={searchFiltersGetAllQuery.data.searchFilters}
       />
     </APIProvider>
   );

@@ -31,12 +31,21 @@ export const Edit: NextPage = () => {
   );
 
   const settingsGetQuery = trpc.settings.get.useQuery();
+  const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
 
-  if (settingsGetQuery.isPending || locationsGetByIdQuery.isPending) {
+  if (
+    settingsGetQuery.isPending ||
+    locationsGetByIdQuery.isPending ||
+    searchFiltersGetAllQuery.isPending
+  ) {
     return <Spinner />;
   }
 
-  if (settingsGetQuery.isError || locationsGetByIdQuery.isError) {
+  if (
+    settingsGetQuery.isError ||
+    locationsGetByIdQuery.isError ||
+    searchFiltersGetAllQuery.isError
+  ) {
     return (
       <Page>
         <Card>
@@ -54,6 +63,7 @@ export const Edit: NextPage = () => {
                 await Promise.all([
                   settingsGetQuery.refetch(),
                   locationsGetByIdQuery.refetch(),
+                  searchFiltersGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -103,7 +113,11 @@ export const Edit: NextPage = () => {
           country: locationsGetByIdQuery.data.location.country,
           lat: locationsGetByIdQuery.data.location.lat,
           lng: locationsGetByIdQuery.data.location.lng,
+          searchFilters: locationsGetByIdQuery.data.location.searchFilters.map(
+            (sf) => sf.id,
+          ),
         }}
+        searchFilters={searchFiltersGetAllQuery.data.searchFilters}
       />
     </APIProvider>
   );

@@ -82,6 +82,7 @@ export const LocationsCreateInput = z.object({
     }, 'Invalid country'),
   lat: z.number(),
   lng: z.number(),
+  searchFilters: z.array(z.string()),
 });
 export type LocationsCreateInput = z.infer<typeof LocationsCreateInput>;
 
@@ -106,6 +107,7 @@ export const LocationsUpdateInput = z.object({
     }, 'Invalid country'),
   lat: z.number(),
   lng: z.number(),
+  searchFilters: z.array(z.string()),
 });
 export type LocationsUpdateInput = z.infer<typeof LocationsUpdateInput>;
 
