@@ -8,11 +8,13 @@ const Settings: NextPage = () => {
   const shopsGetQuery = trpc.shops.get.useQuery();
   const plansGetAllQuery = trpc.plans.getAll.useQuery();
   const settingsGetQuery = trpc.settings.get.useQuery();
+  const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
 
   if (
     shopsGetQuery.isPending ||
     plansGetAllQuery.isPending ||
-    settingsGetQuery.isPending
+    settingsGetQuery.isPending ||
+    searchFiltersGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -20,7 +22,8 @@ const Settings: NextPage = () => {
   if (
     shopsGetQuery.isError ||
     plansGetAllQuery.isError ||
-    settingsGetQuery.isError
+    settingsGetQuery.isError ||
+    searchFiltersGetAllQuery.isError
   ) {
     return (
       <Page>
@@ -40,6 +43,7 @@ const Settings: NextPage = () => {
                   shopsGetQuery.refetch(),
                   plansGetAllQuery.refetch(),
                   settingsGetQuery.refetch(),
+                  searchFiltersGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -56,8 +60,11 @@ const Settings: NextPage = () => {
       shop={shopsGetQuery.data.shop}
       plans={plansGetAllQuery.data.plans}
       defaultFormValues={{
-        googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey,
-        timezone: settingsGetQuery.data.settings.timezone,
+        settings: {
+          googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey,
+          timezone: settingsGetQuery.data.settings.timezone,
+        },
+        searchFilters: searchFiltersGetAllQuery.data.searchFilters,
       }}
     />
   );

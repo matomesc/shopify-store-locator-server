@@ -118,3 +118,39 @@ export const LocationsDeleteManyInput = z.object({
   ids: z.array(z.string()),
 });
 export type LocationsDeleteManyInput = z.infer<typeof LocationsDeleteManyInput>;
+
+/**
+ * Search filters
+ */
+export type SearchFilter =
+  RouterOutput['searchFilters']['getAll']['searchFilters'][number];
+
+export const SearchFiltersCreateInput = z.object({
+  name: z.string().min(1).max(100),
+  // An integer > 0
+  position: z.number().int().nonnegative(),
+});
+export type SearchFiltersCreateInput = z.infer<typeof SearchFiltersCreateInput>;
+
+export const SearchFiltersUpdateInput = z.object({
+  id: z.string(),
+  name: z.string().min(1).max(100),
+  // An integer > 0
+  position: z.number().int().nonnegative(),
+});
+export type SearchFiltersUpdateInput = z.infer<typeof SearchFiltersUpdateInput>;
+
+export const SearchFiltersDeleteInput = z.object({
+  id: z.string(),
+});
+export type SearchFiltersDeleteInput = z.infer<typeof SearchFiltersDeleteInput>;
+
+export const SearchFilterSyncInput = z.array(
+  z.object({
+    id: z.string(),
+    name: z.string().min(1).max(100),
+    // An integer > 0
+    position: z.number().int().nonnegative(),
+  }),
+);
+export type SearchFilterSyncInput = z.infer<typeof SearchFilterSyncInput>;

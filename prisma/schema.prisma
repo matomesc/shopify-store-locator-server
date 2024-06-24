@@ -22,6 +22,7 @@ model Shop {
   showOnboarding    Boolean
   locations         Location[]
   settings          Settings?
+  searchFilters     SearchFilter[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
@@ -60,6 +61,18 @@ model Location {
   lng               Float
   shopId            String
   shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  searchFilters     SearchFilter[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
+}
+
+model SearchFilter {
+  id            String  @id @default(uuid())
+  name          String
+  position      Int
+  shopId        String
+  shop          Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  locations     Location[]
+
+  @@unique([shopId, name])
 }
