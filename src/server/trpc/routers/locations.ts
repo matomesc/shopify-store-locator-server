@@ -112,7 +112,7 @@ export const locationsRouter = router({
           lng: input.lng,
           shopId: shop.id,
           searchFilters: {
-            connect: input.searchFilters.map((sf) => {
+            set: input.searchFilters.map((sf) => {
               return { id: sf };
             }),
           },
