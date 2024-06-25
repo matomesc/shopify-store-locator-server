@@ -104,11 +104,11 @@ router.get(async (req, res) => {
     await settingsService.upsertSettings({
       shopId: shop.id,
       googleMapsApiKey: '',
-      // Attempt to match shopify shop timezone with a supported timezone,
-      // defaults to UTC.
+      // Attempt to match shopify's timezone with one of the supported node
+      // timezones. If no match is found, defaults to UTC (empty value).
       timezone:
         Intl.supportedValuesOf('timeZone').find(
-          (value) => value === shopifyShop.shop.iana_timezone,
+          (tz) => tz === shopifyShop.shop.iana_timezone,
         ) || '',
     });
   }
