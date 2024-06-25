@@ -104,6 +104,8 @@ router.get(async (req, res) => {
     await settingsService.upsertSettings({
       shopId: shop.id,
       googleMapsApiKey: '',
+      // Attempt to match shopify shop timezone with a supported timezone,
+      // defaults to UTC.
       timezone:
         Intl.supportedValuesOf('timeZone').find(
           (value) => value === shopifyShop.shop.iana_timezone,
