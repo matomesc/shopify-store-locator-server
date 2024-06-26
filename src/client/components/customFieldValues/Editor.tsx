@@ -5,10 +5,16 @@ import React from 'react';
 export interface EditorProps {
   value: string;
   height?: number;
+  error?: boolean;
   onChange: (value: string) => void;
 }
 
-export const Editor: React.FC<EditorProps> = ({ value, height, onChange }) => {
+export const Editor: React.FC<EditorProps> = ({
+  value,
+  height,
+  error,
+  onChange,
+}) => {
   return (
     <div>
       <style jsx>{`
@@ -17,8 +23,11 @@ export const Editor: React.FC<EditorProps> = ({ value, height, onChange }) => {
 
         div :global(.mce-content-body) {
           padding: 6px 12px;
-          background-color: rgb(253, 253, 253);
-          border: 0.667px solid rgb(138, 138, 138);
+          background-color: ${error
+            ? 'rgb(254, 233, 232)'
+            : 'rgb(253, 253, 253)'};
+          border: 0.667px solid
+            ${error ? 'rgb(142, 31, 11)' : 'rgb(138, 138, 138)'};
           border-radius: 8px;
           height: ${height ? `${height}px` : '80px'};
           overflow: auto;

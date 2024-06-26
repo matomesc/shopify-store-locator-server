@@ -5,12 +5,17 @@ import {
   ButtonGroup,
   Checkbox,
   FormLayout,
+  Icon,
   Labelled,
   Select,
   Text,
   TextField,
 } from '@shopify/polaris';
-import { ArrowDownIcon, ArrowUpIcon } from '@shopify/polaris-icons';
+import {
+  AlertCircleIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+} from '@shopify/polaris-icons';
 import { useMemo, useState } from 'react';
 import {
   Controller,
@@ -39,6 +44,25 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
 
   return (
     <form>
+      <style jsx>{`
+        .error {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          color: rgb(142, 31, 11);
+        }
+
+        .error :global(.Polaris-Icon) {
+          display: inline-block;
+          margin: 0;
+          margin-right: 8px;
+        }
+
+        .error :global(.Polaris-Icon svg) {
+          color: rgb(142, 31, 11);
+        }
+      `}</style>
+
       <FormLayout>
         <Controller
           control={control}
@@ -135,11 +159,13 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
                   value={field.value}
                   onChange={field.onChange}
                   height={100}
+                  error={!!errors.defaultValue?.message}
                 />
                 {errors.defaultValue?.message && (
-                  <Text as="p" tone="critical">
-                    {errors.defaultValue.message}
-                  </Text>
+                  <div className="error">
+                    <Icon source={AlertCircleIcon} />
+                    <span>{errors.defaultValue.message}</span>
+                  </div>
                 )}
               </Labelled>
             );
