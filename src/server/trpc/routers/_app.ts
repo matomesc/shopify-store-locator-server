@@ -1,5 +1,6 @@
 import { router } from '../trpc';
 import { billingRouter } from './billing';
+import { customFieldsRouter } from './customFields';
 import { locationsRouter } from './locations';
 import { plansRouter } from './plans';
 import { searchFiltersRouter } from './searchFilters';
@@ -13,6 +14,7 @@ export const appRouter = router({
   locations: locationsRouter,
   settings: settingsRouter,
   searchFilters: searchFiltersRouter,
+  customFields: customFieldsRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

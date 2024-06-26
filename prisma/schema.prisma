@@ -23,6 +23,7 @@ model Shop {
   locations         Location[]
   settings          Settings?
   searchFilters     SearchFilter[]
+  customFields      CustomField[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
@@ -62,17 +63,53 @@ model Location {
   shopId            String
   shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   searchFilters     SearchFilter[]
+  customFieldValues CustomFieldValue[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
 
 model SearchFilter {
-  id            String  @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
   position      Int
   shopId        String
-  shop          Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   locations     Location[]
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@unique([shopId, name])
+}
+
+enum CustomFieldLabelPosition {
+  inline
+  top
+}
+
+model CustomField {
+  id                String    @id @default(uuid())
+  name              String
+  position          Int
+  shopId            String
+  shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  hideLabel         Boolean
+  labelPosition     CustomFieldLabelPosition
+  showInList        Boolean
+  showInMap         Boolean
+  customFieldValues CustomFieldValue[]
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
+
+  @@unique([shopId, name])
+}
+
+model CustomFieldValue {
+  id            String      @id @default(uuid())
+  value         String
+  locationId    String
+  location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customFieldId String
+  customField   CustomField @relation(fields: [customFieldId], references: [id], onDelete: Cascade)
+
+  @@unique([locationId, customFieldId])
 }

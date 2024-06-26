@@ -10,6 +10,7 @@ import {
 } from '@shopify/polaris';
 import { useEffect, useState } from 'react';
 import {
+  CustomFieldsSyncInput,
   Plan,
   SearchFilterSyncInput,
   SettingsUpdateInput,
@@ -24,10 +25,12 @@ import { timezones } from '@/lib/timezones';
 import { z } from 'zod';
 import { PlansModal } from '../billing/PlansModal';
 import { SearchFilters } from './SearchFilters';
+import { CustomFields } from './CustomFields';
 
 export const FormData = z.object({
   settings: SettingsUpdateInput,
   searchFilters: SearchFilterSyncInput,
+  customFields: CustomFieldsSyncInput,
 });
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type FormData = z.infer<typeof FormData>;
@@ -49,6 +52,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   });
   const settingsUpdateMutation = trpc.settings.update.useMutation();
   const searchFiltersSyncMutation = trpc.searchFilters.sync.useMutation();
+  const customFieldsSyncMutation = trpc.customFields.sync.useMutation();
   const {
     handleSubmit,
     control,
@@ -60,20 +64,24 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   });
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const [settingsResult, searchFiltersResult] = await Promise.all([
-        settingsUpdateMutation.mutateAsync({
-          googleMapsApiKey: data.settings.googleMapsApiKey,
-          timezone: data.settings.timezone,
-        }),
-        searchFiltersSyncMutation.mutateAsync(data.searchFilters),
-      ]);
+      const [settingsResult, searchFiltersResult, customFieldResult] =
+        await Promise.all([
+          settingsUpdateMutation.mutateAsync({
+            googleMapsApiKey: data.settings.googleMapsApiKey,
+            timezone: data.settings.timezone,
+          }),
+          searchFiltersSyncMutation.mutateAsync(data.searchFilters),
+          customFieldsSyncMutation.mutateAsync(data.customFields),
+        ]);
       reset({
         settings: settingsResult.settings,
         searchFilters: searchFiltersResult.searchFilters,
+        customFields: customFieldResult.customFields,
       });
       await Promise.all([
         utils.settings.get.invalidate(),
         utils.searchFilters.getAll.invalidate(),
+        utils.customFields.getAll.invalidate(),
       ]);
       toast('success', 'Settings saved');
     } catch (err) {
@@ -209,7 +217,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
 
         <Layout.AnnotatedSection
           title="Search filters"
-          description="Update your search filters here"
+          description="You can use search filters to allow users to filter locations based on a certain criteria. For example, you can add a Wheelchair Accessible filter to allow users to easily find wheelchair accessible locations."
         >
           <Card>
             <Controller
@@ -219,9 +227,27 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                 return (
                   <SearchFilters
                     searchFilters={field.value}
-                    onChange={(searchFilters) => {
-                      field.onChange(searchFilters);
-                    }}
+                    onChange={field.onChange}
+                  />
+                );
+              }}
+            />
+          </Card>
+        </Layout.AnnotatedSection>
+
+        <Layout.AnnotatedSection
+          title="Custom fields"
+          description="Use custom fields to add custom data to each location."
+        >
+          <Card>
+            <Controller
+              control={control}
+              name="customFields"
+              render={({ field }) => {
+                return (
+                  <CustomFields
+                    customFields={field.value}
+                    onChange={field.onChange}
                   />
                 );
               }}

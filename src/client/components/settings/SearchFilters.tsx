@@ -69,12 +69,13 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   const [state, setState] = useState({
     addSearchFilter: {
       modalOpen: false,
+      searchFilterId: v4(),
       searchFilterName: '',
       searchFilterNameError: '',
     },
     editSearchFilter: {
       modalOpen: false,
-      searchFilterId: '',
+      searchFilterId: v4(),
       searchFilterName: '',
       searchFilterNameError: '',
     },
@@ -103,6 +104,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 addSearchFilter: {
                   ...prevState.addSearchFilter,
                   modalOpen: true,
+                  searchFilterId: v4(),
                   searchFilterName: '',
                   searchFilterNameError: '',
                 },
@@ -140,11 +142,17 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   });
                 }}
                 onDelete={() => {
-                  onChange(
-                    searchFilters.filter((sf) => {
+                  const remainingSearchFilters = sortedSearchFilters
+                    .filter((sf) => {
                       return sf.id !== searchFilter.id;
-                    }),
-                  );
+                    })
+                    .map((sf, idx) => {
+                      return {
+                        ...sf,
+                        position: idx,
+                      };
+                    });
+                  onChange(remainingSearchFilters);
                 }}
                 onUp={() => {
                   if (index === 0) {
@@ -158,7 +166,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   const destPosition = destValue.position;
 
                   onChange(
-                    searchFilters.map((sf) => {
+                    sortedSearchFilters.map((sf) => {
                       if (sf.id === sourceValue.id) {
                         return {
                           ...sourceValue,
@@ -187,7 +195,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   const destPosition = destValue.position;
 
                   onChange(
-                    searchFilters.map((sf) => {
+                    sortedSearchFilters.map((sf) => {
                       if (sf.id === sourceValue.id) {
                         return {
                           ...sourceValue,
@@ -237,14 +245,18 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   return sf.name === state.addSearchFilter.searchFilterName;
                 });
 
-                if (existingSearchFilter) {
+                if (
+                  existingSearchFilter &&
+                  existingSearchFilter.id !==
+                    state.addSearchFilter.searchFilterId
+                ) {
                   setState((prevState) => {
                     return {
                       ...prevState,
                       addSearchFilter: {
                         ...prevState.addSearchFilter,
                         searchFilterNameError:
-                          'A search filter with the name already exists',
+                          'A search filter with this name already exists',
                       },
                     };
                   });
@@ -266,7 +278,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 onChange([
                   ...searchFilters,
                   {
-                    id: v4(),
+                    id: state.addSearchFilter.searchFilterId,
                     name: state.addSearchFilter.searchFilterName,
                     position: searchFilters.length,
                   },
@@ -347,7 +359,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   return sf.name === state.editSearchFilter.searchFilterName;
                 });
 
-                if (existingSearchFilter) {
+                if (
+                  existingSearchFilter &&
+                  existingSearchFilter.id !==
+                    state.editSearchFilter.searchFilterId
+                ) {
                   setState((prevState) => {
                     return {
                       ...prevState,
