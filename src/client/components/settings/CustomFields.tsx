@@ -22,7 +22,7 @@ import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 import { v4 } from 'uuid';
 import { Modal } from '../Modal';
-import { Editor } from '../customFieldValue/Editor';
+import { Editor } from '../customFieldValues/Editor';
 
 const FormData = CustomFieldsSyncInput.element;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
