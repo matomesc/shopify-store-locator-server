@@ -177,6 +177,7 @@ export const CustomFieldsSyncInput = z.array(
     labelPosition: CustomFieldLabelPosition,
     showInList: z.boolean(),
     showInMap: z.boolean(),
+    defaultValue: z.string().max(1000),
   }),
 );
 export type CustomFieldsSyncInput = z.infer<typeof CustomFieldsSyncInput>;

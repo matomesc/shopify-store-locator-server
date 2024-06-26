@@ -5,6 +5,7 @@ import {
   ButtonGroup,
   Checkbox,
   FormLayout,
+  Labelled,
   Select,
   Text,
   TextField,
@@ -21,6 +22,7 @@ import { z } from 'zod';
 import * as Sentry from '@sentry/nextjs';
 import { v4 } from 'uuid';
 import { Modal } from '../Modal';
+import { Editor } from '../customFieldValue/Editor';
 
 const FormData = CustomFieldsSyncInput.element;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -122,6 +124,27 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
             );
           }}
         />
+
+        <Controller
+          control={control}
+          name="defaultValue"
+          render={({ field }) => {
+            return (
+              <Labelled id="" label="Default value">
+                <Editor
+                  value={field.value}
+                  onChange={field.onChange}
+                  height={100}
+                />
+                {errors.defaultValue?.message && (
+                  <Text as="p" tone="critical">
+                    {errors.defaultValue.message}
+                  </Text>
+                )}
+              </Labelled>
+            );
+          }}
+        />
       </FormLayout>
     </form>
   );
@@ -198,6 +221,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
       labelPosition: 'top',
       showInList: true,
       showInMap: true,
+      defaultValue: '',
     },
   });
   const sortedCustomFields = useMemo(() => {
@@ -237,6 +261,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
                 labelPosition: 'top',
                 showInList: true,
                 showInMap: true,
+                defaultValue: '',
               });
             }}
           >

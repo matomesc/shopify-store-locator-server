@@ -96,6 +96,7 @@ model CustomField {
   labelPosition     CustomFieldLabelPosition
   showInList        Boolean
   showInMap         Boolean
+  defaultValue      String
   customFieldValues CustomFieldValue[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)

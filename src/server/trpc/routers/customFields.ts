@@ -42,7 +42,7 @@ export const customFieldsRouter = router({
           const newCustomFields = input;
           const newCustomFieldsIds = newCustomFields.map((f) => f.id);
 
-          // Delete filters
+          // Delete custom fields
           const customFieldsToDelete = currentCustomFields.filter(
             (customField) => {
               return !newCustomFieldsIds.includes(customField.id);
@@ -56,7 +56,7 @@ export const customFieldsRouter = router({
             },
           });
 
-          // Create filters
+          // Create custom fields
           const customFieldsToCreate = newCustomFields.filter((filter) => {
             return !currentCustomFieldIds.includes(filter.id);
           });
@@ -71,11 +71,12 @@ export const customFieldsRouter = router({
                 labelPosition: customField.labelPosition,
                 showInList: customField.showInList,
                 showInMap: customField.showInMap,
+                defaultValue: customField.defaultValue,
               };
             }),
           });
 
-          // Update filters
+          // Update custom fields
           const customFieldsToUpdate = newCustomFields.filter((filter) => {
             return currentCustomFieldIds.includes(filter.id);
           });
@@ -93,11 +94,12 @@ export const customFieldsRouter = router({
                 labelPosition: customField.labelPosition,
                 showInList: customField.showInList,
                 showInMap: customField.showInMap,
+                defaultValue: customField.defaultValue,
               },
             });
           }
 
-          // Return new search filters
+          // Return new custom fields
           return {
             customFields: await tx.customField.findMany({
               where: {

@@ -6,6 +6,7 @@ module.exports = {
     project: ['./tsconfig.json'],
   },
   plugins: ['@typescript-eslint'],
+  ignorePatterns: ['public/tinymce'],
   extends: [
     'eslint:recommended',
     'airbnb',
