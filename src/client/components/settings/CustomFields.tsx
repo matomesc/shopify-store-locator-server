@@ -5,17 +5,11 @@ import {
   ButtonGroup,
   Checkbox,
   FormLayout,
-  Icon,
-  Labelled,
   Select,
   Text,
   TextField,
 } from '@shopify/polaris';
-import {
-  AlertCircleIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
-} from '@shopify/polaris-icons';
+import { ArrowDownIcon, ArrowUpIcon } from '@shopify/polaris-icons';
 import { useMemo, useState } from 'react';
 import {
   Controller,
@@ -154,20 +148,13 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
           name="defaultValue"
           render={({ field }) => {
             return (
-              <Labelled id="" label="Default value">
-                <Editor
-                  value={field.value}
-                  onChange={field.onChange}
-                  height={100}
-                  error={!!errors.defaultValue?.message}
-                />
-                {errors.defaultValue?.message && (
-                  <div className="error">
-                    <Icon source={AlertCircleIcon} />
-                    <span>{errors.defaultValue.message}</span>
-                  </div>
-                )}
-              </Labelled>
+              <Editor
+                label="Default value"
+                value={field.value}
+                onChange={field.onChange}
+                height={100}
+                error={errors.defaultValue?.message}
+              />
             );
           }}
         />

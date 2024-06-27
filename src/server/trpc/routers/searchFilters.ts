@@ -6,7 +6,7 @@ import {
   SearchFilterSyncInput,
 } from '@/dto/trpc';
 import { TRPCError } from '@trpc/server';
-import { uniq } from 'lodash';
+import { chunk, uniq } from 'lodash';
 import { privateProcedure, router } from '../trpc';
 
 export const searchFiltersRouter = router({
@@ -167,18 +167,23 @@ export const searchFiltersRouter = router({
           const filtersToUpdate = newSearchFilters.filter((filter) => {
             return currentSearchFilterIds.includes(filter.id);
           });
+          const filtersToUpdateChunks = chunk(filtersToUpdate, 5);
           // eslint-disable-next-line no-restricted-syntax
-          for (const filter of filtersToUpdate) {
+          for (const filtersToUpdateChunk of filtersToUpdateChunks) {
             // eslint-disable-next-line no-await-in-loop
-            await tx.searchFilter.update({
-              where: {
-                id: filter.id,
-              },
-              data: {
-                name: filter.name,
-                position: filter.position,
-              },
-            });
+            await Promise.all(
+              filtersToUpdateChunk.map((filter) => {
+                return tx.searchFilter.update({
+                  where: {
+                    id: filter.id,
+                  },
+                  data: {
+                    name: filter.name,
+                    position: filter.position,
+                  },
+                });
+              }),
+            );
           }
 
           // Return new search filters

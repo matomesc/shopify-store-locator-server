@@ -1,20 +1,42 @@
 /* eslint-disable react/require-default-props */
+import { Labelled } from '@shopify/polaris';
 import { Editor as TinymceEditor } from '@tinymce/tinymce-react';
 import React from 'react';
+import { InputError } from '../InputError';
 
 export interface EditorProps {
+  label?: string;
   value: string;
   height?: number;
-  error?: boolean;
+  error?: string;
   onChange: (value: string) => void;
 }
 
 export const Editor: React.FC<EditorProps> = ({
+  label,
   value,
   height,
   error,
   onChange,
 }) => {
+  const editor = (
+    <TinymceEditor
+      init={{
+        inline: true,
+        promotion: false,
+        menubar: false,
+        indentation: '5px',
+        plugins: 'link',
+        toolbar: 'bold italic link',
+      }}
+      tinymceScriptSrc="/tinymce/tinymce.min.js"
+      value={value}
+      onEditorChange={(v) => {
+        onChange(v);
+      }}
+      licenseKey="gpl"
+    />
+  );
   return (
     <div>
       <style jsx>{`
@@ -37,21 +59,19 @@ export const Editor: React.FC<EditorProps> = ({
           outline: 2px solid rgb(0, 91, 211);
         }
       `}</style>
-      <TinymceEditor
-        init={{
-          inline: true,
-          promotion: false,
-          menubar: false,
-          indentation: '5px',
-          plugins: 'link',
-          toolbar: 'bold italic link',
-        }}
-        tinymceScriptSrc="/tinymce/tinymce.min.js"
-        value={value}
-        onEditorChange={(v) => {
-          onChange(v);
-        }}
-      />
+      {label ? (
+        <div>
+          <Labelled id="" label={label}>
+            {editor}
+          </Labelled>
+          {error && <InputError message={error} style={{ marginTop: '4px' }} />}
+        </div>
+      ) : (
+        <div>
+          {editor}
+          {error && <InputError message={error} style={{ marginTop: '4px' }} />}
+        </div>
+      )}
     </div>
   );
 };

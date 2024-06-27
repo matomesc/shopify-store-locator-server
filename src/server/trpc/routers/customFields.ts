@@ -1,6 +1,6 @@
 import { prisma } from '@/server/lib/prisma';
 import { CustomFieldsSyncInput } from '@/dto/trpc';
-import { uniq } from 'lodash';
+import { chunk, uniq } from 'lodash';
 import { TRPCError } from '@trpc/server';
 import { privateProcedure, router } from '../trpc';
 
@@ -80,23 +80,28 @@ export const customFieldsRouter = router({
           const customFieldsToUpdate = newCustomFields.filter((filter) => {
             return currentCustomFieldIds.includes(filter.id);
           });
+          const customFieldsToUpdateChunks = chunk(customFieldsToUpdate, 5);
           // eslint-disable-next-line no-restricted-syntax
-          for (const customField of customFieldsToUpdate) {
+          for (const customFieldsToUpdateChunk of customFieldsToUpdateChunks) {
             // eslint-disable-next-line no-await-in-loop
-            await tx.customField.update({
-              where: {
-                id: customField.id,
-              },
-              data: {
-                name: customField.name,
-                position: customField.position,
-                hideLabel: customField.hideLabel,
-                labelPosition: customField.labelPosition,
-                showInList: customField.showInList,
-                showInMap: customField.showInMap,
-                defaultValue: customField.defaultValue,
-              },
-            });
+            await Promise.all(
+              customFieldsToUpdateChunk.map((customField) => {
+                return tx.customField.update({
+                  where: {
+                    id: customField.id,
+                  },
+                  data: {
+                    name: customField.name,
+                    position: customField.position,
+                    hideLabel: customField.hideLabel,
+                    labelPosition: customField.labelPosition,
+                    showInList: customField.showInList,
+                    showInMap: customField.showInMap,
+                    defaultValue: customField.defaultValue,
+                  },
+                });
+              }),
+            );
           }
 
           // Return new custom fields
