@@ -1,5 +1,5 @@
 import { toast } from '@/client/lib/toast';
-import { LocationsCreateInput, SearchFilter } from '@/dto/trpc';
+import { CustomField, LocationsCreateInput, SearchFilter } from '@/dto/trpc';
 import { trpc } from '@/lib/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -32,6 +32,7 @@ export interface LocationFormProps {
   mode: 'create' | 'edit';
   defaultFormValues: LocationsCreateInput;
   searchFilters: SearchFilter[];
+  customFields: CustomField[];
 }
 
 export const LocationForm: React.FC<LocationFormProps> = ({
@@ -167,20 +168,24 @@ export const LocationForm: React.FC<LocationFormProps> = ({
           });
         },
       }}
-      secondaryActions={[
-        {
-          content: 'Delete',
-          destructive: true,
-          onAction: () => {
-            setState((prevState) => {
-              return {
-                ...prevState,
-                deleteModalOpen: true,
-              };
-            });
-          },
-        },
-      ]}
+      secondaryActions={
+        mode === 'create'
+          ? []
+          : [
+              {
+                content: 'Delete',
+                destructive: true,
+                onAction: () => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      deleteModalOpen: true,
+                    };
+                  });
+                },
+              },
+            ]
+      }
     >
       <Layout>
         <Layout.Section>
