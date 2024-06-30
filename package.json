@@ -51,6 +51,7 @@
     "superjson": "^2.2.1",
     "ts-custom-error": "^3.3.1",
     "tsyringe": "^4.8.0",
+    "uglify-js": "^3.18.0",
     "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },
@@ -62,6 +63,7 @@
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@types/react-modal": "^3",
+    "@types/uglify-js": "^3",
     "@types/uuid": "^10",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
