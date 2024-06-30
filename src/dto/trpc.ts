@@ -83,6 +83,9 @@ export const LocationsCreateInput = z.object({
   lat: z.number(),
   lng: z.number(),
   searchFilters: z.array(z.string()),
+  customFieldValues: z.array(
+    z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
+  ),
 });
 export type LocationsCreateInput = z.infer<typeof LocationsCreateInput>;
 
@@ -108,6 +111,9 @@ export const LocationsUpdateInput = z.object({
   lat: z.number(),
   lng: z.number(),
   searchFilters: z.array(z.string()),
+  customFieldValues: z.array(
+    z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
+  ),
 });
 export type LocationsUpdateInput = z.infer<typeof LocationsUpdateInput>;
 
@@ -161,6 +167,9 @@ export type SearchFilterSyncInput = z.infer<typeof SearchFilterSyncInput>;
 /**
  * Custom fields
  */
+
+export type CustomField =
+  RouterOutput['customFields']['getAll']['customFields'][number];
 
 export const CustomFieldLabelPosition = z.enum(['inline', 'top']);
 

@@ -7,6 +7,8 @@ import {
   LocationsUpdateInput,
 } from '@/dto/trpc';
 import { TRPCError } from '@trpc/server';
+import { v4 } from 'uuid';
+import { chunk } from 'lodash';
 import { privateProcedure, router } from '../trpc';
 
 export const locationsRouter = router({
@@ -31,6 +33,7 @@ export const locationsRouter = router({
         },
         include: {
           searchFilters: true,
+          customFieldValues: true,
         },
       });
 
@@ -46,6 +49,35 @@ export const locationsRouter = router({
     .input(LocationsCreateInput)
     .mutation(async ({ ctx, input }) => {
       const { shop } = ctx;
+
+      const customFields = await prisma.customField.findMany({
+        where: {
+          shopId: shop.id,
+        },
+      });
+      const customFieldsIds = customFields.map((cf) => cf.id);
+      let newCustomFieldValues = input.customFieldValues.filter(
+        (customFieldValue) => {
+          return customFieldsIds.includes(customFieldValue.customFieldId);
+        },
+      );
+      newCustomFieldValues = [
+        ...newCustomFieldValues,
+        // Add missing custom field values for custom fields
+        ...customFieldsIds
+          .filter((customFieldId) => {
+            return !newCustomFieldValues.find(
+              (cfv) => cfv.customFieldId === customFieldId,
+            );
+          })
+          .map((customFieldId) => {
+            return {
+              id: v4(),
+              value: '',
+              customFieldId,
+            };
+          }),
+      ];
 
       const location = await prisma.location.create({
         data: {
@@ -69,6 +101,15 @@ export const locationsRouter = router({
               return { id: sf };
             }),
           },
+          customFieldValues: {
+            createMany: {
+              data: newCustomFieldValues,
+            },
+          },
+        },
+        include: {
+          searchFilters: true,
+          customFieldValues: true,
         },
       });
 
@@ -81,47 +122,167 @@ export const locationsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { shop } = ctx;
 
-      let location = await prisma.location.findFirst({
-        where: {
-          id: input.id,
-          shopId: shop.id,
-        },
-      });
-
-      if (!location) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'LocationNotFound' });
-      }
-
-      location = await prisma.location.update({
-        where: {
-          id: location.id,
-        },
-        data: {
-          name: input.name,
-          active: input.active,
-          email: input.email,
-          phone: input.phone,
-          website: input.website,
-          address1: input.address1,
-          address2: input.address2,
-          city: input.city,
-          state: input.state,
-          zip: input.zip,
-          country: input.country,
-          lat: input.lat,
-          lng: input.lng,
-          shopId: shop.id,
-          searchFilters: {
-            set: input.searchFilters.map((sf) => {
-              return { id: sf };
-            }),
+      return prisma.$transaction(async (tx) => {
+        let location = await tx.location.findFirst({
+          where: {
+            id: input.id,
+            shopId: shop.id,
           },
-        },
-      });
+        });
 
-      return {
-        location,
-      };
+        if (!location) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'LocationNotFound',
+          });
+        }
+
+        location = await tx.location.update({
+          where: {
+            id: location.id,
+          },
+          data: {
+            name: input.name,
+            active: input.active,
+            email: input.email,
+            phone: input.phone,
+            website: input.website,
+            address1: input.address1,
+            address2: input.address2,
+            city: input.city,
+            state: input.state,
+            zip: input.zip,
+            country: input.country,
+            lat: input.lat,
+            lng: input.lng,
+            shopId: shop.id,
+            searchFilters: {
+              set: input.searchFilters.map((sf) => {
+                return { id: sf };
+              }),
+            },
+          },
+        });
+
+        const currentCustomFieldValues = await tx.customFieldValue.findMany({
+          where: {
+            locationId: location.id,
+          },
+        });
+        const currentCustomFieldValuesIds = currentCustomFieldValues.map(
+          (c) => c.id,
+        );
+        const customFields = await tx.customField.findMany({
+          where: {
+            shopId: shop.id,
+          },
+        });
+        const customFieldsIds = customFields.map(
+          (customField) => customField.id,
+        );
+        let newCustomFieldValues = input.customFieldValues.filter(
+          (customFieldValue) => {
+            return customFieldsIds.includes(customFieldValue.customFieldId);
+          },
+        );
+        newCustomFieldValues = [
+          ...newCustomFieldValues,
+          // Add missing custom field values for custom fields
+          ...customFieldsIds
+            .filter((customFieldId) => {
+              return !newCustomFieldValues.find(
+                (cfv) => cfv.customFieldId === customFieldId,
+              );
+            })
+            .map((customFieldId) => {
+              return {
+                id: v4(),
+                value: '',
+                customFieldId,
+              };
+            }),
+        ];
+        const newCustomFieldValuesIds = newCustomFieldValues.map((c) => c.id);
+
+        // Delete custom field values
+        const customFieldValuesToDelete = currentCustomFieldValues.filter(
+          (customFieldValue) => {
+            return !newCustomFieldValuesIds.includes(customFieldValue.id);
+          },
+        );
+        await tx.customField.deleteMany({
+          where: {
+            id: {
+              in: customFieldValuesToDelete.map((c) => c.id),
+            },
+          },
+        });
+
+        // Create custom field values
+        const customFieldValuesToCreate = newCustomFieldValues.filter(
+          (customFieldValue) => {
+            return !currentCustomFieldValuesIds.includes(customFieldValue.id);
+          },
+        );
+        await tx.customFieldValue.createMany({
+          data: customFieldValuesToCreate.map((customFieldValue) => {
+            return {
+              id: customFieldValue.id,
+              customFieldId: customFieldValue.customFieldId,
+              locationId: location.id,
+              value: customFieldValue.value,
+            };
+          }),
+        });
+
+        // Update custom field values
+        const customFieldValuesToUpdate = newCustomFieldValues.filter(
+          (customFieldValue) => {
+            return currentCustomFieldValuesIds.includes(customFieldValue.id);
+          },
+        );
+        const customFieldValuesToUpdateChunks = chunk(
+          customFieldValuesToUpdate,
+          5,
+        );
+        // eslint-disable-next-line no-restricted-syntax
+        for (const customFieldValuesToUpdateChunk of customFieldValuesToUpdateChunks) {
+          // eslint-disable-next-line no-await-in-loop
+          await Promise.all(
+            customFieldValuesToUpdateChunk.map((customFieldValue) => {
+              return tx.customFieldValue.update({
+                where: {
+                  id: customFieldValue.id,
+                },
+                data: {
+                  value: customFieldValue.value,
+                },
+              });
+            }),
+          );
+        }
+
+        const updatedLocation = await tx.location.findFirst({
+          where: {
+            id: location.id,
+          },
+          include: {
+            searchFilters: true,
+            customFieldValues: true,
+          },
+        });
+
+        if (!updatedLocation) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'UpdatedLocationNotFound',
+          });
+        }
+
+        return {
+          location: updatedLocation,
+        };
+      });
     }),
   delete: privateProcedure
     .input(LocationsDeleteInput)

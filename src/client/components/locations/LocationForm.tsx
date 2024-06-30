@@ -27,6 +27,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Modal } from '../Modal';
 import { SearchFilters } from './SearchFilters';
+import { CustomFieldValues } from './CustomFieldValues';
 
 export interface LocationFormProps {
   mode: 'create' | 'edit';
@@ -39,6 +40,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   mode,
   defaultFormValues,
   searchFilters,
+  customFields,
 }) => {
   const utils = trpc.useUtils();
   const router = useRouter();
@@ -58,6 +60,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm({
     resolver: zodResolver(LocationsCreateInput),
     defaultValues: defaultFormValues,
@@ -135,8 +138,13 @@ export const LocationForm: React.FC<LocationFormProps> = ({
           Sentry.captureException(err);
         });
       } else if (mode === 'edit') {
-        await locationsUpdateMutation.mutateAsync(data);
+        const result = await locationsUpdateMutation.mutateAsync(data);
+        reset({
+          ...result.location,
+          searchFilters: result.location.searchFilters.map((sf) => sf.id),
+        });
       }
+
       await Promise.all([
         utils.locations.getAll.invalidate(),
         utils.locations.getById.invalidate(),
@@ -494,6 +502,21 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                 <Text as="h2" variant="headingMd">
                   Custom fields
                 </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <Controller
+                  control={control}
+                  name="customFieldValues"
+                  render={({ field }) => {
+                    return (
+                      <CustomFieldValues
+                        customFields={customFields}
+                        customFieldValues={field.value}
+                        onChange={field.onChange}
+                      />
+                    );
+                  }}
+                />
               </Layout.Section>
             </Layout>
           </Card>

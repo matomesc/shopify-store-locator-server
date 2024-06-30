@@ -29,14 +29,15 @@ export const Edit: NextPage = () => {
     },
     { enabled: !!state.id },
   );
-
   const settingsGetQuery = trpc.settings.get.useQuery();
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
+  const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
 
   if (
     settingsGetQuery.isPending ||
     locationsGetByIdQuery.isPending ||
-    searchFiltersGetAllQuery.isPending
+    searchFiltersGetAllQuery.isPending ||
+    customFieldsGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -44,7 +45,8 @@ export const Edit: NextPage = () => {
   if (
     settingsGetQuery.isError ||
     locationsGetByIdQuery.isError ||
-    searchFiltersGetAllQuery.isError
+    searchFiltersGetAllQuery.isError ||
+    customFieldsGetAllQuery.isError
   ) {
     return (
       <Page>
@@ -64,6 +66,7 @@ export const Edit: NextPage = () => {
                   settingsGetQuery.refetch(),
                   locationsGetByIdQuery.refetch(),
                   searchFiltersGetAllQuery.refetch(),
+                  customFieldsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -116,8 +119,11 @@ export const Edit: NextPage = () => {
           searchFilters: locationsGetByIdQuery.data.location.searchFilters.map(
             (sf) => sf.id,
           ),
+          customFieldValues:
+            locationsGetByIdQuery.data.location.customFieldValues,
         }}
         searchFilters={searchFiltersGetAllQuery.data.searchFilters}
+        customFields={customFieldsGetAllQuery.data.customFields}
       />
     </APIProvider>
   );

@@ -2,6 +2,7 @@ import { prisma } from '@/server/lib/prisma';
 import { CustomFieldsSyncInput } from '@/dto/trpc';
 import { chunk, uniq } from 'lodash';
 import { TRPCError } from '@trpc/server';
+import { v4 } from 'uuid';
 import { privateProcedure, router } from '../trpc';
 
 export const customFieldsRouter = router({
@@ -57,8 +58,8 @@ export const customFieldsRouter = router({
           });
 
           // Create custom fields
-          const customFieldsToCreate = newCustomFields.filter((filter) => {
-            return !currentCustomFieldIds.includes(filter.id);
+          const customFieldsToCreate = newCustomFields.filter((customField) => {
+            return !currentCustomFieldIds.includes(customField.id);
           });
           await tx.customField.createMany({
             data: customFieldsToCreate.map((customField) => {
@@ -73,6 +74,24 @@ export const customFieldsRouter = router({
                 showInMap: customField.showInMap,
                 defaultValue: customField.defaultValue,
               };
+            }),
+          });
+          const locations = await tx.location.findMany({
+            where: {
+              shopId: shop.id,
+            },
+          });
+          // Create custom field values
+          await tx.customFieldValue.createMany({
+            data: locations.flatMap((location) => {
+              return customFieldsToCreate.map((customField) => {
+                return {
+                  id: v4(),
+                  value: '',
+                  locationId: location.id,
+                  customFieldId: customField.id,
+                };
+              });
             }),
           });
 

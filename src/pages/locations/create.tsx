@@ -9,12 +9,21 @@ import { v4 } from 'uuid';
 const LocationsCreate: NextPage = () => {
   const settingsGetQuery = trpc.settings.get.useQuery();
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
+  const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
 
-  if (settingsGetQuery.isPending || searchFiltersGetAllQuery.isPending) {
+  if (
+    settingsGetQuery.isPending ||
+    searchFiltersGetAllQuery.isPending ||
+    customFieldsGetAllQuery.isPending
+  ) {
     return <Spinner />;
   }
 
-  if (settingsGetQuery.isError || searchFiltersGetAllQuery.isError) {
+  if (
+    settingsGetQuery.isError ||
+    searchFiltersGetAllQuery.isError ||
+    customFieldsGetAllQuery.isError
+  ) {
     return (
       <Page>
         <Card>
@@ -32,6 +41,7 @@ const LocationsCreate: NextPage = () => {
                 await Promise.all([
                   settingsGetQuery.refetch(),
                   searchFiltersGetAllQuery.refetch(),
+                  customFieldsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -82,8 +92,18 @@ const LocationsCreate: NextPage = () => {
           lat: 39,
           lng: 34,
           searchFilters: [],
+          customFieldValues: customFieldsGetAllQuery.data.customFields.map(
+            (customField) => {
+              return {
+                id: v4(),
+                customFieldId: customField.id,
+                value: '',
+              };
+            },
+          ),
         }}
         searchFilters={searchFiltersGetAllQuery.data.searchFilters}
+        customFields={customFieldsGetAllQuery.data.customFields}
       />
     </APIProvider>
   );
