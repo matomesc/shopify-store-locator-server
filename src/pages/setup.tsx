@@ -4,7 +4,6 @@ import {
   Badge,
   Button,
   Card,
-  Collapsible,
   Layout,
   Link,
   Page,
@@ -12,11 +11,19 @@ import {
   ExceptionList,
   List,
 } from '@shopify/polaris';
-import { AlertTriangleIcon } from '@shopify/polaris-icons';
+import { AlertTriangleIcon, ClipboardIcon } from '@shopify/polaris-icons';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/nextjs';
+import { Spinner } from '@/client/components/Spinner';
+import { Roboto_Mono } from 'next/font/google';
+import { toast } from '@/client/lib/toast';
+
+const robotoMono = Roboto_Mono({
+  weight: ['400'],
+  subsets: ['latin'],
+});
 
 interface ThumbnailProps {
   src: string;
@@ -95,17 +102,52 @@ const Setup: NextPage = () => {
     showCreateGoogleMapsApiKey: false,
     showSetupBillingAlerts: false,
     showSetupQuotas: false,
-    setupShopifyOnlineStore10ThemeInstructionsOpen: false,
-    setupShopifyOnlineStore20ThemeInstructionsOpen: false,
+    showShopifyOnlineStore20Theme: false,
+    showShopifyVintageTheme: false,
   });
   const shopsUpdateMutation = trpc.shops.update.useMutation();
-
+  const shopsGetQuery = trpc.shops.get.useQuery();
   useEffect(() => {
     shopsUpdateMutation
       .mutateAsync({ showOnboarding: false })
       .catch((err) => Sentry.captureException(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (shopsGetQuery.isPending) {
+    return <Spinner />;
+  }
+
+  if (shopsGetQuery.isError) {
+    return (
+      <Page>
+        <Card>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            <p>Failed to load data</p>
+            <Button
+              onClick={async () => {
+                await Promise.all([shopsGetQuery.refetch()]);
+              }}
+            >
+              Retry
+            </Button>
+          </div>
+        </Card>
+      </Page>
+    );
+  }
+
+  const embedCode = `<script async defer type="text/javascript" src="${document.location.origin}/api/loader?id=${
+    shopsGetQuery.data.shop.id
+  }"></script>\n<div id="NeutekLocator"></div>`;
+
   return (
     <Page>
       <Card>
@@ -896,30 +938,132 @@ const Setup: NextPage = () => {
             </Layout>
           </Layout.Section>
           <Layout.Section>
-            <Text as="h2" variant="headingMd">
-              2a. Setup Shopify Online Store 1.0 Theme
-            </Text>
-            <Collapsible
-              id="setupShopifyOnlineStore10ThemeCollapsible"
-              open={state.setupShopifyOnlineStore10ThemeInstructionsOpen}
-            >
-              <Layout>
-                <Layout.Section>Step 1: WIP</Layout.Section>
-              </Layout>
-            </Collapsible>
-          </Layout.Section>
-          <Layout.Section>
-            <Text as="h2" variant="headingMd">
-              2b. Setup Shopify Online Store 2.0 Theme
-            </Text>
-            <Collapsible
-              id="setupShopifyOnlineStore20ThemeCollapsible"
-              open={state.setupShopifyOnlineStore20ThemeInstructionsOpen}
-            >
-              <Layout>
-                <Layout.Section>Step 1: WIP</Layout.Section>
-              </Layout>
-            </Collapsible>
+            <Layout>
+              <Layout.Section>
+                <Text as="h2" variant="headingMd">
+                  2. Setup Shopify
+                </Text>
+                <p style={{ marginBottom: '6px' }}>
+                  The next thing you need to do is setup your Shopify store by
+                  adding your embed code. The process is different depending if
+                  you have an Online Store 2.0 theme or an Online Store 1.0 (aka
+                  vintage) theme. You can check if you have an Online Store 2.0
+                  or vintage theme by following the instructions{' '}
+                  <Link
+                    url="https://help.shopify.com/en/manual/online-store/themes/managing-themes/versions"
+                    target="_blank"
+                  >
+                    here
+                  </Link>
+                  . Your embed code is:
+                </p>
+                <div
+                  style={{
+                    padding: '12px',
+                    background: 'rgba(243, 243, 243, 1)',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div className={robotoMono.className}>{embedCode}</div>
+                  <div>
+                    <Button
+                      icon={ClipboardIcon}
+                      onClick={() => {
+                        navigator.clipboard
+                          .writeText(embedCode)
+                          .then(() => {
+                            toast('success', 'Copied to clipboard');
+                          })
+                          .catch((err) => {
+                            toast('error', 'Failed to copy');
+                            Sentry.captureException(err);
+                          });
+                      }}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+              </Layout.Section>
+              <Layout.Section>
+                <Layout>
+                  <Layout.Section>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
+                      <Text as="h3" variant="headingSm">
+                        Setup Online Store 2.0 theme
+                      </Text>
+                      <div>
+                        <Button
+                          fullWidth={false}
+                          onClick={() => {
+                            setState((prevState) => {
+                              return {
+                                ...prevState,
+                                showShopifyOnlineStore20Theme:
+                                  !prevState.showShopifyOnlineStore20Theme,
+                              };
+                            });
+                          }}
+                        >
+                          {state.showShopifyOnlineStore20Theme
+                            ? 'Hide'
+                            : 'Show'}{' '}
+                          instructions
+                        </Button>
+                      </div>
+                      {state.showShopifyOnlineStore20Theme && (
+                        <Layout>
+                          <Layout.Section>Step 1</Layout.Section>
+                        </Layout>
+                      )}
+                    </div>
+                  </Layout.Section>
+                  <Layout.Section>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
+                      <Text as="h3" variant="headingSm">
+                        Setup vintage theme
+                      </Text>
+                      <div>
+                        <Button
+                          fullWidth={false}
+                          onClick={() => {
+                            setState((prevState) => {
+                              return {
+                                ...prevState,
+                                showShopifyVintageTheme:
+                                  !prevState.showShopifyVintageTheme,
+                              };
+                            });
+                          }}
+                        >
+                          {state.showShopifyVintageTheme ? 'Hide' : 'Show'}{' '}
+                          instructions
+                        </Button>
+                      </div>
+                      {state.showShopifyVintageTheme && (
+                        <Layout>
+                          <Layout.Section>Step 1</Layout.Section>
+                        </Layout>
+                      )}
+                    </div>
+                  </Layout.Section>
+                </Layout>
+              </Layout.Section>
+            </Layout>
           </Layout.Section>
         </Layout>
       </Card>

@@ -35,6 +35,7 @@ export const shopsRouter = router({
 
     return {
       shop: {
+        id: shop.id,
         domain: shop.domain,
         planId: shop.planId,
         plan: { ...plan, price: plan.price.toNumber() },
