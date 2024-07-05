@@ -25,9 +25,12 @@ import {
 } from '@vis.gl/react-google-maps';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { debounce } from 'lodash';
 import { Modal } from '../Modal';
 import { SearchFilters } from './SearchFilters';
 import { CustomFieldValues } from './CustomFieldValues';
+
+const geocodingCache: Record<string, { lat: number; lng: number }> = {};
 
 export interface LocationFormProps {
   mode: 'create' | 'edit';
@@ -49,6 +52,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   });
   const map = useMap();
   const placesLibrary = useMapsLibrary('places');
+  const geocodingLibrary = useMapsLibrary('geocoding');
   const locationsCreateMutation = trpc.locations.create.useMutation();
   const locationsUpdateMutation = trpc.locations.update.useMutation();
   const locationsDeleteMutation = trpc.locations.delete.useMutation();
@@ -156,6 +160,58 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       Sentry.captureException(err);
     }
   };
+  const debouncedGeocoding = debounce(async () => {
+    if (!geocodingLibrary) {
+      return;
+    }
+    const address = `${watch('address1')} ${watch('city')} ${watch('state')} ${watch('zip')} ${watch('country')}`;
+
+    if (!address.trim()) {
+      return;
+    }
+
+    if (geocodingCache[address]) {
+      const { lat, lng } = geocodingCache[address];
+      setValue('lat', lat);
+      setValue('lng', lng);
+      map?.setCenter({ lat, lng });
+      map?.setZoom(15);
+      return;
+    }
+
+    const geocoder = new geocodingLibrary.Geocoder();
+
+    try {
+      await geocoder.geocode(
+        {
+          address,
+        },
+        (result, status) => {
+          if (
+            status !== geocodingLibrary.GeocoderStatus.OK ||
+            !result ||
+            result.length === 0
+          ) {
+            return;
+          }
+          const [firstResult] = result;
+
+          const lat = firstResult.geometry.location.lat();
+          const lng = firstResult.geometry.location.lng();
+
+          setValue('lat', lat);
+          setValue('lng', lng);
+          map?.setCenter({ lat, lng });
+          map?.setZoom(15);
+
+          geocodingCache[address] = { lat, lng };
+        },
+      );
+    } catch (err) {
+      // Ignore the errors thrown here because we handle them inside the
+      // callback
+    }
+  }, 1000);
 
   return (
     <Page
@@ -330,7 +386,12 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                             label="Address"
                             autoComplete="off"
                             value={field.value}
-                            onChange={field.onChange}
+                            onChange={(value) => {
+                              field.onChange(value);
+                              debouncedGeocoding()?.catch((err) => {
+                                Sentry.captureException(err);
+                              });
+                            }}
                             onBlur={field.onBlur}
                             placeholder="Search for an address..."
                             error={errors.address1?.message}
@@ -366,7 +427,12 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                               label="City"
                               autoComplete="off"
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                debouncedGeocoding()?.catch((err) => {
+                                  Sentry.captureException(err);
+                                });
+                              }}
                               onBlur={field.onBlur}
                               error={errors.city?.message}
                             />
@@ -384,7 +450,12 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                               label="State / province"
                               autoComplete="off"
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                debouncedGeocoding()?.catch((err) => {
+                                  Sentry.captureException(err);
+                                });
+                              }}
                               onBlur={field.onBlur}
                               error={errors.state?.message}
                             />
@@ -404,7 +475,12 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                               label="Zip / postal code"
                               autoComplete="off"
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                debouncedGeocoding()?.catch((err) => {
+                                  Sentry.captureException(err);
+                                });
+                              }}
                               onBlur={field.onBlur}
                               error={errors.zip?.message}
                             />
@@ -425,7 +501,12 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                                 return { label: name, value: code };
                               })}
                               placeholder="Select country"
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                debouncedGeocoding()?.catch((err) => {
+                                  Sentry.captureException(err);
+                                });
+                              }}
                               onBlur={field.onBlur}
                               error={errors.country?.message}
                             />
