@@ -47,6 +47,8 @@ export const searchFiltersRouter = router({
           shopId: shop.id,
           name: input.name,
           position: input.position,
+          showInList: input.showInList,
+          showInMap: input.showInMap,
         },
       });
 
@@ -80,6 +82,8 @@ export const searchFiltersRouter = router({
         data: {
           name: input.name,
           position: input.position,
+          showInList: input.showInList,
+          showInMap: input.showInMap,
         },
       });
 
@@ -159,6 +163,8 @@ export const searchFiltersRouter = router({
                 name: filter.name,
                 shopId: shop.id,
                 position: filter.position,
+                showInList: filter.showInList,
+                showInMap: filter.showInMap,
               };
             }),
           });
@@ -180,6 +186,8 @@ export const searchFiltersRouter = router({
                   data: {
                     name: filter.name,
                     position: filter.position,
+                    showInList: filter.showInList,
+                    showInMap: filter.showInMap,
                   },
                 });
               }),

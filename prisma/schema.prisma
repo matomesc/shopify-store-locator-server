@@ -72,6 +72,8 @@ model SearchFilter {
   id            String    @id @default(uuid())
   name          String
   position      Int
+  showInList    Boolean
+  showInMap     Boolean
   shopId        String
   shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   locations     Location[]

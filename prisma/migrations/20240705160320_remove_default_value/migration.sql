@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "SearchFilter" ALTER COLUMN "showInList" DROP DEFAULT,
+ALTER COLUMN "showInMap" DROP DEFAULT;

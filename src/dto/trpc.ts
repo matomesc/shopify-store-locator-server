@@ -135,17 +135,27 @@ export type SearchFilter =
   RouterOutput['searchFilters']['getAll']['searchFilters'][number];
 
 export const SearchFiltersCreateInput = z.object({
-  name: z.string().min(1).max(100),
+  name: z
+    .string()
+    .min(1, { message: 'Search filter name is required' })
+    .max(100),
   // An integer > 0
   position: z.number().int().nonnegative(),
+  showInList: z.boolean(),
+  showInMap: z.boolean(),
 });
 export type SearchFiltersCreateInput = z.infer<typeof SearchFiltersCreateInput>;
 
 export const SearchFiltersUpdateInput = z.object({
   id: z.string(),
-  name: z.string().min(1).max(100),
+  name: z
+    .string()
+    .min(1, { message: 'Search filter name is required' })
+    .max(100),
   // An integer >= 0
   position: z.number().int().nonnegative(),
+  showInList: z.boolean(),
+  showInMap: z.boolean(),
 });
 export type SearchFiltersUpdateInput = z.infer<typeof SearchFiltersUpdateInput>;
 
@@ -157,9 +167,14 @@ export type SearchFiltersDeleteInput = z.infer<typeof SearchFiltersDeleteInput>;
 export const SearchFilterSyncInput = z.array(
   z.object({
     id: z.string(),
-    name: z.string().min(1).max(100),
+    name: z
+      .string()
+      .min(1, { message: 'Search filter name is required' })
+      .max(100),
     // An integer >= 0
     position: z.number().int().nonnegative(),
+    showInList: z.boolean(),
+    showInMap: z.boolean(),
   }),
 );
 export type SearchFilterSyncInput = z.infer<typeof SearchFilterSyncInput>;

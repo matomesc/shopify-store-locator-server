@@ -5,11 +5,80 @@ import {
   FormLayout,
   TextField,
   Text,
+  Checkbox,
 } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
 import { v4 } from 'uuid';
 import { ArrowUpIcon, ArrowDownIcon } from '@shopify/polaris-icons';
+import { z } from 'zod';
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as Sentry from '@sentry/nextjs';
 import { Modal } from '../Modal';
+
+const FormData = SearchFilterSyncInput.element;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+type FormData = z.infer<typeof FormData>;
+
+const SearchFilterForm: React.FC = () => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<FormData>();
+
+  return (
+    <form>
+      <FormLayout>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field }) => {
+            return (
+              <TextField
+                label="Name"
+                autoComplete="off"
+                value={field.value}
+                error={errors.name?.message}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+        <Controller
+          control={control}
+          name="showInList"
+          render={({ field }) => {
+            return (
+              <Checkbox
+                label="Show in list"
+                checked={field.value}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+        <Controller
+          control={control}
+          name="showInMap"
+          render={({ field }) => {
+            return (
+              <Checkbox
+                label="Show in map"
+                checked={field.value}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+      </FormLayout>
+    </form>
+  );
+};
 
 interface SearchFilterProps {
   searchFilter: SearchFilterSyncInput[number];
@@ -67,20 +136,21 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   onChange,
 }) => {
   const [state, setState] = useState({
-    addSearchFilter: {
-      modalOpen: false,
-      searchFilterId: v4(),
-      searchFilterName: '',
-      searchFilterNameError: '',
-    },
-    editSearchFilter: {
-      modalOpen: false,
-      searchFilterId: v4(),
-      searchFilterName: '',
-      searchFilterNameError: '',
+    searchFilterModal: {
+      isOpen: false,
+      scope: 'add' as 'add' | 'edit',
     },
   });
-
+  const formMethods = useForm<FormData>({
+    resolver: zodResolver(FormData),
+    defaultValues: {
+      id: v4(),
+      name: '',
+      position: 0,
+      showInList: true,
+      showInMap: true,
+    },
+  });
   const sortedSearchFilters = useMemo(() => {
     return searchFilters.sort((searchFilterA, searchFilterB) => {
       return searchFilterA.position - searchFilterB.position;
@@ -88,368 +158,239 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   }, [searchFilters]);
 
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginBottom: '10px',
-        }}
-      >
-        <Button
-          onClick={() => {
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formMethods}>
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: '10px',
+          }}
+        >
+          <Button
+            onClick={() => {
+              setState((prevState) => {
+                return {
+                  ...prevState,
+                  searchFilterModal: {
+                    ...prevState.searchFilterModal,
+                    isOpen: true,
+                    scope: 'add',
+                  },
+                };
+              });
+              formMethods.reset({
+                id: v4(),
+                name: '',
+                position: sortedSearchFilters.length,
+                showInList: true,
+                showInMap: true,
+              });
+            }}
+          >
+            Add search filter
+          </Button>
+        </div>
+        {sortedSearchFilters.length === 0 && (
+          <div>
+            <p>You have no search filters. Add your first one.</p>
+          </div>
+        )}
+        {sortedSearchFilters.length > 0 && (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+          >
+            {sortedSearchFilters.map((searchFilter, index) => {
+              return (
+                <SearchFilter
+                  key={searchFilter.id}
+                  searchFilter={searchFilter}
+                  onEdit={() => {
+                    setState((prevState) => {
+                      return {
+                        ...prevState,
+                        searchFilterModal: {
+                          ...prevState.searchFilterModal,
+                          isOpen: true,
+                          scope: 'edit',
+                        },
+                      };
+                    });
+                    formMethods.reset(searchFilter);
+                  }}
+                  onDelete={() => {
+                    const remainingSearchFilters = sortedSearchFilters
+                      .filter((sf) => {
+                        return sf.id !== searchFilter.id;
+                      })
+                      .map((sf, idx) => {
+                        return {
+                          ...sf,
+                          position: idx,
+                        };
+                      });
+                    onChange(remainingSearchFilters);
+                  }}
+                  onUp={() => {
+                    if (index === 0) {
+                      // Can't move up
+                      return;
+                    }
+                    const sourceValue = searchFilter;
+                    const sourcePosition = searchFilter.position;
+                    const destIndex = index - 1;
+                    const destValue = sortedSearchFilters[destIndex];
+                    const destPosition = destValue.position;
+
+                    onChange(
+                      sortedSearchFilters.map((sf) => {
+                        if (sf.id === sourceValue.id) {
+                          return {
+                            ...sourceValue,
+                            position: destPosition,
+                          };
+                        }
+                        if (sf.id === destValue.id) {
+                          return {
+                            ...destValue,
+                            position: sourcePosition,
+                          };
+                        }
+                        return sf;
+                      }),
+                    );
+                  }}
+                  onDown={() => {
+                    if (index === sortedSearchFilters.length - 1) {
+                      // Can't move down
+                      return;
+                    }
+                    const sourceValue = searchFilter;
+                    const sourcePosition = searchFilter.position;
+                    const destIndex = index + 1;
+                    const destValue = sortedSearchFilters[destIndex];
+                    const destPosition = destValue.position;
+
+                    onChange(
+                      sortedSearchFilters.map((sf) => {
+                        if (sf.id === sourceValue.id) {
+                          return {
+                            ...sourceValue,
+                            position: destPosition,
+                          };
+                        }
+                        if (sf.id === destValue.id) {
+                          return {
+                            ...destValue,
+                            position: sourcePosition,
+                          };
+                        }
+                        return sf;
+                      }),
+                    );
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+        {/* Search filter modal */}
+        <Modal
+          open={state.searchFilterModal.isOpen}
+          title={
+            state.searchFilterModal.scope === 'add'
+              ? 'Add search filter'
+              : 'Edit search filter'
+          }
+          height="fit-content"
+          footer={
+            <ButtonGroup>
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      searchFilterModal: {
+                        ...prevState.searchFilterModal,
+                        isOpen: false,
+                      },
+                    };
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  formMethods
+                    .handleSubmit((data) => {
+                      const existingSearchFilter = searchFilters.find((sf) => {
+                        return sf.name === formMethods.getValues().name;
+                      });
+
+                      if (
+                        existingSearchFilter &&
+                        existingSearchFilter.id !== formMethods.getValues().id
+                      ) {
+                        formMethods.setError('name', {
+                          message:
+                            'A search filter with this name already exists',
+                        });
+                        return;
+                      }
+
+                      if (state.searchFilterModal.scope === 'add') {
+                        onChange([...sortedSearchFilters, data]);
+                      } else {
+                        onChange(
+                          sortedSearchFilters.map((searchFilter) => {
+                            if (searchFilter.id === data.id) {
+                              return {
+                                ...data,
+                              };
+                            }
+                            return searchFilter;
+                          }),
+                        );
+                      }
+
+                      setState((prevState) => {
+                        return {
+                          ...prevState,
+                          searchFilterModal: {
+                            ...prevState.searchFilterModal,
+                            isOpen: false,
+                          },
+                        };
+                      });
+                    })()
+                    .catch((err) => {
+                      Sentry.captureException(err);
+                    });
+                }}
+              >
+                {state.searchFilterModal.scope === 'add'
+                  ? 'Add search filter'
+                  : 'Update search filter'}
+              </Button>
+            </ButtonGroup>
+          }
+          onClose={() => {
             setState((prevState) => {
               return {
                 ...prevState,
-                addSearchFilter: {
-                  ...prevState.addSearchFilter,
-                  modalOpen: true,
-                  searchFilterId: v4(),
-                  searchFilterName: '',
-                  searchFilterNameError: '',
+                searchFilterModal: {
+                  ...prevState.searchFilterModal,
+                  isOpen: false,
                 },
               };
             });
           }}
         >
-          Add search filter
-        </Button>
+          <SearchFilterForm />
+        </Modal>
       </div>
-      {sortedSearchFilters.length === 0 && (
-        <div>
-          <p>You have no search filters. Add your first one.</p>
-        </div>
-      )}
-      {sortedSearchFilters.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {sortedSearchFilters.map((searchFilter, index) => {
-            return (
-              <SearchFilter
-                key={searchFilter.id}
-                searchFilter={searchFilter}
-                onEdit={() => {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      editSearchFilter: {
-                        ...prevState.editSearchFilter,
-                        modalOpen: true,
-                        searchFilterId: searchFilter.id,
-                        searchFilterName: searchFilter.name,
-                        searchFilterNameError: '',
-                      },
-                    };
-                  });
-                }}
-                onDelete={() => {
-                  const remainingSearchFilters = sortedSearchFilters
-                    .filter((sf) => {
-                      return sf.id !== searchFilter.id;
-                    })
-                    .map((sf, idx) => {
-                      return {
-                        ...sf,
-                        position: idx,
-                      };
-                    });
-                  onChange(remainingSearchFilters);
-                }}
-                onUp={() => {
-                  if (index === 0) {
-                    // Can't move up
-                    return;
-                  }
-                  const sourceValue = searchFilter;
-                  const sourcePosition = searchFilter.position;
-                  const destIndex = index - 1;
-                  const destValue = sortedSearchFilters[destIndex];
-                  const destPosition = destValue.position;
-
-                  onChange(
-                    sortedSearchFilters.map((sf) => {
-                      if (sf.id === sourceValue.id) {
-                        return {
-                          ...sourceValue,
-                          position: destPosition,
-                        };
-                      }
-                      if (sf.id === destValue.id) {
-                        return {
-                          ...destValue,
-                          position: sourcePosition,
-                        };
-                      }
-                      return sf;
-                    }),
-                  );
-                }}
-                onDown={() => {
-                  if (index === sortedSearchFilters.length - 1) {
-                    // Can't move down
-                    return;
-                  }
-                  const sourceValue = searchFilter;
-                  const sourcePosition = searchFilter.position;
-                  const destIndex = index + 1;
-                  const destValue = sortedSearchFilters[destIndex];
-                  const destPosition = destValue.position;
-
-                  onChange(
-                    sortedSearchFilters.map((sf) => {
-                      if (sf.id === sourceValue.id) {
-                        return {
-                          ...sourceValue,
-                          position: destPosition,
-                        };
-                      }
-                      if (sf.id === destValue.id) {
-                        return {
-                          ...destValue,
-                          position: sourcePosition,
-                        };
-                      }
-                      return sf;
-                    }),
-                  );
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
-      {/* Add search filter modal */}
-      <Modal
-        open={state.addSearchFilter.modalOpen}
-        title="Add search filter"
-        height="fit-content"
-        footer={
-          <ButtonGroup>
-            <Button
-              onClick={() => {
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    addSearchFilter: {
-                      ...prevState.addSearchFilter,
-                      modalOpen: false,
-                    },
-                  };
-                });
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                const existingSearchFilter = searchFilters.find((sf) => {
-                  return sf.name === state.addSearchFilter.searchFilterName;
-                });
-
-                if (
-                  existingSearchFilter &&
-                  existingSearchFilter.id !==
-                    state.addSearchFilter.searchFilterId
-                ) {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      addSearchFilter: {
-                        ...prevState.addSearchFilter,
-                        searchFilterNameError:
-                          'A search filter with this name already exists',
-                      },
-                    };
-                  });
-                  return;
-                }
-                if (state.addSearchFilter.searchFilterName.length === 0) {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      addSearchFilter: {
-                        ...prevState.addSearchFilter,
-                        searchFilterNameError: 'Search filter name is required',
-                      },
-                    };
-                  });
-                  return;
-                }
-
-                onChange([
-                  ...searchFilters,
-                  {
-                    id: state.addSearchFilter.searchFilterId,
-                    name: state.addSearchFilter.searchFilterName,
-                    position: searchFilters.length,
-                  },
-                ]);
-
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    addSearchFilter: {
-                      ...prevState.addSearchFilter,
-                      modalOpen: false,
-                    },
-                  };
-                });
-              }}
-            >
-              Add search filter
-            </Button>
-          </ButtonGroup>
-        }
-        onClose={() => {
-          setState((prevState) => {
-            return {
-              ...prevState,
-              addSearchFilter: {
-                ...prevState.addSearchFilter,
-                modalOpen: false,
-              },
-            };
-          });
-        }}
-      >
-        <FormLayout>
-          <TextField
-            autoComplete="off"
-            label="Name"
-            value={state.addSearchFilter.searchFilterName}
-            onChange={(value) => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  addSearchFilter: {
-                    ...prevState.addSearchFilter,
-                    searchFilterName: value,
-                  },
-                };
-              });
-            }}
-            error={state.addSearchFilter.searchFilterNameError}
-          />
-        </FormLayout>
-      </Modal>
-      {/* Edit search filter modal */}
-      <Modal
-        open={state.editSearchFilter.modalOpen}
-        title="Edit search filter"
-        height="fit-content"
-        footer={
-          <ButtonGroup>
-            <Button
-              onClick={() => {
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    editSearchFilter: {
-                      ...prevState.editSearchFilter,
-                      modalOpen: false,
-                    },
-                  };
-                });
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                const existingSearchFilter = searchFilters.find((sf) => {
-                  return sf.name === state.editSearchFilter.searchFilterName;
-                });
-
-                if (
-                  existingSearchFilter &&
-                  existingSearchFilter.id !==
-                    state.editSearchFilter.searchFilterId
-                ) {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      editSearchFilter: {
-                        ...prevState.editSearchFilter,
-                        searchFilterNameError:
-                          'A search filter with the name already exists',
-                      },
-                    };
-                  });
-                  return;
-                }
-                if (state.editSearchFilter.searchFilterName.length === 0) {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      editSearchFilter: {
-                        ...prevState.editSearchFilter,
-                        searchFilterNameError: 'Search filter name is required',
-                      },
-                    };
-                  });
-                  return;
-                }
-
-                onChange(
-                  searchFilters.map((searchFilter) => {
-                    if (
-                      searchFilter.id === state.editSearchFilter.searchFilterId
-                    ) {
-                      return {
-                        ...searchFilter,
-                        name: state.editSearchFilter.searchFilterName,
-                      };
-                    }
-                    return searchFilter;
-                  }),
-                );
-
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    editSearchFilter: {
-                      ...prevState.editSearchFilter,
-                      modalOpen: false,
-                    },
-                  };
-                });
-              }}
-            >
-              Update search filter
-            </Button>
-          </ButtonGroup>
-        }
-        onClose={() => {
-          setState((prevState) => {
-            return {
-              ...prevState,
-              editSearchFilter: {
-                ...prevState.editSearchFilter,
-                modalOpen: false,
-              },
-            };
-          });
-        }}
-      >
-        <FormLayout>
-          <TextField
-            autoComplete="off"
-            label="Name"
-            value={state.editSearchFilter.searchFilterName}
-            onChange={(value) => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  editSearchFilter: {
-                    ...prevState.editSearchFilter,
-                    searchFilterName: value,
-                  },
-                };
-              });
-            }}
-            error={state.editSearchFilter.searchFilterNameError}
-          />
-        </FormLayout>
-      </Modal>
-    </div>
+    </FormProvider>
   );
 };
