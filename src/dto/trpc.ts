@@ -141,6 +141,7 @@ export const SearchFiltersCreateInput = z.object({
     .max(100),
   // An integer > 0
   position: z.number().int().nonnegative(),
+  enabled: z.boolean(),
   showInList: z.boolean(),
   showInMap: z.boolean(),
 });
@@ -154,6 +155,7 @@ export const SearchFiltersUpdateInput = z.object({
     .max(100),
   // An integer >= 0
   position: z.number().int().nonnegative(),
+  enabled: z.boolean(),
   showInList: z.boolean(),
   showInMap: z.boolean(),
 });
@@ -173,6 +175,7 @@ export const SearchFilterSyncInput = z.array(
       .max(100),
     // An integer >= 0
     position: z.number().int().nonnegative(),
+    enabled: z.boolean(),
     showInList: z.boolean(),
     showInMap: z.boolean(),
   }),
@@ -197,6 +200,7 @@ export const CustomFieldsSyncInput = z.array(
       .max(100),
     // An integer >= 0
     position: z.number().int().nonnegative(),
+    enabled: z.boolean(),
     hideLabel: z.boolean(),
     labelPosition: CustomFieldLabelPosition,
     showInList: z.boolean(),

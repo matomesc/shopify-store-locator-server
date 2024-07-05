@@ -47,6 +47,7 @@ export const searchFiltersRouter = router({
           shopId: shop.id,
           name: input.name,
           position: input.position,
+          enabled: input.enabled,
           showInList: input.showInList,
           showInMap: input.showInMap,
         },
@@ -82,6 +83,7 @@ export const searchFiltersRouter = router({
         data: {
           name: input.name,
           position: input.position,
+          enabled: input.enabled,
           showInList: input.showInList,
           showInMap: input.showInMap,
         },
@@ -163,6 +165,7 @@ export const searchFiltersRouter = router({
                 name: filter.name,
                 shopId: shop.id,
                 position: filter.position,
+                enabled: filter.enabled,
                 showInList: filter.showInList,
                 showInMap: filter.showInMap,
               };
@@ -186,6 +189,7 @@ export const searchFiltersRouter = router({
                   data: {
                     name: filter.name,
                     position: filter.position,
+                    enabled: filter.enabled,
                     showInList: filter.showInList,
                     showInMap: filter.showInMap,
                   },

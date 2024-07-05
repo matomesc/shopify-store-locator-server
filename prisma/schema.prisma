@@ -72,6 +72,7 @@ model SearchFilter {
   id            String    @id @default(uuid())
   name          String
   position      Int
+  enabled       Boolean
   showInList    Boolean
   showInMap     Boolean
   shopId        String
@@ -92,6 +93,7 @@ model CustomField {
   id                String    @id @default(uuid())
   name              String
   position          Int
+  enabled           Boolean
   shopId            String
   shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   hideLabel         Boolean

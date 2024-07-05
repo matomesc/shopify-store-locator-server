@@ -67,6 +67,7 @@ export const customFieldsRouter = router({
                 id: customField.id,
                 name: customField.name,
                 shopId: shop.id,
+                enabled: customField.enabled,
                 position: customField.position,
                 hideLabel: customField.hideLabel,
                 labelPosition: customField.labelPosition,
@@ -112,6 +113,7 @@ export const customFieldsRouter = router({
                   data: {
                     name: customField.name,
                     position: customField.position,
+                    enabled: customField.enabled,
                     hideLabel: customField.hideLabel,
                     labelPosition: customField.labelPosition,
                     showInList: customField.showInList,

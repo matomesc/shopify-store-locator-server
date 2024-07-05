@@ -6,6 +6,7 @@ import {
   TextField,
   Text,
   Checkbox,
+  Badge,
 } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
 import { v4 } from 'uuid';
@@ -44,6 +45,19 @@ const SearchFilterForm: React.FC = () => {
                 autoComplete="off"
                 value={field.value}
                 error={errors.name?.message}
+                onChange={field.onChange}
+              />
+            );
+          }}
+        />
+        <Controller
+          control={control}
+          name="enabled"
+          render={({ field }) => {
+            return (
+              <Checkbox
+                label="Enabled"
+                checked={field.value}
                 onChange={field.onChange}
               />
             );
@@ -110,9 +124,12 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
           alignItems: 'center',
         }}
       >
-        <Text as="p" fontWeight="bold">
-          {searchFilter.name}
-        </Text>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Text as="p" fontWeight="bold">
+            {searchFilter.name}
+          </Text>
+          {!searchFilter.enabled && <Badge tone="new">Disabled</Badge>}
+        </div>
         <ButtonGroup>
           <Button icon={ArrowUpIcon} onClick={onUp} />
           <Button icon={ArrowDownIcon} onClick={onDown} />
@@ -184,6 +201,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 id: v4(),
                 name: '',
                 position: sortedSearchFilters.length,
+                enabled: true,
                 showInList: true,
                 showInMap: true,
               });

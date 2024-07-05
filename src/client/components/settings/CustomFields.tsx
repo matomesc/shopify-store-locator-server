@@ -1,6 +1,7 @@
 import { CustomFieldLabelPosition, CustomFieldsSyncInput } from '@/dto/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Badge,
   Button,
   ButtonGroup,
   Checkbox,
@@ -50,6 +51,20 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
                 value={field.value}
                 onChange={field.onChange}
                 error={errors.name?.message}
+              />
+            );
+          }}
+        />
+
+        <Controller
+          control={control}
+          name="enabled"
+          render={({ field }) => {
+            return (
+              <Checkbox
+                label="Enabled"
+                checked={field.value}
+                onChange={field.onChange}
               />
             );
           }}
@@ -174,9 +189,12 @@ const CustomField: React.FC<CustomFieldProps> = ({
           alignItems: 'center',
         }}
       >
-        <Text as="p" fontWeight="bold">
-          {customField.name}
-        </Text>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Text as="p" fontWeight="bold">
+            {customField.name}
+          </Text>
+          {!customField.enabled && <Badge tone="new">Disabled</Badge>}
+        </div>
         <ButtonGroup>
           <Button icon={ArrowUpIcon} onClick={onUp} />
           <Button icon={ArrowDownIcon} onClick={onDown} />
@@ -251,6 +269,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
                 id: v4(),
                 name: '',
                 position: sortedCustomFields.length,
+                enabled: true,
                 hideLabel: false,
                 labelPosition: 'top',
                 showInList: true,
