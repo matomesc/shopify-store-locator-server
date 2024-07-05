@@ -38,25 +38,6 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
 
   return (
     <form>
-      <style jsx>{`
-        .error {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          color: rgb(142, 31, 11);
-        }
-
-        .error :global(.Polaris-Icon) {
-          display: inline-block;
-          margin: 0;
-          margin-right: 8px;
-        }
-
-        .error :global(.Polaris-Icon svg) {
-          color: rgb(142, 31, 11);
-        }
-      `}</style>
-
       <FormLayout>
         <Controller
           control={control}
