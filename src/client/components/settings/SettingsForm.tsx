@@ -10,6 +10,7 @@ import {
 } from '@shopify/polaris';
 import { useEffect, useState } from 'react';
 import {
+  CustomActionsSyncInput,
   CustomFieldsSyncInput,
   Plan,
   SearchFilterSyncInput,
@@ -26,11 +27,13 @@ import { z } from 'zod';
 import { PlansModal } from '../billing/PlansModal';
 import { SearchFilters } from './SearchFilters';
 import { CustomFields } from './CustomFields';
+import { CustomActions } from './CustomActions';
 
 export const FormData = z.object({
   settings: SettingsUpdateInput,
   searchFilters: SearchFilterSyncInput,
   customFields: CustomFieldsSyncInput,
+  customActions: CustomActionsSyncInput,
 });
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type FormData = z.infer<typeof FormData>;
@@ -53,6 +56,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const settingsUpdateMutation = trpc.settings.update.useMutation();
   const searchFiltersSyncMutation = trpc.searchFilters.sync.useMutation();
   const customFieldsSyncMutation = trpc.customFields.sync.useMutation();
+  const customActionsSyncMutation = trpc.customActions.sync.useMutation();
   const {
     handleSubmit,
     control,
@@ -64,24 +68,31 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   });
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const [settingsResult, searchFiltersResult, customFieldResult] =
-        await Promise.all([
-          settingsUpdateMutation.mutateAsync({
-            googleMapsApiKey: data.settings.googleMapsApiKey,
-            timezone: data.settings.timezone,
-          }),
-          searchFiltersSyncMutation.mutateAsync(data.searchFilters),
-          customFieldsSyncMutation.mutateAsync(data.customFields),
-        ]);
+      const [
+        settingsResult,
+        searchFiltersResult,
+        customFieldResult,
+        customActionsResult,
+      ] = await Promise.all([
+        settingsUpdateMutation.mutateAsync({
+          googleMapsApiKey: data.settings.googleMapsApiKey,
+          timezone: data.settings.timezone,
+        }),
+        searchFiltersSyncMutation.mutateAsync(data.searchFilters),
+        customFieldsSyncMutation.mutateAsync(data.customFields),
+        customActionsSyncMutation.mutateAsync(data.customActions),
+      ]);
       reset({
         settings: settingsResult.settings,
         searchFilters: searchFiltersResult.searchFilters,
         customFields: customFieldResult.customFields,
+        customActions: customActionsResult.customActions,
       });
       await Promise.all([
         utils.settings.get.invalidate(),
         utils.searchFilters.getAll.invalidate(),
         utils.customFields.getAll.invalidate(),
+        utils.customActions.getAll.invalidate(),
       ]);
       toast('success', 'Settings saved');
     } catch (err) {
@@ -161,7 +172,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
           description={
             <p>
               Update your Google Maps API key here. You can create one with the
-              instructions on the <Link url="/setup">setup page</Link>
+              instructions on the <Link url="/setup">setup page</Link>.
             </p>
           }
         >
@@ -237,7 +248,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
 
         <Layout.AnnotatedSection
           title="Custom fields"
-          description="Use custom fields to add custom data to each location."
+          description="Use custom fields to add custom data to each location. Give it a default value to apply to all stores that haven't set their own value."
         >
           <Card>
             <Controller
@@ -247,6 +258,26 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                 return (
                   <CustomFields
                     customFields={field.value}
+                    onChange={field.onChange}
+                  />
+                );
+              }}
+            />
+          </Card>
+        </Layout.AnnotatedSection>
+
+        <Layout.AnnotatedSection
+          title="Custom actions"
+          description="Use custom actions to add custom buttons that open links or execute custom JavaScript."
+        >
+          <Card>
+            <Controller
+              control={control}
+              name="customActions"
+              render={({ field }) => {
+                return (
+                  <CustomActions
+                    customActions={field.value}
                     onChange={field.onChange}
                   />
                 );

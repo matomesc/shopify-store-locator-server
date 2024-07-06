@@ -9,6 +9,8 @@ import {
 import { TRPCError } from '@trpc/server';
 import { v4 } from 'uuid';
 import { chunk } from 'lodash';
+import { container } from 'tsyringe';
+import { CustomActionValueService } from '@/server/services/CustomActionValueService';
 import { privateProcedure, router } from '../trpc';
 
 export const locationsRouter = router({
@@ -17,6 +19,9 @@ export const locationsRouter = router({
     const locations = await prisma.location.findMany({
       where: {
         shopId: shop.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -34,6 +39,7 @@ export const locationsRouter = router({
         include: {
           searchFilters: true,
           customFieldValues: true,
+          customActionValues: true,
         },
       });
 
@@ -50,6 +56,7 @@ export const locationsRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { shop } = ctx;
 
+      // Build custom field values
       const customFields = await prisma.customField.findMany({
         where: {
           shopId: shop.id,
@@ -79,6 +86,35 @@ export const locationsRouter = router({
           }),
       ];
 
+      // Build custom action values
+      const customActions = await prisma.customAction.findMany({
+        where: {
+          shopId: shop.id,
+        },
+      });
+      const customActionsIds = customActions.map((c) => c.id);
+      let newCustomActionValues = input.customActionValues.filter(
+        (customActionValue) => {
+          return customActionsIds.includes(customActionValue.customActionId);
+        },
+      );
+      newCustomActionValues = [
+        ...newCustomActionValues,
+        ...customActionsIds
+          .filter((customActionId) => {
+            return !newCustomActionValues.find(
+              (c) => c.customActionId === customActionId,
+            );
+          })
+          .map((customActionId) => {
+            return {
+              id: v4(),
+              value: '',
+              customActionId,
+            };
+          }),
+      ];
+
       const location = await prisma.location.create({
         data: {
           id: input.id,
@@ -104,6 +140,11 @@ export const locationsRouter = router({
           customFieldValues: {
             createMany: {
               data: newCustomFieldValues,
+            },
+          },
+          customActionValues: {
+            createMany: {
+              data: newCustomActionValues,
             },
           },
         },
@@ -210,7 +251,7 @@ export const locationsRouter = router({
             return !newCustomFieldValuesIds.includes(customFieldValue.id);
           },
         );
-        await tx.customField.deleteMany({
+        await tx.customFieldValue.deleteMany({
           where: {
             id: {
               in: customFieldValuesToDelete.map((c) => c.id),
@@ -262,6 +303,17 @@ export const locationsRouter = router({
           );
         }
 
+        const customActionValueService = container.resolve(
+          CustomActionValueService,
+        );
+
+        await customActionValueService.sync({
+          shopId: shop.id,
+          locationId: location.id,
+          data: input.customActionValues,
+          tx,
+        });
+
         const updatedLocation = await tx.location.findFirst({
           where: {
             id: location.id,
@@ -269,6 +321,7 @@ export const locationsRouter = router({
           include: {
             searchFilters: true,
             customFieldValues: true,
+            customActionValues: true,
           },
         });
 

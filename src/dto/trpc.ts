@@ -63,56 +63,54 @@ export type LocationsGetByIdInput = z.infer<typeof LocationsGetByIdInput>;
 
 export const LocationsCreateInput = z.object({
   id: z.string().max(100),
-  name: z.string().min(1).max(100),
+  name: z.string().min(1, 'Name is required').max(100),
   active: z.boolean(),
   phone: z.string(),
   email: z.string(),
   website: z.string(),
-  address1: z.string().min(1).max(200),
+  address1: z.string().min(1, 'Address is required').max(200),
   address2: z.string().max(100),
   city: z.string().max(100),
   state: z.string().max(100),
   zip: z.string().max(100),
-  country: z
-    .string()
-    .min(1, 'Country is required')
-    .max(100, 'Invalid country')
-    .refine((val) => {
-      return !!countriesByCode[val];
-    }, 'Invalid country'),
+  country: z.string().refine((val) => {
+    return !!countriesByCode[val];
+  }, 'Invalid country'),
   lat: z.number(),
   lng: z.number(),
   searchFilters: z.array(z.string()),
   customFieldValues: z.array(
     z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
   ),
+  customActionValues: z.array(
+    z.object({ id: z.string(), customActionId: z.string(), value: z.string() }),
+  ),
 });
 export type LocationsCreateInput = z.infer<typeof LocationsCreateInput>;
 
 export const LocationsUpdateInput = z.object({
   id: z.string(),
-  name: z.string().min(1).max(100),
+  name: z.string().min(1, 'Name is required').max(100),
   active: z.boolean(),
   phone: z.string(),
   email: z.string(),
   website: z.string(),
-  address1: z.string().max(200),
+  address1: z.string().min(1, 'Address is required').max(200),
   address2: z.string().max(100),
   city: z.string().max(100),
   state: z.string().max(100),
   zip: z.string().max(100),
-  country: z
-    .string()
-    .min(1, 'Country is required')
-    .max(100, 'Invalid country')
-    .refine((val) => {
-      return !!countriesByCode[val];
-    }, 'Invalid country'),
+  country: z.string().refine((val) => {
+    return !!countriesByCode[val];
+  }, 'Invalid country'),
   lat: z.number(),
   lng: z.number(),
   searchFilters: z.array(z.string()),
   customFieldValues: z.array(
     z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
+  ),
+  customActionValues: z.array(
+    z.object({ id: z.string(), customActionId: z.string(), value: z.string() }),
   ),
 });
 export type LocationsUpdateInput = z.infer<typeof LocationsUpdateInput>;
@@ -209,3 +207,28 @@ export const CustomFieldsSyncInput = z.array(
   }),
 );
 export type CustomFieldsSyncInput = z.infer<typeof CustomFieldsSyncInput>;
+
+/**
+ * Custom actions
+ */
+
+export type CustomAction =
+  RouterOutput['customActions']['getAll']['customActions'][number];
+
+export const CustomActionType = z.enum(['link', 'js']);
+export type CustomActionType = z.infer<typeof CustomActionType>;
+
+export const CustomActionsSyncInput = z.array(
+  z.object({
+    id: z.string(),
+    type: CustomActionType,
+    name: z.string().min(1).max(100),
+    position: z.number().int().nonnegative(),
+    enabled: z.boolean(),
+    showInList: z.boolean(),
+    showInMap: z.boolean(),
+    defaultValue: z.string().max(10000),
+    openInNewTab: z.boolean(),
+  }),
+);
+export type CustomActionsSyncInput = z.infer<typeof CustomActionsSyncInput>;

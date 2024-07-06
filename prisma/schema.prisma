@@ -24,6 +24,7 @@ model Shop {
   settings          Settings?
   searchFilters     SearchFilter[]
   customFields      CustomField[]
+  customActions     CustomAction[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
@@ -46,26 +47,27 @@ model Plan {
 }
 
 model Location {
-  id                String    @id @default(uuid())
-  name              String
-  active            Boolean
-  phone             String
-  email             String
-  website           String
-  address1          String
-  address2          String
-  city              String
-  state             String
-  zip               String
-  country           String
-  lat               Float
-  lng               Float
-  shopId            String
-  shop              Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  searchFilters     SearchFilter[]
-  customFieldValues CustomFieldValue[]
-  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
+  id                  String    @id @default(uuid())
+  name                String
+  active              Boolean
+  phone               String
+  email               String
+  website             String
+  address1            String
+  address2            String
+  city                String
+  state               String
+  zip                 String
+  country             String
+  lat                 Float
+  lng                 Float
+  shopId              String
+  shop                Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  searchFilters       SearchFilter[]
+  customFieldValues   CustomFieldValue[]
+  customActionValues  CustomActionValue[]
+  createdAt           DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
 }
 
 model SearchFilter {
@@ -117,4 +119,37 @@ model CustomFieldValue {
   customField   CustomField @relation(fields: [customFieldId], references: [id], onDelete: Cascade)
 
   @@unique([locationId, customFieldId])
+}
+
+enum CustomActionType {
+  link
+  js
+}
+
+model CustomAction {
+  id                  String    @id @default(uuid())
+  name                String
+  type                CustomActionType
+  position            Int
+  enabled             Boolean
+  showInList          Boolean
+  showInMap           Boolean
+  defaultValue        String
+  openInNewTab        Boolean
+  customActionValues  CustomActionValue[]
+  shopId              String
+  shop                Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
+}
+
+model CustomActionValue {
+  id              String        @id @default(uuid())
+  value           String
+  locationId      String
+  location        Location      @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  customActionId  String
+  customAction    CustomAction  @relation(fields: [customActionId], references: [id], onDelete: Cascade)
+
+  @@unique([locationId, customActionId])
 }

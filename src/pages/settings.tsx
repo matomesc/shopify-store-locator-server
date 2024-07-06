@@ -10,13 +10,15 @@ const Settings: NextPage = () => {
   const settingsGetQuery = trpc.settings.get.useQuery();
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
   const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
+  const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
 
   if (
     shopsGetQuery.isPending ||
     plansGetAllQuery.isPending ||
     settingsGetQuery.isPending ||
     searchFiltersGetAllQuery.isPending ||
-    customFieldsGetAllQuery.isPending
+    customFieldsGetAllQuery.isPending ||
+    customActionsGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -26,7 +28,8 @@ const Settings: NextPage = () => {
     plansGetAllQuery.isError ||
     settingsGetQuery.isError ||
     searchFiltersGetAllQuery.isError ||
-    customFieldsGetAllQuery.isError
+    customFieldsGetAllQuery.isError ||
+    customActionsGetAllQuery.isError
   ) {
     return (
       <Page>
@@ -48,6 +51,7 @@ const Settings: NextPage = () => {
                   settingsGetQuery.refetch(),
                   searchFiltersGetAllQuery.refetch(),
                   customFieldsGetAllQuery.refetch(),
+                  customActionsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -70,6 +74,7 @@ const Settings: NextPage = () => {
         },
         searchFilters: searchFiltersGetAllQuery.data.searchFilters,
         customFields: customFieldsGetAllQuery.data.customFields,
+        customActions: customActionsGetAllQuery.data.customActions,
       }}
     />
   );

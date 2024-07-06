@@ -1,5 +1,5 @@
 import { CustomField, LocationsCreateInput } from '@/dto/trpc';
-import { Link } from '@shopify/polaris';
+import { FormLayout, Link } from '@shopify/polaris';
 import { Editor } from '../customFieldValues/Editor';
 
 export interface CustomFieldValuesProps {
@@ -16,13 +16,7 @@ export const CustomFieldValues: React.FC<CustomFieldValuesProps> = ({
   onChange,
 }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-      }}
-    >
+    <FormLayout>
       {customFieldValues
         .map((customFieldValue) => {
           const customField = customFields.find(
@@ -76,6 +70,6 @@ export const CustomFieldValues: React.FC<CustomFieldValuesProps> = ({
         You can manage your custom fields on the{' '}
         <Link url="/settings">settings page</Link>
       </p>
-    </div>
+    </FormLayout>
   );
 };

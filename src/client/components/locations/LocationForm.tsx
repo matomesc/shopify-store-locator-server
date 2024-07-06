@@ -1,5 +1,10 @@
 import { toast } from '@/client/lib/toast';
-import { CustomField, LocationsCreateInput, SearchFilter } from '@/dto/trpc';
+import {
+  CustomAction,
+  CustomField,
+  LocationsCreateInput,
+  SearchFilter,
+} from '@/dto/trpc';
 import { trpc } from '@/lib/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -29,6 +34,7 @@ import { debounce } from 'lodash';
 import { Modal } from '../Modal';
 import { SearchFilters } from './SearchFilters';
 import { CustomFieldValues } from './CustomFieldValues';
+import { CustomActionValues } from './CustomActionValues';
 
 const geocodingCache: Record<string, { lat: number; lng: number }> = {};
 
@@ -37,6 +43,7 @@ export interface LocationFormProps {
   defaultFormValues: LocationsCreateInput;
   searchFilters: SearchFilter[];
   customFields: CustomField[];
+  customActions: CustomAction[];
 }
 
 export const LocationForm: React.FC<LocationFormProps> = ({
@@ -44,6 +51,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   defaultFormValues,
   searchFilters,
   customFields,
+  customActions,
 }) => {
   const utils = trpc.useUtils();
   const router = useRouter();
@@ -593,6 +601,32 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <CustomFieldValues
                         customFields={customFields}
                         customFieldValues={field.value}
+                        onChange={field.onChange}
+                      />
+                    );
+                  }}
+                />
+              </Layout.Section>
+            </Layout>
+          </Card>
+        </Layout.Section>
+        <Layout.Section>
+          <Card>
+            <Layout>
+              <Layout.Section>
+                <Text as="h2" variant="headingMd">
+                  Custom actions
+                </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <Controller
+                  control={control}
+                  name="customActionValues"
+                  render={({ field }) => {
+                    return (
+                      <CustomActionValues
+                        customActions={customActions}
+                        customActionValues={field.value}
                         onChange={field.onChange}
                       />
                     );

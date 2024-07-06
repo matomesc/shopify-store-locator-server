@@ -10,11 +10,13 @@ const LocationsCreate: NextPage = () => {
   const settingsGetQuery = trpc.settings.get.useQuery();
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
   const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
+  const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
 
   if (
     settingsGetQuery.isPending ||
     searchFiltersGetAllQuery.isPending ||
-    customFieldsGetAllQuery.isPending
+    customFieldsGetAllQuery.isPending ||
+    customActionsGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -22,7 +24,8 @@ const LocationsCreate: NextPage = () => {
   if (
     settingsGetQuery.isError ||
     searchFiltersGetAllQuery.isError ||
-    customFieldsGetAllQuery.isError
+    customFieldsGetAllQuery.isError ||
+    customActionsGetAllQuery.isError
   ) {
     return (
       <Page>
@@ -42,6 +45,7 @@ const LocationsCreate: NextPage = () => {
                   settingsGetQuery.refetch(),
                   searchFiltersGetAllQuery.refetch(),
                   customFieldsGetAllQuery.refetch(),
+                  customActionsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -101,9 +105,19 @@ const LocationsCreate: NextPage = () => {
               };
             },
           ),
+          customActionValues: customActionsGetAllQuery.data.customActions.map(
+            (customAction) => {
+              return {
+                id: v4(),
+                customActionId: customAction.id,
+                value: '',
+              };
+            },
+          ),
         }}
         searchFilters={searchFiltersGetAllQuery.data.searchFilters}
         customFields={customFieldsGetAllQuery.data.customFields}
+        customActions={customActionsGetAllQuery.data.customActions}
       />
     </APIProvider>
   );
