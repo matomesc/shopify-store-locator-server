@@ -23,7 +23,7 @@ router.get((req, res) => {
     let filesResponse;
     let filesText;
     try {
-      filesResponse = await fetch(filesUrl);
+      filesResponse = await fetch(filesUrl, { cache: 'no-cache' });
       if (!filesResponse.ok) {
         throw new Error('Failed response');
       }
