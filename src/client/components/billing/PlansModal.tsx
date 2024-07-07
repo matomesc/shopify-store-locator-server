@@ -199,7 +199,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>Custom fields</div>
                     <Divider />
-                    <div>Custom map color themes</div>
+                    <div>Custom theme colors</div>
                   </div>
                 );
                 break;
@@ -217,7 +217,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>2 display languages</div>
                     <Divider />
-                    <div>Custom map pins</div>
+                    <div>Custom map pin icons</div>
                     <Divider />
                     <div>Basic email support</div>
                   </div>
@@ -253,7 +253,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       locations
                     </div>
                     <Divider />
-                    <div>API access</div>
+                    <div>API access (coming soon)</div>
                     <Divider />
                     <div>10 display languages</div>
                   </div>
