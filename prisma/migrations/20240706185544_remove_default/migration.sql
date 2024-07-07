@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Shop" ALTER COLUMN "email" DROP DEFAULT;

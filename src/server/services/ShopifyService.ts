@@ -11,6 +11,7 @@ const ExchangeCodeForAccessTokenResponse = z.object({
 
 const GetShopResponse = z.object({
   shop: z.object({
+    email: z.string(),
     iana_timezone: z.string(),
   }),
 });
@@ -132,7 +133,7 @@ export class ShopifyService {
         json: {
           webhook: {
             topic,
-            address: `${config.BASE_URL}/api/webhooks`,
+            address: `${config.BASE_URL}/api/shopify/webhooks`,
             format: 'json',
           },
         },

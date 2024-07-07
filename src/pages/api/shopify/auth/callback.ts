@@ -69,6 +69,7 @@ router.get(async (req, res) => {
         domain: shopDomain,
       },
       data: {
+        email: shopifyShop.shop.email,
         installedAt: new Date(),
         uninstalledAt: null,
         accessToken: result.access_token,
@@ -86,12 +87,14 @@ router.get(async (req, res) => {
       data: {
         accessToken: result.access_token,
         accessTokenScope: result.scope,
+        email: shopifyShop.shop.email,
       },
     });
   } else if (!shop) {
     shop = await prisma.shop.create({
       data: {
         domain: shopDomain,
+        email: shopifyShop.shop.email,
         accessToken: result.access_token,
         accessTokenScope: result.scope,
         installedAt: new Date(),

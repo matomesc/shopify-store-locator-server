@@ -10,6 +10,7 @@ generator client {
 model Shop {
   id                String    @id @default(uuid())
   domain            String    @unique
+  email             String
   accessToken       String
   accessTokenScope  String
   installedAt       DateTime  @db.Timestamptz(3)
