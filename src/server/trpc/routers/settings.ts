@@ -1,6 +1,4 @@
 import { prisma } from '@/server/lib/prisma';
-import { container } from 'tsyringe';
-import { SettingsService } from '@/server/services/SettingsService';
 import { SettingsUpdateInput } from '@/dto/trpc';
 import { privateProcedure, router } from '../trpc';
 
@@ -15,11 +13,12 @@ export const settingsRouter = router({
     });
 
     if (!settings) {
-      const settingsService = container.resolve(SettingsService);
-      settings = await settingsService.upsertSettings({
-        shopId: shop.id,
-        googleMapsApiKey: '',
-        timezone: '',
+      settings = await prisma.settings.create({
+        data: {
+          shopId: shop.id,
+          googleMapsApiKey: '',
+          timezone: '',
+        },
       });
     }
 
@@ -38,12 +37,25 @@ export const settingsRouter = router({
         },
       });
 
-      const settingsService = container.resolve(SettingsService);
-      settings = await settingsService.upsertSettings({
-        shopId: shop.id,
-        googleMapsApiKey: input.googleMapsApiKey,
-        timezone: input.timezone,
-      });
+      if (settings) {
+        settings = await prisma.settings.update({
+          where: {
+            id: settings.id,
+          },
+          data: {
+            googleMapsApiKey: input.googleMapsApiKey,
+            timezone: input.timezone,
+          },
+        });
+      } else {
+        settings = await prisma.settings.create({
+          data: {
+            shopId: shop.id,
+            googleMapsApiKey: input.googleMapsApiKey,
+            timezone: input.timezone,
+          },
+        });
+      }
 
       return {
         settings,

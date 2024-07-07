@@ -5,7 +5,6 @@ import { config } from '@/server/config';
 import { base64decode } from '@/server/lib/utils';
 import { prisma } from '@/server/lib/prisma';
 import { ShopifyService } from '@/server/services/ShopifyService';
-import { SettingsService } from '@/server/services/SettingsService';
 import { createRouter } from 'next-connect';
 import { errorHandler, sendError } from '@/server/lib/api';
 import { GetShopifyAuthCallbackInput } from '@/dto/api';
@@ -101,18 +100,18 @@ router.get(async (req, res) => {
         planId: 'free',
         showPlansModal: true,
         showOnboarding: true,
+        settings: {
+          create: {
+            googleMapsApiKey: '',
+            // Attempt to match shopify's timezone with one of the supported node
+            // timezones. If no match is found, defaults to UTC (empty value).
+            timezone:
+              Intl.supportedValuesOf('timeZone').find(
+                (tz) => tz === shopifyShop.shop.iana_timezone,
+              ) || '',
+          },
+        },
       },
-    });
-    const settingsService = container.resolve(SettingsService);
-    await settingsService.upsertSettings({
-      shopId: shop.id,
-      googleMapsApiKey: '',
-      // Attempt to match shopify's timezone with one of the supported node
-      // timezones. If no match is found, defaults to UTC (empty value).
-      timezone:
-        Intl.supportedValuesOf('timeZone').find(
-          (tz) => tz === shopifyShop.shop.iana_timezone,
-        ) || '',
     });
   }
 
