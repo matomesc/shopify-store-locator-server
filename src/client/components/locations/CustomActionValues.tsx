@@ -45,6 +45,11 @@ export const CustomActionValues: React.FC<CustomActionValuesProps> = ({
               label={
                 <div>
                   {value.customAction.name}{' '}
+                  {!value.customAction.enabled && (
+                    <>
+                      <Badge tone="new">Disabled</Badge>{' '}
+                    </>
+                  )}
                   <Badge tone="success">
                     {value.customAction.type === 'link' ? 'Link' : 'JavaScript'}
                   </Badge>

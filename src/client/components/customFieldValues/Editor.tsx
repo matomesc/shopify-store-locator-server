@@ -5,7 +5,7 @@ import React from 'react';
 import { InputError } from '../InputError';
 
 export interface EditorProps {
-  label?: string;
+  label?: React.ReactNode;
   value: string;
   height?: number;
   error?: string;

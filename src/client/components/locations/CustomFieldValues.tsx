@@ -1,5 +1,5 @@
 import { CustomField, LocationsCreateInput } from '@/dto/trpc';
-import { FormLayout, Link } from '@shopify/polaris';
+import { Badge, FormLayout, Link } from '@shopify/polaris';
 import { Editor } from '../customFieldValues/Editor';
 
 export interface CustomFieldValuesProps {
@@ -48,7 +48,15 @@ export const CustomFieldValues: React.FC<CustomFieldValuesProps> = ({
           return (
             <Editor
               key={value.customFieldValue.id}
-              label={value.customField.name}
+              label={
+                value.customField.enabled ? (
+                  value.customField.name
+                ) : (
+                  <div>
+                    {value.customField.name} <Badge tone="new">Disabled</Badge>
+                  </div>
+                )
+              }
               value={value.customFieldValue.value}
               onChange={(newValue) => {
                 onChange(
