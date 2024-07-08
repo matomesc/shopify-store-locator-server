@@ -226,7 +226,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
               case 'pro':
                 features = (
                   <div>
-                    <div>Everything in basic plus:</div>
+                    <div>Everything in starter plus:</div>
                     <Divider />
                     <div>
                       <Text as="span" fontWeight="bold">
@@ -244,7 +244,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
               case 'enterprise':
                 features = (
                   <div>
-                    <div>Everything in standard plus:</div>
+                    <div>Everything in pro plus:</div>
                     <Divider />
                     <div>
                       <Text as="span" fontWeight="bold">
