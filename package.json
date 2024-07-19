@@ -1,5 +1,5 @@
 {
-  "name": "shopify-nextjs-starter",
+  "name": "neutek-locator",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -31,6 +31,7 @@
     "@trpc/react-query": "^11.0.0-rc.403",
     "@trpc/server": "^11.0.0-rc.403",
     "@vis.gl/react-google-maps": "^1.1.0",
+    "cors": "^2.8.5",
     "got": "^12.6.1",
     "http-terminator": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
@@ -56,6 +57,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/cors": "^2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4",
     "@types/luxon": "^3",

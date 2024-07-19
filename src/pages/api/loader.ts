@@ -31,7 +31,7 @@ router.get((req, res) => {
     } catch (err) {
       const errorElement = document.createElement('div');
       errorElement.innerText = 'Failed to load locator';
-      document.querySelector('#NeutekLocator')?.appendChild(errorElement);
+      document.querySelector('#neutek-locator')?.appendChild(errorElement);
       return;
     }
 

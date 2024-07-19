@@ -4,13 +4,14 @@ import { BaseError } from '@/server/lib/error';
 import { prisma } from '@/server/lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createRouter } from 'next-connect';
+import cors from 'cors';
 
 export const router = createRouter<
   NextApiRequest,
   NextApiResponse<GetLocatorOutput>
 >();
 
-router.get(async (req, res) => {
+router.use(cors()).get(async (req, res) => {
   const input = GetLocatorInput.safeParse(req.query);
 
   if (!input.success) {

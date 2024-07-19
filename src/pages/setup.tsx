@@ -146,7 +146,7 @@ const Setup: NextPage = () => {
 
   const embedCode = `<script async defer type="text/javascript" src="${document.location.origin}/api/loader?id=${
     shopsGetQuery.data.shop.id
-  }"></script>\n<div id="NeutekLocator"></div>`;
+  }"></script>\n<div id="neutek-locator"></div>`;
 
   return (
     <Page>
