@@ -80,6 +80,7 @@ const Dashboard: NextPage = () => {
                   shopsGetQuery.refetch(),
                   plansGetAllQuery.refetch(),
                   locationsGetAllQuery.refetch(),
+                  settingsGetQuery.refetch(),
                 ]);
               }}
             >
@@ -119,15 +120,15 @@ const Dashboard: NextPage = () => {
       }
     >
       <Layout>
-        <Layout.Section>
-          {!shopsGetQuery.data.shop.showOnboarding &&
-            !settingsGetQuery.data.settings.googleMapsApiKey && (
+        {!shopsGetQuery.data.shop.showOnboarding &&
+          !settingsGetQuery.data.settings.googleMapsApiKey && (
+            <Layout.Section>
               <Banner title="Setup your Google Maps API key now" tone="warning">
                 You have not set a Google Maps API key. Go to{' '}
                 <Link url="/setup">setup</Link> to create one.
               </Banner>
-            )}
-        </Layout.Section>
+            </Layout.Section>
+          )}
         {(shopsGetQuery.data.shop.showOnboarding ||
           !settingsGetQuery.data.settings.googleMapsApiKey) && (
           <Layout.Section>
