@@ -17,6 +17,7 @@ export const trpc = createTRPCNext<AppRouter>({
            * @link https://trpc.io/docs/ssr
            * */
           url: `/api/trpc`,
+          methodOverride: 'POST',
           // You can pass any HTTP headers you wish here
           async headers() {
             if (window.shopify) {

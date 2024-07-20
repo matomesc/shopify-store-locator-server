@@ -6,6 +6,7 @@ import { appRouter } from '../../../server/trpc/routers/_app';
 // export API handler
 export default trpcNext.createNextApiHandler({
   router: appRouter,
+  allowMethodOverride: true,
   createContext,
   onError: ({ error }) => {
     if (error.code === 'INTERNAL_SERVER_ERROR') {
