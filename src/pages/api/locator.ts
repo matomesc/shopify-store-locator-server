@@ -83,8 +83,20 @@ router.use(cors()).get(async (req, res) => {
               id: true,
             },
           },
-          customFieldValues: true,
-          customActionValues: true,
+          customFieldValues: {
+            where: {
+              customField: {
+                enabled: true,
+              },
+            },
+          },
+          customActionValues: {
+            where: {
+              customAction: {
+                enabled: true,
+              },
+            },
+          },
         },
         take: locationLimit,
       }),
