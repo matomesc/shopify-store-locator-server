@@ -1,6 +1,5 @@
 import { GetLocatorInput, GetLocatorOutput } from '@/dto/api';
 import { errorHandler, sendError } from '@/server/lib/api';
-import { BaseError } from '@/server/lib/error';
 import { prisma } from '@/server/lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createRouter } from 'next-connect';
@@ -103,16 +102,16 @@ router.use(cors()).get(async (req, res) => {
     ]);
 
   if (!settings) {
-    sendError(res, 'BadRequest', { message: 'Missing settings' });
+    sendError(res, 'BadRequest', { message: 'MissingSettings' });
     return;
   }
 
   if (!settings.googleMapsApiKey) {
-    sendError(res, 'BadRequest', { message: 'Missing Google Maps API key' });
+    sendError(res, 'BadRequest', { message: 'MissingGoogleMapsAPIKey' });
     return;
   }
 
-  const output = GetLocatorOutput.safeParse({
+  res.json({
     ok: true,
     settings: {
       googleMapsApiKey: settings.googleMapsApiKey,
@@ -121,15 +120,7 @@ router.use(cors()).get(async (req, res) => {
     customFields,
     customActions,
     locations,
-  } as GetLocatorOutput);
-
-  if (output.success) {
-    res.json(output.data);
-  } else {
-    throw new BaseError('Invalid output', 'InvalidOutput', {
-      output,
-    });
-  }
+  });
 });
 
 export default router.handler({
