@@ -424,7 +424,7 @@ export const CustomActions: React.FC<CustomActionsProps> = ({
                       ) {
                         formMethods.setError('name', {
                           message:
-                            'A search filter with this name already exists',
+                            'A custom action with this name already exists',
                         });
                         return;
                       }

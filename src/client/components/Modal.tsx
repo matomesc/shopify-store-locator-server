@@ -16,6 +16,7 @@ export interface ModalProps {
    */
   width?: React.CSSProperties['width'];
   height?: React.CSSProperties['height'];
+  maxWidth?: React.CSSProperties['maxWidth'];
 }
 
 export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
@@ -27,6 +28,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   title,
   width,
   height,
+  maxWidth,
 }) => {
   return (
     <ModalSafeForReact18
@@ -40,6 +42,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           boxShadow: 'rgba(26, 26, 26, 0.07) 0px 1px 0px 0px',
           borderRadius: '12px',
           width,
+          maxWidth,
           height,
           // left: 0,
           // right: 0,

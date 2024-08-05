@@ -36,26 +36,22 @@ export const CustomFieldValues: React.FC<CustomFieldValuesProps> = ({
           return !!value;
         })
         .sort((valueA, valueB) => {
-          if (valueA.customField.name < valueB.customField.name) {
-            return -1;
-          }
-          if (valueA.customField.name > valueB.customField.name) {
-            return 1;
-          }
-          return 0;
+          return valueA.customField.position - valueB.customField.position;
         })
         .map((value) => {
           return (
             <Editor
               key={value.customFieldValue.id}
               label={
-                value.customField.enabled ? (
-                  value.customField.name
-                ) : (
-                  <div>
-                    {value.customField.name} <Badge tone="new">Disabled</Badge>
-                  </div>
-                )
+                <div>
+                  {value.customField.name}
+                  {!value.customField.enabled && (
+                    <>
+                      {' '}
+                      <Badge tone="new">Disabled</Badge>
+                    </>
+                  )}
+                </div>
               }
               value={value.customFieldValue.value}
               onChange={(newValue) => {

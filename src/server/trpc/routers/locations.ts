@@ -1,6 +1,7 @@
 import { prisma } from '@/server/lib/prisma';
 import {
   LocationsCreateInput,
+  LocationsCreateManyInput,
   LocationsDeleteInput,
   LocationsDeleteManyInput,
   LocationsGetByIdInput,
@@ -11,6 +12,7 @@ import { v4 } from 'uuid';
 import { container } from 'tsyringe';
 import { CustomActionValueService } from '@/server/services/CustomActionValueService';
 import { CustomFieldValueService } from '@/server/services/CustomFieldValueService';
+import { chunk } from 'lodash';
 import { privateProcedure, router } from '../trpc';
 
 export const locationsRouter = router({
@@ -151,6 +153,7 @@ export const locationsRouter = router({
         include: {
           searchFilters: true,
           customFieldValues: true,
+          customActionValues: true,
         },
       });
 
@@ -285,5 +288,121 @@ export const locationsRouter = router({
           shopId: shop.id,
         },
       });
+    }),
+  createMany: privateProcedure
+    .input(LocationsCreateManyInput)
+    .mutation(async ({ ctx, input }) => {
+      const { shop } = ctx;
+
+      await prisma.$transaction(
+        async (tx) => {
+          const customFields = await tx.customField.findMany({
+            where: {
+              shopId: shop.id,
+            },
+          });
+          const customFieldsIds = customFields.map((cf) => cf.id);
+          const customActions = await tx.customAction.findMany({
+            where: {
+              shopId: shop.id,
+            },
+          });
+          const customActionsIds = customActions.map((ca) => ca.id);
+          const inputChunks = chunk(input, 5);
+
+          // eslint-disable-next-line no-restricted-syntax
+          for (const inputChunk of inputChunks) {
+            const promises = inputChunk.map(async (data) => {
+              // Build custom field values
+              let newCustomFieldValues = data.customFieldValues.filter(
+                (customFieldValue) => {
+                  return customFieldsIds.includes(
+                    customFieldValue.customFieldId,
+                  );
+                },
+              );
+              newCustomFieldValues = [
+                ...newCustomFieldValues,
+                ...customFieldsIds
+                  .filter((customFieldId) => {
+                    return !newCustomFieldValues.find(
+                      (cfv) => cfv.customFieldId === customFieldId,
+                    );
+                  })
+                  .map((customFieldId) => {
+                    return {
+                      id: v4(),
+                      value: '',
+                      customFieldId,
+                    };
+                  }),
+              ];
+
+              // Build custom action values
+              let newCustomActionValues = data.customActionValues.filter(
+                (customActionValue) => {
+                  return customActionsIds.includes(
+                    customActionValue.customActionId,
+                  );
+                },
+              );
+              newCustomActionValues = [
+                ...newCustomActionValues,
+                ...customActionsIds
+                  .filter((customActionId) => {
+                    return !newCustomActionValues.find(
+                      (c) => c.customActionId === customActionId,
+                    );
+                  })
+                  .map((customActionId) => {
+                    return {
+                      id: v4(),
+                      value: '',
+                      customActionId,
+                    };
+                  }),
+              ];
+
+              await tx.location.create({
+                data: {
+                  id: data.id,
+                  name: data.name,
+                  active: data.active,
+                  email: data.email,
+                  phone: data.phone,
+                  website: data.website,
+                  address1: data.address1,
+                  address2: data.address2,
+                  city: data.city,
+                  state: data.state,
+                  zip: data.zip,
+                  country: data.country,
+                  lat: data.lat,
+                  lng: data.lng,
+                  shopId: shop.id,
+                  searchFilters: {
+                    connect: data.searchFilters.map((sf) => {
+                      return { id: sf };
+                    }),
+                  },
+                  customFieldValues: {
+                    createMany: {
+                      data: newCustomFieldValues,
+                    },
+                  },
+                  customActionValues: {
+                    createMany: {
+                      data: newCustomActionValues,
+                    },
+                  },
+                },
+              });
+            });
+            // eslint-disable-next-line no-await-in-loop
+            await Promise.all(promises);
+          }
+        },
+        { isolationLevel: 'ReadCommitted' },
+      );
     }),
 });

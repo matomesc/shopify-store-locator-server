@@ -28,13 +28,7 @@ export const CustomActionValues: React.FC<CustomActionValuesProps> = ({
         })
         .filter((v) => !!v)
         .sort((valueA, valueB) => {
-          if (valueA.customAction.name < valueB.customAction.name) {
-            return -1;
-          }
-          if (valueA.customAction.name > valueB.customAction.name) {
-            return 1;
-          }
-          return 0;
+          return valueA.customAction.position - valueB.customAction.position;
         })
         .map((value) => {
           return (

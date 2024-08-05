@@ -18,18 +18,31 @@ import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
 import { LocationsTable } from '@/client/components/locations/LocationsTable';
+import { ImportModal } from '@/client/components/dashboard/ImportModal';
+import { APIProvider } from '@vis.gl/react-google-maps';
 
 const Dashboard: NextPage = () => {
   const router = useRouter();
   const utils = trpc.useUtils();
   const [state, setState] = useState({
     plansModalOpen: false,
+    import: {
+      /**
+       * This key is used to reset the modal. It gets updated on every modal
+       * close.
+       */
+      modalKey: 0,
+      modalOpen: false,
+    },
   });
   const shopsGetQuery = trpc.shops.get.useQuery();
   const plansGetAllQuery = trpc.plans.getAll.useQuery();
   const shopsUpdateMutation = trpc.shops.update.useMutation();
   const locationsGetAllQuery = trpc.locations.getAll.useQuery();
   const settingsGetQuery = trpc.settings.get.useQuery();
+  const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
+  const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
+  const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
   useEffect(() => {
     if (shopsGetQuery.isPending || shopsGetQuery.isError) {
       return;
@@ -51,7 +64,10 @@ const Dashboard: NextPage = () => {
     shopsGetQuery.isPending ||
     plansGetAllQuery.isPending ||
     locationsGetAllQuery.isPending ||
-    settingsGetQuery.isPending
+    settingsGetQuery.isPending ||
+    searchFiltersGetAllQuery.isPending ||
+    customFieldsGetAllQuery.isPending ||
+    customActionsGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -60,7 +76,10 @@ const Dashboard: NextPage = () => {
     shopsGetQuery.isError ||
     plansGetAllQuery.isError ||
     locationsGetAllQuery.isError ||
-    settingsGetQuery.isError
+    settingsGetQuery.isError ||
+    searchFiltersGetAllQuery.isError ||
+    customFieldsGetAllQuery.isError ||
+    customActionsGetAllQuery.isError
   ) {
     return (
       <Page fullWidth>
@@ -81,6 +100,9 @@ const Dashboard: NextPage = () => {
                   plansGetAllQuery.refetch(),
                   locationsGetAllQuery.refetch(),
                   settingsGetQuery.refetch(),
+                  searchFiltersGetAllQuery.refetch(),
+                  customFieldsGetAllQuery.refetch(),
+                  customActionsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -114,9 +136,28 @@ const Dashboard: NextPage = () => {
         shopsGetQuery.data.shop.showOnboarding ||
         !settingsGetQuery.data.settings.googleMapsApiKey
           ? []
-          : locationsGetAllQuery.data.locations.length === 0
-            ? [{ content: 'Import' }]
-            : [{ content: 'Import' }, { content: 'Export' }]
+          : [
+              {
+                content: 'Import',
+                onAction: () => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      import: {
+                        ...prevState.import,
+                        modalOpen: true,
+                      },
+                    };
+                  });
+                },
+              },
+              {
+                content: 'Export',
+                onAction: () => {
+                  console.log('todo export');
+                },
+              },
+            ]
       }
     >
       <Layout>
@@ -147,7 +188,7 @@ const Dashboard: NextPage = () => {
               >
                 <p>
                   Once you complete the setup you will be able to import
-                  existing data in csv format or manually add your locations
+                  existing data in CSV format or manually add your locations
                 </p>
               </EmptyState>
             </Card>
@@ -171,11 +212,22 @@ const Dashboard: NextPage = () => {
                   }}
                   secondaryAction={{
                     content: 'Import locations',
+                    onAction: () => {
+                      setState((prevState) => {
+                        return {
+                          ...prevState,
+                          import: {
+                            ...prevState.import,
+                            modalOpen: true,
+                          },
+                        };
+                      });
+                    },
                   }}
                   image="/emptystate.png"
                 >
                   <p>
-                    You can import existing data in csv format or manually add
+                    You can import existing data in CSV format or manually add
                     your locations
                   </p>
                 </EmptyState>
@@ -218,6 +270,29 @@ const Dashboard: NextPage = () => {
           }
         }}
       />
+      {settingsGetQuery.data.settings.googleMapsApiKey && (
+        <APIProvider apiKey={settingsGetQuery.data.settings.googleMapsApiKey}>
+          <ImportModal
+            key={state.import.modalKey}
+            open={state.import.modalOpen}
+            searchFilters={searchFiltersGetAllQuery.data.searchFilters}
+            customFields={customFieldsGetAllQuery.data.customFields}
+            customActions={customActionsGetAllQuery.data.customActions}
+            onClose={() => {
+              setState((prevState) => {
+                return {
+                  ...prevState,
+                  import: {
+                    ...prevState.import,
+                    modalOpen: false,
+                    modalKey: prevState.import.modalKey + 1,
+                  },
+                };
+              });
+            }}
+          />
+        </APIProvider>
+      )}
     </Page>
   );
 };

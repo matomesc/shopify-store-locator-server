@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import { countriesByCode } from '@/lib/countries';
 import { timezones } from '@/lib/timezones';
 import type { AppRouter } from '@/server/trpc/routers/_app';
 import type { inferRouterOutputs } from '@trpc/server';
@@ -65,52 +64,64 @@ export const LocationsCreateInput = z.object({
   id: z.string().max(100),
   name: z.string().min(1, 'Name is required').max(100),
   active: z.boolean(),
-  phone: z.string(),
-  email: z.string(),
-  website: z.string(),
+  phone: z.string().max(100),
+  email: z.string().max(100),
+  website: z.string().max(300),
   address1: z.string().min(1, 'Address is required').max(200),
   address2: z.string().max(100),
   city: z.string().max(100),
   state: z.string().max(100),
   zip: z.string().max(100),
-  country: z.string().refine((val) => {
-    return !!countriesByCode[val];
-  }, 'Invalid country'),
+  country: z.string().max(100),
   lat: z.number(),
   lng: z.number(),
-  searchFilters: z.array(z.string()),
+  searchFilters: z.array(z.string().max(100)),
   customFieldValues: z.array(
-    z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
+    z.object({
+      id: z.string().max(100),
+      customFieldId: z.string(),
+      value: z.string().max(300),
+    }),
   ),
   customActionValues: z.array(
-    z.object({ id: z.string(), customActionId: z.string(), value: z.string() }),
+    z.object({
+      id: z.string().max(100),
+      customActionId: z.string(),
+      value: z.string().max(10000),
+    }),
   ),
 });
 export type LocationsCreateInput = z.infer<typeof LocationsCreateInput>;
 
 export const LocationsUpdateInput = z.object({
-  id: z.string(),
+  id: z.string().max(100),
   name: z.string().min(1, 'Name is required').max(100),
   active: z.boolean(),
-  phone: z.string(),
-  email: z.string(),
-  website: z.string(),
+  phone: z.string().max(100),
+  email: z.string().max(100),
+  website: z.string().max(300),
   address1: z.string().min(1, 'Address is required').max(200),
   address2: z.string().max(100),
   city: z.string().max(100),
   state: z.string().max(100),
   zip: z.string().max(100),
-  country: z.string().refine((val) => {
-    return !!countriesByCode[val];
-  }, 'Invalid country'),
+  country: z.string().max(100),
   lat: z.number(),
   lng: z.number(),
-  searchFilters: z.array(z.string()),
+  searchFilters: z.array(z.string().max(100)),
   customFieldValues: z.array(
-    z.object({ id: z.string(), customFieldId: z.string(), value: z.string() }),
+    z.object({
+      id: z.string().max(100),
+      customFieldId: z.string(),
+      value: z.string().max(300),
+    }),
   ),
   customActionValues: z.array(
-    z.object({ id: z.string(), customActionId: z.string(), value: z.string() }),
+    z.object({
+      id: z.string().max(100),
+      customActionId: z.string(),
+      value: z.string().max(10000),
+    }),
   ),
 });
 export type LocationsUpdateInput = z.infer<typeof LocationsUpdateInput>;
@@ -124,6 +135,9 @@ export const LocationsDeleteManyInput = z.object({
   ids: z.array(z.string()),
 });
 export type LocationsDeleteManyInput = z.infer<typeof LocationsDeleteManyInput>;
+
+export const LocationsCreateManyInput = z.array(LocationsCreateInput);
+export type LocationsCreateManyInput = z.infer<typeof LocationsCreateManyInput>;
 
 /**
  * Search filters
@@ -191,7 +205,7 @@ export const CustomFieldsSyncInput = z.array(
     labelPosition: CustomFieldLabelPosition,
     showInList: z.boolean(),
     showInMap: z.boolean(),
-    defaultValue: z.string().max(1000),
+    defaultValue: z.string().max(300),
   }),
 );
 export type CustomFieldsSyncInput = z.infer<typeof CustomFieldsSyncInput>;

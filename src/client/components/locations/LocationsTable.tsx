@@ -300,6 +300,7 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
       <Modal
         open={state.deleteModalOpen}
         title="Delete location"
+        maxWidth="500px"
         footer={
           <ButtonGroup>
             <Button
@@ -357,6 +358,7 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
       <Modal
         open={state.deleteManyModalOpen}
         title="Delete locations"
+        maxWidth="500px"
         footer={
           <ButtonGroup>
             <Button

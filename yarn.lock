@@ -1809,6 +1809,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5":
+  version: 5.3.14
+  resolution: "@types/papaparse@npm:5.3.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/9bd5cc0e6a2c02def6c8903dc4604e499907cb465186ed3532390468082a06f023adbac0216428d0d8e8fe017206780a03d20007041e9fed47c8d391cd69a536
+  languageName: node
+  linkType: hard
+
 "@types/pg-pool@npm:2.0.4":
   version: 2.0.4
   resolution: "@types/pg-pool@npm:2.0.4"
@@ -5978,6 +5987,7 @@ __metadata:
     "@types/lodash": "npm:^4"
     "@types/luxon": "npm:^3"
     "@types/node": "npm:20.14.4"
+    "@types/papaparse": "npm:^5"
     "@types/react": "npm:18.3.3"
     "@types/react-dom": "npm:18.3.0"
     "@types/react-modal": "npm:^3"
@@ -6008,6 +6018,7 @@ __metadata:
     luxon: "npm:^3.4.4"
     next: "npm:14.2.4"
     next-connect: "npm:^1.0.0"
+    papaparse: "npm:^5.4.1"
     pino: "npm:^9.2.0"
     pino-pretty: "npm:^11.2.1"
     prettier: "npm:^3.3.2"
@@ -6417,6 +6428,13 @@ __metadata:
   dependencies:
     p-timeout: "npm:^3.0.0"
   checksum: 10/7f6840e9233d96836a233dee9c5b1c711bfdf76228d0eaea68fa74a79418f5eef6dc1915dadd28d17312a99f6a53daa308b1c18b779bc9c1dabcae3d6b35a086
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: 10/5e6dc978187182ad2efa1d264ffe73d2042cd23b8fb1dcb0b0f5c8c7c772c11e3eb4e166fb0893880ed24529a96abe9065d704cc5b4cb96abf037413cfe43788
   languageName: node
   linkType: hard
 
