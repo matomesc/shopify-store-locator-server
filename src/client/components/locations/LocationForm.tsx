@@ -56,7 +56,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   const [state, setState] = useState({
     deleteModalOpen: false,
   });
-  const map = useMap();
+  const map = useMap('mainMap');
   const placesLibrary = useMapsLibrary('places');
   const geocodingLibrary = useMapsLibrary('geocoding');
   const locationsCreateMutation = trpc.locations.create.useMutation();
@@ -519,7 +519,8 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                   <div>
                     <div style={{ height: '300px' }}>
                       <Map
-                        mapId="map"
+                        id="mainMap"
+                        mapId="mainMap"
                         defaultZoom={
                           watch('lat') === 39 && watch('lng') === 34 ? 1 : 15
                         }
