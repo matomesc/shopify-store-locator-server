@@ -195,11 +195,13 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>Spreadsheet bulk import</div>
                     <Divider />
-                    <div>Search filters</div>
+                    <div>Unlimited search filters</div>
                     <Divider />
-                    <div>Custom fields</div>
+                    <div>Unlimited custom fields</div>
                     <Divider />
                     <div>Custom theme colors</div>
+                    <Divider />
+                    <div>Custom map pin icons</div>
                   </div>
                 );
                 break;
@@ -217,7 +219,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>2 display languages</div>
                     <Divider />
-                    <div>Custom map pin icons</div>
+                    <div>Analytics</div>
                     <Divider />
                     <div>Basic email support</div>
                   </div>
