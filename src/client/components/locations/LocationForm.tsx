@@ -15,13 +15,11 @@ import {
   Layout,
   Page,
   RadioButton,
-  Select,
   Text,
   TextField,
 } from '@shopify/polaris';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import * as Sentry from '@sentry/nextjs';
-import { countries } from '@/lib/countries';
 import {
   AdvancedMarker,
   Map,
@@ -500,13 +498,10 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                         name="country"
                         render={({ field }) => {
                           return (
-                            <Select
+                            <TextField
                               label="Country"
+                              autoComplete="off"
                               value={field.value}
-                              options={countries.map(({ code, name }) => {
-                                return { label: name, value: code };
-                              })}
-                              placeholder="Select country"
                               onChange={(value) => {
                                 field.onChange(value);
                                 debouncedGeocoding()?.catch((err) => {
