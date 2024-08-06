@@ -24,12 +24,12 @@ import { chunk } from 'lodash';
 import { trpc } from '@/lib/trpc';
 import { Modal } from '../Modal';
 
-function getCustomFieldHeaderName(customField: CustomField) {
-  return `Custom field: ${customField.name}`;
+export function getCustomFieldHeaderName(customFieldName: string) {
+  return `Custom field: ${customFieldName}`;
 }
 
-function getCustomActionHeaderName(customAction: CustomAction) {
-  return `Custom action: ${customAction.name}`;
+export function getCustomActionHeaderName(customActionName: string) {
+  return `Custom action: ${customActionName}`;
 }
 
 function parseBoolean(value: string) {
@@ -211,7 +211,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                     return customFieldA.position - customFieldB.position;
                   })
                   .forEach((customField) => {
-                    sample[getCustomFieldHeaderName(customField)] =
+                    sample[getCustomFieldHeaderName(customField.name)] =
                       customField.name;
                   });
                 customActions
@@ -219,7 +219,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                     return customActionA.position - customActionB.position;
                   })
                   .forEach((customAction) => {
-                    sample[getCustomActionHeaderName(customAction)] =
+                    sample[getCustomActionHeaderName(customAction.name)] =
                       customAction.name;
                   });
 
@@ -359,10 +359,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                 'Longitude',
                 'Search filters',
                 ...customFields.map((customField) => {
-                  return getCustomFieldHeaderName(customField);
+                  return getCustomFieldHeaderName(customField.name);
                 }),
                 ...customActions.map((customAction) => {
-                  return getCustomActionHeaderName(customAction);
+                  return getCustomActionHeaderName(customAction.name);
                 }),
               ];
               const missingFields: string[] = [];
@@ -422,12 +422,12 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       return searchFilterId !== null;
                     }),
                   customFieldValues: customFields.map((customField) => {
-                    const header = getCustomFieldHeaderName(customField);
+                    const header = getCustomFieldHeaderName(customField.name);
                     const value = row[header];
                     return { id: v4(), customFieldId: customField.id, value };
                   }),
                   customActionValues: customActions.map((customAction) => {
-                    const header = getCustomActionHeaderName(customAction);
+                    const header = getCustomActionHeaderName(customAction.name);
                     const value = row[header];
                     return { id: v4(), customActionId: customAction.id, value };
                   }),
@@ -451,7 +451,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       (cf) => cf.id === customFieldId,
                     );
                     if (customField) {
-                      column = getCustomFieldHeaderName(customField);
+                      column = getCustomFieldHeaderName(customField.name);
                     }
                   } else if (
                     issue.path[0] === 'customActionValues' &&
@@ -463,7 +463,7 @@ export const ImportModal: React.FC<ImportModalProps> = ({
                       (ca) => ca.id === customActionId,
                     );
                     if (customAction) {
-                      column = getCustomActionHeaderName(customAction);
+                      column = getCustomActionHeaderName(customAction.name);
                     }
                   } else {
                     column = parsedRowKeyToHeader[issue.path[0]];

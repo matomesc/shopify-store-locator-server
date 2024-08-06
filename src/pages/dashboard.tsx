@@ -18,8 +18,13 @@ import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
 import { LocationsTable } from '@/client/components/locations/LocationsTable';
-import { ImportModal } from '@/client/components/dashboard/ImportModal';
+import {
+  getCustomActionHeaderName,
+  getCustomFieldHeaderName,
+  ImportModal,
+} from '@/client/components/dashboard/ImportModal';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import Papa from 'papaparse';
 
 const Dashboard: NextPage = () => {
   const router = useRouter();
@@ -154,7 +159,96 @@ const Dashboard: NextPage = () => {
               {
                 content: 'Export',
                 onAction: () => {
-                  console.log('todo export');
+                  const searchFilters = [
+                    ...searchFiltersGetAllQuery.data.searchFilters,
+                  ].sort((searchFilterA, searchFilterB) => {
+                    return searchFilterA.position - searchFilterB.position;
+                  });
+                  const customFields = [
+                    ...customFieldsGetAllQuery.data.customFields,
+                  ].sort((customFieldA, customFieldB) => {
+                    return customFieldA.position - customFieldB.position;
+                  });
+                  const customActions = [
+                    ...customActionsGetAllQuery.data.customActions,
+                  ].sort((customActionA, customActionB) => {
+                    return customActionA.position - customActionB.position;
+                  });
+
+                  const rows = locationsGetAllQuery.data.locations.map(
+                    (location) => {
+                      const row: Record<string, string> = {
+                        Name: location.name,
+                        Active: location.active ? 'yes' : 'no',
+                        Phone: location.phone,
+                        Email: location.email,
+                        Website: location.website,
+                        Address: location.address1,
+                        'Apartment, suite, etc.': location.address2,
+                        City: location.city,
+                        'State/Province': location.state,
+                        'Zip/Postal code': location.zip,
+                        Country: location.country,
+                        Latitude: String(location.lat),
+                        Longitude: String(location.lng),
+                        'Search filters': searchFilters
+                          .map((searchFilter) => {
+                            const included = location.searchFilters.find(
+                              (sf) => sf.id === searchFilter.id,
+                            );
+
+                            if (included) {
+                              return searchFilter.name;
+                            }
+
+                            return null;
+                          })
+                          .filter((v) => !!v)
+                          .join(' | '),
+                      };
+
+                      customFields.forEach((customField) => {
+                        const customFieldValue =
+                          location.customFieldValues.find(
+                            (cfv) => cfv.customFieldId === customField.id,
+                          );
+
+                        if (!customFieldValue || !customFieldValue.value) {
+                          row[getCustomFieldHeaderName(customField.name)] =
+                            customField.defaultValue;
+                        } else {
+                          row[getCustomFieldHeaderName(customField.name)] =
+                            customFieldValue.value;
+                        }
+                      });
+
+                      customActions.forEach((customAction) => {
+                        const customActionValue =
+                          location.customActionValues.find(
+                            (cav) => cav.customActionId === customAction.id,
+                          );
+
+                        if (!customActionValue || !customActionValue.value) {
+                          row[getCustomActionHeaderName(customAction.name)] =
+                            customAction.defaultValue;
+                        } else {
+                          row[getCustomActionHeaderName(customAction.name)] =
+                            customActionValue.value;
+                        }
+                      });
+
+                      return row;
+                    },
+                  );
+
+                  const csv = Papa.unparse(rows);
+                  const url = window.URL.createObjectURL(new Blob([csv]));
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.setAttribute('download', 'export.csv');
+                  document.body.appendChild(link);
+                  link.click();
+                  link.parentNode?.removeChild(link);
                 },
               },
             ]

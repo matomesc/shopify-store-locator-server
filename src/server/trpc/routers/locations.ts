@@ -25,6 +25,27 @@ export const locationsRouter = router({
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        searchFilters: {
+          select: {
+            id: true,
+          },
+        },
+        customFieldValues: {
+          select: {
+            id: true,
+            value: true,
+            customFieldId: true,
+          },
+        },
+        customActionValues: {
+          select: {
+            id: true,
+            value: true,
+            customActionId: true,
+          },
+        },
+      },
     });
 
     return {
