@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
-import { LocationsTable } from '@/client/components/locations/LocationsTable';
+import { LocationsTable } from '@/client/components/dashboard/LocationsTable';
 import {
   getCustomActionHeaderName,
   getCustomFieldHeaderName,

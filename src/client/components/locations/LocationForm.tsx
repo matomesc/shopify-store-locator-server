@@ -146,7 +146,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
     try {
       if (mode === 'create') {
         await locationsCreateMutation.mutateAsync(data);
-        router.push(`/locations/${data.id}/edit`).catch((err) => {
+        router.replace(`/locations/${data.id}/edit`).catch((err) => {
           Sentry.captureException(err);
         });
       } else if (mode === 'edit') {
@@ -227,9 +227,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       backAction={{
         content: 'Dashboard',
         onAction: () => {
-          router.push('/dashboard').catch((err) => {
-            Sentry.captureException(err);
-          });
+          router.back();
         },
       }}
       primaryAction={{

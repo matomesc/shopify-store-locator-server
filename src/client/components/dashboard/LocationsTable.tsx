@@ -13,7 +13,7 @@ import {
 import { Location } from '@/dto/trpc';
 import { useRouter } from 'next/router';
 import * as Sentry from '@sentry/nextjs';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from '@/client/lib/toast';
 import { trpc } from '@/lib/trpc';
 import { Modal } from '../Modal';
@@ -85,6 +85,22 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
   }, [filteredAndSortedLocations, state.limit, state.page]);
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(locations);
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+    setState((prevState) => {
+      return {
+        ...prevState,
+        page: router.query.page
+          ? Number.parseInt(String(router.query.page), 10)
+          : 1,
+        limit: router.query.limit
+          ? Number.parseInt(String(router.query.limit), 10)
+          : 10,
+      };
+    });
+  }, [router.isReady, router.query.limit, router.query.page]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -260,6 +276,18 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
           hasPrevious={state.page > 1}
           onPrevious={() => {
             setState((prevState) => {
+              router
+                .push(
+                  { query: { ...router.query, page: prevState.page - 1 } },
+                  undefined,
+                  {
+                    shallow: true,
+                  },
+                )
+                .catch((err) => {
+                  Sentry.captureException(err);
+                });
+
               return {
                 ...prevState,
                 page: prevState.page - 1,
@@ -269,6 +297,18 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
           hasNext={state.page * state.limit < filteredAndSortedLocations.length}
           onNext={() => {
             setState((prevState) => {
+              router
+                .push(
+                  { query: { ...router.query, page: prevState.page + 1 } },
+                  undefined,
+                  {
+                    shallow: true,
+                  },
+                )
+                .catch((err) => {
+                  Sentry.captureException(err);
+                });
+
               return {
                 ...prevState,
                 page: prevState.page + 1,
@@ -288,6 +328,13 @@ export const LocationsTable: React.FC<LocationsTableProps> = ({
           value={String(state.limit)}
           onChange={(value) => {
             setState((prevState) => {
+              router
+                .push({ query: { ...router.query, limit: value } }, undefined, {
+                  shallow: true,
+                })
+                .catch((err) => {
+                  Sentry.captureException(err);
+                });
               return {
                 ...prevState,
                 limit: Number.parseInt(value, 10),
