@@ -70,6 +70,8 @@ model Location {
   customActionValues  CustomActionValue[]
   createdAt           DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
+
+  @@index([shopId])
 }
 
 model SearchFilter {
@@ -87,6 +89,7 @@ model SearchFilter {
   updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@unique([shopId, name])
+  @@index([shopId])
 }
 
 enum CustomFieldLabelPosition {
@@ -112,6 +115,7 @@ model CustomField {
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@unique([shopId, name])
+  @@index([shopId])
 }
 
 model CustomFieldValue {
@@ -123,6 +127,7 @@ model CustomFieldValue {
   customField   CustomField @relation(fields: [customFieldId], references: [id], onDelete: Cascade)
 
   @@unique([locationId, customFieldId])
+  @@index([locationId])
 }
 
 enum CustomActionType {
@@ -148,6 +153,7 @@ model CustomAction {
   updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@unique([shopId, name])
+  @@index([shopId])
 }
 
 model CustomActionValue {
@@ -159,6 +165,7 @@ model CustomActionValue {
   customAction    CustomAction  @relation(fields: [customActionId], references: [id], onDelete: Cascade)
 
   @@unique([locationId, customActionId])
+  @@index([locationId])
 }
 
 model Language {
@@ -172,6 +179,7 @@ model Language {
   updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@unique([shopId, code])
+  @@index([shopId])
 }
 
 model Translation {
@@ -191,4 +199,5 @@ model Translation {
   @@unique([languageId, searchFilterId])
   @@unique([languageId, customFieldId])
   @@unique([languageId, customActionId])
+  @@index([languageId])
 }
