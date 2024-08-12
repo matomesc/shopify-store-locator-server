@@ -149,7 +149,13 @@ export type SearchFilter =
 export const SearchFiltersSyncInput = z.array(
   z.object({
     id: z.string().max(100),
-    name: z.string().min(1, 'Search filter name is required').max(100),
+    name: z
+      .string()
+      .min(1, 'Search filter name is required')
+      .max(100)
+      .refine((value) => {
+        return !value.includes('|');
+      }, "Search filter name can't contain | character"),
     // An integer >= 0
     position: z.number().int().nonnegative(),
     enabled: z.boolean(),
@@ -171,7 +177,13 @@ export const CustomFieldLabelPosition = z.enum(['inline', 'top']);
 export const CustomFieldsSyncInput = z.array(
   z.object({
     id: z.string().max(100),
-    name: z.string().min(1, 'Custom field name is required').max(100),
+    name: z
+      .string()
+      .min(1, 'Custom field name is required')
+      .max(100)
+      .refine((value) => {
+        return !value.includes(':');
+      }, "Custom field name can't contain : character"),
     // An integer >= 0
     position: z.number().int().nonnegative(),
     enabled: z.boolean(),
@@ -198,7 +210,13 @@ export const CustomActionsSyncInput = z.array(
   z.object({
     id: z.string().max(100),
     type: CustomActionType,
-    name: z.string().min(1).max(100),
+    name: z
+      .string()
+      .min(1, 'Custom action name is required')
+      .max(100)
+      .refine((value) => {
+        return !value.includes(':');
+      }, "Custom action name can't contain : character"),
     position: z.number().int().nonnegative(),
     enabled: z.boolean(),
     showInList: z.boolean(),
