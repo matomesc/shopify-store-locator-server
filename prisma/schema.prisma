@@ -26,6 +26,7 @@ model Shop {
   searchFilters     SearchFilter[]
   customFields      CustomField[]
   customActions     CustomAction[]
+  languages         Language[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
@@ -81,6 +82,7 @@ model SearchFilter {
   shopId        String
   shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
   locations     Location[]
+  translations  Translation[]
   createdAt     DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
 
@@ -105,6 +107,7 @@ model CustomField {
   showInMap         Boolean
   defaultValue      String
   customFieldValues CustomFieldValue[]
+  translations      Translation[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 
@@ -140,6 +143,7 @@ model CustomAction {
   customActionValues  CustomActionValue[]
   shopId              String
   shop                Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  translations        Translation[]
   createdAt           DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
 
@@ -155,4 +159,36 @@ model CustomActionValue {
   customAction    CustomAction  @relation(fields: [customActionId], references: [id], onDelete: Cascade)
 
   @@unique([locationId, customActionId])
+}
+
+model Language {
+  id            String    @id @default(uuid())
+  code          String
+  shopId        String
+  shop          Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  enabled       Boolean
+  translations  Translation[]
+  createdAt     DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime  @updatedAt      @db.Timestamptz(3)
+
+  @@unique([shopId, code])
+}
+
+model Translation {
+  id              String          @id @default(uuid())
+  languageId      String
+  language        Language        @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  value           String
+  target          String?
+  searchFilterId  String?
+  searchFilter    SearchFilter?   @relation(fields: [searchFilterId], references: [id], onDelete: Cascade)
+  customFieldId   String?
+  customField     CustomField?    @relation(fields: [customFieldId], references: [id], onDelete: Cascade)
+  customActionId  String?
+  customAction    CustomAction?   @relation(fields: [customActionId], references: [id], onDelete: Cascade)
+
+  @@unique([languageId, target])
+  @@unique([languageId, searchFilterId])
+  @@unique([languageId, customFieldId])
+  @@unique([languageId, customActionId])
 }

@@ -236,7 +236,7 @@ export const CustomActions: React.FC<CustomActionsProps> = ({
     },
   });
   const sortedCustomActions = useMemo(() => {
-    return customActions.sort((customActionA, customActionB) => {
+    return [...customActions].sort((customActionA, customActionB) => {
       return customActionA.position - customActionB.position;
     });
   }, [customActions]);

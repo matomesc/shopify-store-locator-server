@@ -3,7 +3,7 @@ import {
   SearchFiltersCreateInput,
   SearchFiltersDeleteInput,
   SearchFiltersUpdateInput,
-  SearchFilterSyncInput,
+  SearchFiltersSyncInput,
 } from '@/dto/trpc';
 import { TRPCError } from '@trpc/server';
 import { chunk, uniq } from 'lodash';
@@ -119,7 +119,7 @@ export const searchFiltersRouter = router({
       });
     }),
   sync: privateProcedure
-    .input(SearchFilterSyncInput)
+    .input(SearchFiltersSyncInput)
     .mutation(async ({ ctx, input }) => {
       const { shop } = ctx;
 

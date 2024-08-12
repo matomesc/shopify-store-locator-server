@@ -9,6 +9,7 @@ import { createRouter } from 'next-connect';
 import { errorHandler, sendError } from '@/server/lib/api';
 import { GetShopifyAuthCallbackInput } from '@/dto/api';
 import * as Sentry from '@sentry/nextjs';
+import { timezones } from '@/lib/timezones';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -104,11 +105,10 @@ router.get(async (req, res) => {
           create: {
             googleMapsApiKey: '',
             // Attempt to match shopify's timezone with one of the supported node
-            // timezones. If no match is found, defaults to UTC (empty value).
+            // timezones. If no match is found, defaults to UTC.
             timezone:
-              Intl.supportedValuesOf('timeZone').find(
-                (tz) => tz === shopifyShop.shop.iana_timezone,
-              ) || '',
+              timezones.find((tz) => tz === shopifyShop.shop.iana_timezone) ||
+              'UTC',
           },
         },
       },

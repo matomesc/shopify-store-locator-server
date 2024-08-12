@@ -3,6 +3,7 @@
  * Intl.supportedValuesOf('timeZone').
  */
 export const timezones = [
+  'UTC',
   'Africa/Abidjan',
   'Africa/Accra',
   'Africa/Addis_Ababa',

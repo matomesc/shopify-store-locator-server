@@ -99,9 +99,11 @@ export const customActionsRouter = router({
           });
 
           // Update custom actions
-          const customActionsToUpdate = newCustomActions.filter((filter) => {
-            return currentCustomActionIds.includes(filter.id);
-          });
+          const customActionsToUpdate = newCustomActions.filter(
+            (customAction) => {
+              return currentCustomActionIds.includes(customAction.id);
+            },
+          );
           const customActionsToUpdateChunks = chunk(customActionsToUpdate, 5);
           // eslint-disable-next-line no-restricted-syntax
           for (const customActionsToUpdateChunk of customActionsToUpdateChunks) {

@@ -237,7 +237,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
     },
   });
   const sortedCustomFields = useMemo(() => {
-    return customFields.sort((customFieldA, customFieldB) => {
+    return [...customFields].sort((customFieldA, customFieldB) => {
       return customFieldA.position - customFieldB.position;
     });
   }, [customFields]);

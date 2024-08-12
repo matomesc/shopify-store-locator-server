@@ -1,5 +1,5 @@
 import ReactModal from 'react-modal';
-import { ComponentType, PropsWithChildren, ReactNode } from 'react';
+import { ComponentType, PropsWithChildren, ReactNode, useEffect } from 'react';
 import { Divider, Icon, Text } from '@shopify/polaris';
 import { XIcon } from '@shopify/polaris-icons';
 
@@ -30,6 +30,15 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   height,
   maxWidth,
 }) => {
+  // When the modal is open, prevent scrolling the body
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [open]);
+
   return (
     <ModalSafeForReact18
       isOpen={open}
@@ -56,7 +65,28 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
       shouldCloseOnEsc={shouldCloseOnEsc}
       ariaHideApp={false}
     >
-      <div>
+      <div
+        ref={(ref) => {
+          if (!ref) {
+            return;
+          }
+          const headerEl = ref.querySelector<HTMLDivElement>('.header');
+          const childrenEl = ref.querySelector<HTMLDivElement>('.children');
+          const footerEl = ref.querySelector<HTMLDivElement>('.footer');
+
+          if (!headerEl || !childrenEl) {
+            return;
+          }
+
+          const headerHeight = headerEl.offsetHeight;
+          const footerHeight = footerEl ? footerEl.offsetHeight : 0;
+
+          // The max height of children is 100vh minus the header, footer and
+          // divider heights. This is necessary in order for the children to
+          // be scrollable.
+          childrenEl.style.maxHeight = `calc(100vh - ${headerHeight}px - ${footerHeight}px - 4px)`;
+        }}
+      >
         <style jsx>{`
           .headerCloseIcon > :global(.Polaris-Icon) {
             width: 2rem;
@@ -87,7 +117,13 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           </span>
         </div>
         <Divider />
-        <div className="children" style={{ padding: '16px' }}>
+        <div
+          className="children"
+          style={{
+            padding: '16px',
+            overflow: 'auto',
+          }}
+        >
           {children}
         </div>
         {footer && <Divider />}

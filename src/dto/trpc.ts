@@ -43,7 +43,7 @@ export type PlansGetAllOutput = RouterOutput['plans']['getAll'];
 export const SettingsUpdateInput = z.object({
   googleMapsApiKey: z.string(),
   timezone: z.string().refine((val) => {
-    return timezones.includes(val) || val === '';
+    return timezones.includes(val);
   }, 'Invalid timezone'),
 });
 export type SettingsUpdateInput = z.infer<typeof SettingsUpdateInput>;
@@ -172,7 +172,7 @@ export const SearchFiltersDeleteInput = z.object({
 });
 export type SearchFiltersDeleteInput = z.infer<typeof SearchFiltersDeleteInput>;
 
-export const SearchFilterSyncInput = z.array(
+export const SearchFiltersSyncInput = z.array(
   z.object({
     id: z.string(),
     name: z.string().min(1, 'Search filter name is required').max(100),
@@ -183,7 +183,7 @@ export const SearchFilterSyncInput = z.array(
     showInMap: z.boolean(),
   }),
 );
-export type SearchFilterSyncInput = z.infer<typeof SearchFilterSyncInput>;
+export type SearchFiltersSyncInput = z.infer<typeof SearchFiltersSyncInput>;
 
 /**
  * Custom fields
@@ -234,3 +234,49 @@ export const CustomActionsSyncInput = z.array(
   }),
 );
 export type CustomActionsSyncInput = z.infer<typeof CustomActionsSyncInput>;
+
+/**
+ * Languages
+ */
+
+export type Language = RouterOutput['languages']['getAll']['languages'][number];
+
+export const LanguagesSyncInput = z.array(
+  z.object({
+    id: z.string().max(100),
+    code: z.string().max(100),
+    enabled: z.boolean(),
+    createdAt: z.date(),
+  }),
+);
+export type LanguagesSyncInput = z.infer<typeof LanguagesSyncInput>;
+
+/**
+ * Translations
+ */
+
+export const TranslationsSyncInput = z.array(
+  z
+    .object({
+      id: z.string().max(100),
+      languageId: z.string().max(100),
+      value: z.string().max(100),
+      target: z.string().max(100).nullable(),
+      searchFilterId: z.string().max(100).nullable(),
+      customFieldId: z.string().max(100).nullable(),
+      customActionId: z.string().max(100).nullable(),
+    })
+    .refine((value) => {
+      const keys = [
+        'target',
+        'searchFilterId',
+        'customFieldId',
+        'customActionId',
+      ] as const;
+
+      const values = keys.map((key) => value[key]).filter((v) => v !== null);
+
+      return values.length === 1;
+    }, 'One of target, searchFilterId, customFieldId or customActionId must be specified'),
+);
+export type TranslationsSyncInput = z.infer<typeof TranslationsSyncInput>;

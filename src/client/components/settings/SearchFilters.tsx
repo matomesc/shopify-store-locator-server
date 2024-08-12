@@ -1,4 +1,4 @@
-import { SearchFilterSyncInput } from '@/dto/trpc';
+import { SearchFiltersSyncInput } from '@/dto/trpc';
 import {
   Button,
   ButtonGroup,
@@ -22,7 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as Sentry from '@sentry/nextjs';
 import { Modal } from '../Modal';
 
-const FormData = SearchFilterSyncInput.element;
+const FormData = SearchFiltersSyncInput.element;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 type FormData = z.infer<typeof FormData>;
 
@@ -95,7 +95,7 @@ const SearchFilterForm: React.FC = () => {
 };
 
 interface SearchFilterProps {
-  searchFilter: SearchFilterSyncInput[number];
+  searchFilter: SearchFiltersSyncInput[number];
   onDelete: () => void;
   onEdit: () => void;
   onUp: () => void;
@@ -144,8 +144,8 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
 };
 
 export interface SearchFiltersProps {
-  searchFilters: SearchFilterSyncInput;
-  onChange: (searchFilters: SearchFilterSyncInput) => void;
+  searchFilters: SearchFiltersSyncInput;
+  onChange: (searchFilters: SearchFiltersSyncInput) => void;
 }
 
 export const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -169,7 +169,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     },
   });
   const sortedSearchFilters = useMemo(() => {
-    return searchFilters.sort((searchFilterA, searchFilterB) => {
+    return [...searchFilters].sort((searchFilterA, searchFilterB) => {
       return searchFilterA.position - searchFilterB.position;
     });
   }, [searchFilters]);

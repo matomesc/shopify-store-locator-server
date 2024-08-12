@@ -11,6 +11,8 @@ const Settings: NextPage = () => {
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
   const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
   const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
+  const languagesGetAllQuery = trpc.languages.getAll.useQuery();
+  const translationsGetAllQuery = trpc.translations.getAll.useQuery();
 
   if (
     shopsGetQuery.isPending ||
@@ -18,7 +20,9 @@ const Settings: NextPage = () => {
     settingsGetQuery.isPending ||
     searchFiltersGetAllQuery.isPending ||
     customFieldsGetAllQuery.isPending ||
-    customActionsGetAllQuery.isPending
+    customActionsGetAllQuery.isPending ||
+    languagesGetAllQuery.isPending ||
+    translationsGetAllQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -29,7 +33,9 @@ const Settings: NextPage = () => {
     settingsGetQuery.isError ||
     searchFiltersGetAllQuery.isError ||
     customFieldsGetAllQuery.isError ||
-    customActionsGetAllQuery.isError
+    customActionsGetAllQuery.isError ||
+    languagesGetAllQuery.isError ||
+    translationsGetAllQuery.isError
   ) {
     return (
       <Page>
@@ -52,6 +58,8 @@ const Settings: NextPage = () => {
                   searchFiltersGetAllQuery.refetch(),
                   customFieldsGetAllQuery.refetch(),
                   customActionsGetAllQuery.refetch(),
+                  languagesGetAllQuery.refetch(),
+                  translationsGetAllQuery.refetch(),
                 ]);
               }}
             >
@@ -75,6 +83,8 @@ const Settings: NextPage = () => {
         searchFilters: searchFiltersGetAllQuery.data.searchFilters,
         customFields: customFieldsGetAllQuery.data.customFields,
         customActions: customActionsGetAllQuery.data.customActions,
+        languages: languagesGetAllQuery.data.languages,
+        translations: translationsGetAllQuery.data.translations,
       }}
     />
   );
