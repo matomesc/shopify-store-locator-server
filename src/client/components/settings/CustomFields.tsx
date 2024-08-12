@@ -393,6 +393,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
           }
           open={state.customFieldModal.isOpen}
           height="fit-content"
+          maxWidth="500px"
           footer={
             <ButtonGroup>
               <Button

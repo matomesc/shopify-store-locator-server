@@ -322,6 +322,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
               : 'Edit search filter'
           }
           height="fit-content"
+          maxWidth="500px"
           footer={
             <ButtonGroup>
               <Button

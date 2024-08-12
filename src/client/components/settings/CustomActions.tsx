@@ -391,6 +391,7 @@ export const CustomActions: React.FC<CustomActionsProps> = ({
               : 'Edit custom action'
           }
           height="fit-content"
+          maxWidth="500px"
           footer={
             <ButtonGroup>
               <Button
