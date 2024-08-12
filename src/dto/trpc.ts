@@ -146,32 +146,6 @@ export type LocationsCreateManyInput = z.infer<typeof LocationsCreateManyInput>;
 export type SearchFilter =
   RouterOutput['searchFilters']['getAll']['searchFilters'][number];
 
-export const SearchFiltersCreateInput = z.object({
-  name: z.string().min(1, 'Search filter name is required').max(100),
-  // An integer > 0
-  position: z.number().int().nonnegative(),
-  enabled: z.boolean(),
-  showInList: z.boolean(),
-  showInMap: z.boolean(),
-});
-export type SearchFiltersCreateInput = z.infer<typeof SearchFiltersCreateInput>;
-
-export const SearchFiltersUpdateInput = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'Search filter name is required').max(100),
-  // An integer >= 0
-  position: z.number().int().nonnegative(),
-  enabled: z.boolean(),
-  showInList: z.boolean(),
-  showInMap: z.boolean(),
-});
-export type SearchFiltersUpdateInput = z.infer<typeof SearchFiltersUpdateInput>;
-
-export const SearchFiltersDeleteInput = z.object({
-  id: z.string(),
-});
-export type SearchFiltersDeleteInput = z.infer<typeof SearchFiltersDeleteInput>;
-
 export const SearchFiltersSyncInput = z.array(
   z.object({
     id: z.string(),

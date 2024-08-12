@@ -1,10 +1,5 @@
 import { prisma } from '@/server/lib/prisma';
-import {
-  SearchFiltersCreateInput,
-  SearchFiltersDeleteInput,
-  SearchFiltersUpdateInput,
-  SearchFiltersSyncInput,
-} from '@/dto/trpc';
+import { SearchFiltersSyncInput } from '@/dto/trpc';
 import { TRPCError } from '@trpc/server';
 import { chunk, uniq } from 'lodash';
 import { privateProcedure, router } from '../trpc';
@@ -23,101 +18,6 @@ export const searchFiltersRouter = router({
       searchFilters,
     };
   }),
-  create: privateProcedure
-    .input(SearchFiltersCreateInput)
-    .mutation(async ({ ctx, input }) => {
-      const { shop } = ctx;
-
-      const existingSearchFilter = await prisma.searchFilter.findFirst({
-        where: {
-          shopId: shop.id,
-          name: input.name,
-        },
-      });
-
-      if (existingSearchFilter) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'NameAlreadyExists',
-        });
-      }
-
-      const searchFilter = await prisma.searchFilter.create({
-        data: {
-          shopId: shop.id,
-          name: input.name,
-          position: input.position,
-          enabled: input.enabled,
-          showInList: input.showInList,
-          showInMap: input.showInMap,
-        },
-      });
-
-      return {
-        searchFilter,
-      };
-    }),
-  update: privateProcedure
-    .input(SearchFiltersUpdateInput)
-    .mutation(async ({ ctx, input }) => {
-      const { shop } = ctx;
-
-      const searchFilter = await prisma.searchFilter.findFirst({
-        where: {
-          id: input.id,
-          shopId: shop.id,
-        },
-      });
-
-      if (!searchFilter) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'SearchFilterNotFound',
-        });
-      }
-
-      await prisma.searchFilter.update({
-        where: {
-          id: searchFilter.id,
-        },
-        data: {
-          name: input.name,
-          position: input.position,
-          enabled: input.enabled,
-          showInList: input.showInList,
-          showInMap: input.showInMap,
-        },
-      });
-
-      return {
-        searchFilter,
-      };
-    }),
-  delete: privateProcedure
-    .input(SearchFiltersDeleteInput)
-    .mutation(async ({ ctx, input }) => {
-      const { shop } = ctx;
-
-      const searchFilter = await prisma.searchFilter.findFirst({
-        where: {
-          id: input.id,
-          shopId: shop.id,
-        },
-      });
-
-      if (!searchFilter) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'SearchFilterNotFound',
-        });
-      }
-
-      await prisma.searchFilter.delete({
-        where: {
-          id: searchFilter.id,
-        },
-      });
-    }),
   sync: privateProcedure
     .input(SearchFiltersSyncInput)
     .mutation(async ({ ctx, input }) => {
