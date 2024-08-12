@@ -148,7 +148,7 @@ export type SearchFilter =
 
 export const SearchFiltersSyncInput = z.array(
   z.object({
-    id: z.string(),
+    id: z.string().max(100),
     name: z.string().min(1, 'Search filter name is required').max(100),
     // An integer >= 0
     position: z.number().int().nonnegative(),
@@ -170,7 +170,7 @@ export const CustomFieldLabelPosition = z.enum(['inline', 'top']);
 
 export const CustomFieldsSyncInput = z.array(
   z.object({
-    id: z.string(),
+    id: z.string().max(100),
     name: z.string().min(1, 'Custom field name is required').max(100),
     // An integer >= 0
     position: z.number().int().nonnegative(),
@@ -196,7 +196,7 @@ export type CustomActionType = z.infer<typeof CustomActionType>;
 
 export const CustomActionsSyncInput = z.array(
   z.object({
-    id: z.string(),
+    id: z.string().max(100),
     type: CustomActionType,
     name: z.string().min(1).max(100),
     position: z.number().int().nonnegative(),
