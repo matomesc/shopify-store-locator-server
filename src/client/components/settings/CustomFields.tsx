@@ -4,8 +4,10 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  Card,
   Checkbox,
   FormLayout,
+  Layout,
   Select,
   Text,
   TextField,
@@ -245,146 +247,159 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
-      <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '10px',
-          }}
-        >
-          <Button
-            onClick={() => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  customFieldModal: {
-                    ...prevState.customFieldModal,
-                    isOpen: true,
-                    scope: 'add',
-                  },
-                };
-              });
-              formMethods.reset({
-                id: v4(),
-                name: '',
-                position: sortedCustomFields.length,
-                enabled: true,
-                hideLabel: false,
-                labelPosition: 'top',
-                showInList: true,
-                showInMap: true,
-                defaultValue: '',
-              });
-            }}
-          >
-            Add custom field
-          </Button>
-        </div>
-        {sortedCustomFields.length === 0 && (
-          <div>
-            <p>You have no custom fields. Add your first one.</p>
-          </div>
-        )}
-        {sortedCustomFields.length > 0 && (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-          >
-            {sortedCustomFields.map((customField, index) => {
-              return (
-                <CustomField
-                  key={customField.id}
-                  customField={customField}
-                  onEdit={() => {
-                    setState((prevState) => {
-                      return {
-                        ...prevState,
-                        customFieldModal: {
-                          ...prevState.customFieldModal,
-                          isOpen: true,
-                          scope: 'edit',
-                        },
-                      };
-                    });
-                    formMethods.reset(customField);
-                  }}
-                  onDelete={() => {
-                    // Get the remaining custom fields by filtering out the
-                    // custom field to delete and then readjust the positions
-                    // based on their location in the array.
-                    const remainingCustomFields = sortedCustomFields
-                      .filter((cf) => cf.id !== customField.id)
-                      .map((cf, idx) => {
-                        return {
-                          ...cf,
-                          position: idx,
-                        };
-                      });
-                    onChange(remainingCustomFields);
-                  }}
-                  onUp={() => {
-                    if (index === 0) {
-                      // Can't move up
-                      return;
-                    }
-                    const sourceValue = customField;
-                    const sourcePosition = customField.position;
-                    const destIndex = index - 1;
-                    const destValue = sortedCustomFields[destIndex];
-                    const destPosition = destValue.position;
+      <Card>
+        <Layout>
+          <Layout.Section>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text variant="headingMd" as="h2">
+                Custom fields
+              </Text>
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      customFieldModal: {
+                        ...prevState.customFieldModal,
+                        isOpen: true,
+                        scope: 'add',
+                      },
+                    };
+                  });
+                  formMethods.reset({
+                    id: v4(),
+                    name: '',
+                    position: sortedCustomFields.length,
+                    enabled: true,
+                    hideLabel: false,
+                    labelPosition: 'top',
+                    showInList: true,
+                    showInMap: true,
+                    defaultValue: '',
+                  });
+                }}
+              >
+                Add custom field
+              </Button>
+            </div>
+          </Layout.Section>
+          <Layout.Section>
+            <Text as="p">
+              Use custom fields to add custom data to each location.
+            </Text>
+          </Layout.Section>
+          {sortedCustomFields.length > 0 && (
+            <Layout.Section>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                {sortedCustomFields.map((customField, index) => {
+                  return (
+                    <CustomField
+                      key={customField.id}
+                      customField={customField}
+                      onEdit={() => {
+                        setState((prevState) => {
+                          return {
+                            ...prevState,
+                            customFieldModal: {
+                              ...prevState.customFieldModal,
+                              isOpen: true,
+                              scope: 'edit',
+                            },
+                          };
+                        });
+                        formMethods.reset(customField);
+                      }}
+                      onDelete={() => {
+                        // Get the remaining custom fields by filtering out the
+                        // custom field to delete and then readjust the positions
+                        // based on their location in the array.
+                        const remainingCustomFields = sortedCustomFields
+                          .filter((cf) => cf.id !== customField.id)
+                          .map((cf, idx) => {
+                            return {
+                              ...cf,
+                              position: idx,
+                            };
+                          });
+                        onChange(remainingCustomFields);
+                      }}
+                      onUp={() => {
+                        if (index === 0) {
+                          // Can't move up
+                          return;
+                        }
+                        const sourceValue = customField;
+                        const sourcePosition = customField.position;
+                        const destIndex = index - 1;
+                        const destValue = sortedCustomFields[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedCustomFields.map((sf) => {
-                        if (sf.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
+                        onChange(
+                          sortedCustomFields.map((sf) => {
+                            if (sf.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (sf.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return sf;
+                          }),
+                        );
+                      }}
+                      onDown={() => {
+                        if (index === sortedCustomFields.length - 1) {
+                          // Can't move down
+                          return;
                         }
-                        if (sf.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return sf;
-                      }),
-                    );
-                  }}
-                  onDown={() => {
-                    if (index === sortedCustomFields.length - 1) {
-                      // Can't move down
-                      return;
-                    }
-                    const sourceValue = customField;
-                    const sourcePosition = customField.position;
-                    const destIndex = index + 1;
-                    const destValue = sortedCustomFields[destIndex];
-                    const destPosition = destValue.position;
+                        const sourceValue = customField;
+                        const sourcePosition = customField.position;
+                        const destIndex = index + 1;
+                        const destValue = sortedCustomFields[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedCustomFields.map((sf) => {
-                        if (sf.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
-                        }
-                        if (sf.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return sf;
-                      }),
-                    );
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+                        onChange(
+                          sortedCustomFields.map((sf) => {
+                            if (sf.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (sf.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return sf;
+                          }),
+                        );
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </Layout.Section>
+          )}
+        </Layout>
         <Modal
           title={
             state.customFieldModal.scope === 'add'
@@ -480,7 +495,7 @@ export const CustomFields: React.FC<CustomFieldsProps> = ({
         >
           <CustomFieldForm />
         </Modal>
-      </div>
+      </Card>
     </FormProvider>
   );
 };

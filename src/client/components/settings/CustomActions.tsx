@@ -13,8 +13,10 @@ import {
   Badge,
   Button,
   ButtonGroup,
+  Card,
   Checkbox,
   FormLayout,
+  Layout,
   Select,
   Text,
   TextField,
@@ -244,145 +246,159 @@ export const CustomActions: React.FC<CustomActionsProps> = ({
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
-      <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '10px',
-          }}
-        >
-          <Button
-            onClick={() => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  customActionModal: {
-                    ...prevState.customActionModal,
-                    isOpen: true,
-                    scope: 'add',
-                  },
-                };
-              });
-              formMethods.reset({
-                id: v4(),
-                type: 'link',
-                name: '',
-                position: sortedCustomActions.length,
-                enabled: true,
-                showInList: true,
-                showInMap: true,
-                defaultValue: '',
-                openInNewTab: true,
-              });
-            }}
-          >
-            Add custom action
-          </Button>
-        </div>
-        {sortedCustomActions.length === 0 && (
-          <div>
-            <p>You have no custom actions. Add your first one.</p>
-          </div>
-        )}
-        {sortedCustomActions.length > 0 && (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-          >
-            {sortedCustomActions.map((customAction, index) => {
-              return (
-                <CustomAction
-                  key={customAction.id}
-                  customAction={customAction}
-                  onEdit={() => {
-                    setState((prevState) => {
-                      return {
-                        ...prevState,
-                        customActionModal: {
-                          ...prevState.customActionModal,
-                          isOpen: true,
-                          scope: 'edit',
-                        },
-                      };
-                    });
-                    formMethods.reset(customAction);
-                  }}
-                  onDelete={() => {
-                    const remainingSearchFilters = sortedCustomActions
-                      .filter((ca) => {
-                        return ca.id !== customAction.id;
-                      })
-                      .map((ca, idx) => {
-                        return {
-                          ...ca,
-                          position: idx,
-                        };
-                      });
-                    onChange(remainingSearchFilters);
-                  }}
-                  onUp={() => {
-                    if (index === 0) {
-                      // Can't move up
-                      return;
-                    }
-                    const sourceValue = customAction;
-                    const sourcePosition = customAction.position;
-                    const destIndex = index - 1;
-                    const destValue = sortedCustomActions[destIndex];
-                    const destPosition = destValue.position;
+      <Card>
+        <Layout>
+          <Layout.Section>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text variant="headingMd" as="h2">
+                Custom actions
+              </Text>
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      customActionModal: {
+                        ...prevState.customActionModal,
+                        isOpen: true,
+                        scope: 'add',
+                      },
+                    };
+                  });
+                  formMethods.reset({
+                    id: v4(),
+                    type: 'link',
+                    name: '',
+                    position: sortedCustomActions.length,
+                    enabled: true,
+                    showInList: true,
+                    showInMap: true,
+                    defaultValue: '',
+                    openInNewTab: true,
+                  });
+                }}
+              >
+                Add custom action
+              </Button>
+            </div>
+          </Layout.Section>
+          <Layout.Section>
+            <Text as="p">
+              Use custom actions to add custom buttons that open links or
+              execute custom JavaScript.
+            </Text>
+          </Layout.Section>
+          {sortedCustomActions.length > 0 && (
+            <Layout.Section>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                {sortedCustomActions.map((customAction, index) => {
+                  return (
+                    <CustomAction
+                      key={customAction.id}
+                      customAction={customAction}
+                      onEdit={() => {
+                        setState((prevState) => {
+                          return {
+                            ...prevState,
+                            customActionModal: {
+                              ...prevState.customActionModal,
+                              isOpen: true,
+                              scope: 'edit',
+                            },
+                          };
+                        });
+                        formMethods.reset(customAction);
+                      }}
+                      onDelete={() => {
+                        const remainingSearchFilters = sortedCustomActions
+                          .filter((ca) => {
+                            return ca.id !== customAction.id;
+                          })
+                          .map((ca, idx) => {
+                            return {
+                              ...ca,
+                              position: idx,
+                            };
+                          });
+                        onChange(remainingSearchFilters);
+                      }}
+                      onUp={() => {
+                        if (index === 0) {
+                          // Can't move up
+                          return;
+                        }
+                        const sourceValue = customAction;
+                        const sourcePosition = customAction.position;
+                        const destIndex = index - 1;
+                        const destValue = sortedCustomActions[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedCustomActions.map((ca) => {
-                        if (ca.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
+                        onChange(
+                          sortedCustomActions.map((ca) => {
+                            if (ca.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (ca.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return ca;
+                          }),
+                        );
+                      }}
+                      onDown={() => {
+                        if (index === sortedCustomActions.length - 1) {
+                          // Can't move down
+                          return;
                         }
-                        if (ca.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return ca;
-                      }),
-                    );
-                  }}
-                  onDown={() => {
-                    if (index === sortedCustomActions.length - 1) {
-                      // Can't move down
-                      return;
-                    }
-                    const sourceValue = customAction;
-                    const sourcePosition = customAction.position;
-                    const destIndex = index + 1;
-                    const destValue = sortedCustomActions[destIndex];
-                    const destPosition = destValue.position;
+                        const sourceValue = customAction;
+                        const sourcePosition = customAction.position;
+                        const destIndex = index + 1;
+                        const destValue = sortedCustomActions[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedCustomActions.map((ca) => {
-                        if (ca.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
-                        }
-                        if (ca.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return ca;
-                      }),
-                    );
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+                        onChange(
+                          sortedCustomActions.map((ca) => {
+                            if (ca.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (ca.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return ca;
+                          }),
+                        );
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </Layout.Section>
+          )}
+        </Layout>
         <Modal
           open={state.customActionModal.isOpen}
           title={
@@ -480,7 +496,7 @@ export const CustomActions: React.FC<CustomActionsProps> = ({
         >
           <CustomActionForm />
         </Modal>
-      </div>
+      </Card>
     </FormProvider>
   );
 };

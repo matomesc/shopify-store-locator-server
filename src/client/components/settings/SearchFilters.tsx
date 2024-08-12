@@ -7,6 +7,8 @@ import {
   Text,
   Checkbox,
   Badge,
+  Card,
+  Layout,
 } from '@shopify/polaris';
 import { useMemo, useState } from 'react';
 import { v4 } from 'uuid';
@@ -133,10 +135,10 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
         <ButtonGroup>
           <Button icon={ArrowUpIcon} onClick={onUp} />
           <Button icon={ArrowDownIcon} onClick={onDown} />
+          <Button onClick={onEdit}>Edit</Button>
           <Button tone="critical" onClick={onDelete}>
             Delete
           </Button>
-          <Button onClick={onEdit}>Edit</Button>
         </ButtonGroup>
       </div>
     </div>
@@ -177,142 +179,158 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
-      <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '10px',
-          }}
-        >
-          <Button
-            onClick={() => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  searchFilterModal: {
-                    ...prevState.searchFilterModal,
-                    isOpen: true,
-                    scope: 'add',
-                  },
-                };
-              });
-              formMethods.reset({
-                id: v4(),
-                name: '',
-                position: sortedSearchFilters.length,
-                enabled: true,
-                showInList: true,
-                showInMap: true,
-              });
-            }}
-          >
-            Add search filter
-          </Button>
-        </div>
-        {sortedSearchFilters.length === 0 && (
-          <div>
-            <p>You have no search filters. Add your first one.</p>
-          </div>
-        )}
-        {sortedSearchFilters.length > 0 && (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-          >
-            {sortedSearchFilters.map((searchFilter, index) => {
-              return (
-                <SearchFilter
-                  key={searchFilter.id}
-                  searchFilter={searchFilter}
-                  onEdit={() => {
-                    setState((prevState) => {
-                      return {
-                        ...prevState,
-                        searchFilterModal: {
-                          ...prevState.searchFilterModal,
-                          isOpen: true,
-                          scope: 'edit',
-                        },
-                      };
-                    });
-                    formMethods.reset(searchFilter);
-                  }}
-                  onDelete={() => {
-                    const remainingSearchFilters = sortedSearchFilters
-                      .filter((sf) => {
-                        return sf.id !== searchFilter.id;
-                      })
-                      .map((sf, idx) => {
-                        return {
-                          ...sf,
-                          position: idx,
-                        };
-                      });
-                    onChange(remainingSearchFilters);
-                  }}
-                  onUp={() => {
-                    if (index === 0) {
-                      // Can't move up
-                      return;
-                    }
-                    const sourceValue = searchFilter;
-                    const sourcePosition = searchFilter.position;
-                    const destIndex = index - 1;
-                    const destValue = sortedSearchFilters[destIndex];
-                    const destPosition = destValue.position;
+      <Card>
+        <Layout>
+          <Layout.Section>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Text variant="headingMd" as="h2">
+                Search filters
+              </Text>
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      searchFilterModal: {
+                        ...prevState.searchFilterModal,
+                        isOpen: true,
+                        scope: 'add',
+                      },
+                    };
+                  });
+                  formMethods.reset({
+                    id: v4(),
+                    name: '',
+                    position: sortedSearchFilters.length,
+                    enabled: true,
+                    showInList: true,
+                    showInMap: true,
+                  });
+                }}
+              >
+                Add search filter
+              </Button>
+            </div>
+          </Layout.Section>
+          <Layout.Section>
+            <Text as="p">
+              Use search filters to allow users to filter locations based on a
+              certain criteria. For example, you can add a Wheelchair Accessible
+              filter to allow users to easily find wheelchair accessible
+              locations.
+            </Text>
+          </Layout.Section>
+          {sortedSearchFilters.length > 0 && (
+            <Layout.Section>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                {sortedSearchFilters.map((searchFilter, index) => {
+                  return (
+                    <SearchFilter
+                      key={searchFilter.id}
+                      searchFilter={searchFilter}
+                      onEdit={() => {
+                        setState((prevState) => {
+                          return {
+                            ...prevState,
+                            searchFilterModal: {
+                              ...prevState.searchFilterModal,
+                              isOpen: true,
+                              scope: 'edit',
+                            },
+                          };
+                        });
+                        formMethods.reset(searchFilter);
+                      }}
+                      onDelete={() => {
+                        const remainingSearchFilters = sortedSearchFilters
+                          .filter((sf) => {
+                            return sf.id !== searchFilter.id;
+                          })
+                          .map((sf, idx) => {
+                            return {
+                              ...sf,
+                              position: idx,
+                            };
+                          });
+                        onChange(remainingSearchFilters);
+                      }}
+                      onUp={() => {
+                        if (index === 0) {
+                          // Can't move up
+                          return;
+                        }
+                        const sourceValue = searchFilter;
+                        const sourcePosition = searchFilter.position;
+                        const destIndex = index - 1;
+                        const destValue = sortedSearchFilters[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedSearchFilters.map((sf) => {
-                        if (sf.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
+                        onChange(
+                          sortedSearchFilters.map((sf) => {
+                            if (sf.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (sf.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return sf;
+                          }),
+                        );
+                      }}
+                      onDown={() => {
+                        if (index === sortedSearchFilters.length - 1) {
+                          // Can't move down
+                          return;
                         }
-                        if (sf.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return sf;
-                      }),
-                    );
-                  }}
-                  onDown={() => {
-                    if (index === sortedSearchFilters.length - 1) {
-                      // Can't move down
-                      return;
-                    }
-                    const sourceValue = searchFilter;
-                    const sourcePosition = searchFilter.position;
-                    const destIndex = index + 1;
-                    const destValue = sortedSearchFilters[destIndex];
-                    const destPosition = destValue.position;
+                        const sourceValue = searchFilter;
+                        const sourcePosition = searchFilter.position;
+                        const destIndex = index + 1;
+                        const destValue = sortedSearchFilters[destIndex];
+                        const destPosition = destValue.position;
 
-                    onChange(
-                      sortedSearchFilters.map((sf) => {
-                        if (sf.id === sourceValue.id) {
-                          return {
-                            ...sourceValue,
-                            position: destPosition,
-                          };
-                        }
-                        if (sf.id === destValue.id) {
-                          return {
-                            ...destValue,
-                            position: sourcePosition,
-                          };
-                        }
-                        return sf;
-                      }),
-                    );
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+                        onChange(
+                          sortedSearchFilters.map((sf) => {
+                            if (sf.id === sourceValue.id) {
+                              return {
+                                ...sourceValue,
+                                position: destPosition,
+                              };
+                            }
+                            if (sf.id === destValue.id) {
+                              return {
+                                ...destValue,
+                                position: sourcePosition,
+                              };
+                            }
+                            return sf;
+                          }),
+                        );
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </Layout.Section>
+          )}
+        </Layout>
         {/* Search filter modal */}
         <Modal
           open={state.searchFilterModal.isOpen}
@@ -409,7 +427,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         >
           <SearchFilterForm />
         </Modal>
-      </div>
+      </Card>
     </FormProvider>
   );
 };

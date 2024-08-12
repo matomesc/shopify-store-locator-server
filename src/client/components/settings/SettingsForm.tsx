@@ -1,8 +1,8 @@
 import {
   Button,
   Card,
+  FormLayout,
   Layout,
-  Link,
   Page,
   Select,
   Text,
@@ -155,28 +155,72 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
       }}
     >
       <Layout>
-        <Layout.AnnotatedSection
-          title="Billing"
-          description="Update your billing plan here"
-        >
+        <Layout.Section>
           <Card>
-            Your current plan is{' '}
-            <Text as="span" fontWeight="bold">
-              {shop.plan.name}
-            </Text>{' '}
-            @ ${shop.planCharge?.price || '0.00'} / month{' '}
-            <Button
-              onClick={() => {
-                setState((prevState) => {
-                  return {
-                    ...prevState,
-                    plansModalOpen: true,
-                  };
-                });
-              }}
-            >
-              Change plan
-            </Button>
+            <Layout>
+              <Layout.Section>
+                <Text variant="headingMd" as="h2">
+                  General
+                </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <FormLayout>
+                  <Controller
+                    control={control}
+                    name="settings.timezone"
+                    render={({ field }) => {
+                      return (
+                        <Select
+                          label="Timezone"
+                          options={timezones.map((tz) => {
+                            return {
+                              label: tz,
+                              value: tz,
+                            };
+                          })}
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          error={errors.settings?.timezone?.message}
+                          helpText="This is used for analytics to display data in your timezone. Choose the location closest to you."
+                        />
+                      );
+                    }}
+                  />
+                </FormLayout>
+              </Layout.Section>
+            </Layout>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section>
+          <Card>
+            <Layout>
+              <Layout.Section>
+                <Text variant="headingMd" as="h2">
+                  Billing
+                </Text>
+              </Layout.Section>
+              <Layout.Section>
+                Your current plan is{' '}
+                <Text as="span" fontWeight="bold">
+                  {shop.plan.name}
+                </Text>{' '}
+                @ ${shop.planCharge?.price || '0.00'} / month{' '}
+                <Button
+                  onClick={() => {
+                    setState((prevState) => {
+                      return {
+                        ...prevState,
+                        plansModalOpen: true,
+                      };
+                    });
+                  }}
+                >
+                  Change plan
+                </Button>
+              </Layout.Section>
+            </Layout>
           </Card>
           <PlansModal
             open={state.plansModalOpen}
@@ -191,259 +235,226 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               });
             }}
           />
-        </Layout.AnnotatedSection>
-        <Layout.AnnotatedSection
-          title="Google Maps"
-          description={
-            <p>
-              Update your Google Maps API key here. You can create one with the
-              instructions on the <Link url="/setup">setup page</Link>.
-            </p>
-          }
-        >
+        </Layout.Section>
+
+        <Layout.Section>
           <Card>
-            <Controller
-              control={control}
-              name="settings.googleMapsApiKey"
-              render={({ field }) => {
-                return (
-                  <TextField
-                    autoComplete="off"
-                    label="Google Maps API key"
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    error={errors.settings?.googleMapsApiKey?.message}
-                  />
-                );
-              }}
-            />
+            <Layout>
+              <Layout.Section>
+                <Text variant="headingMd" as="h2">
+                  Google Maps
+                </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <Controller
+                  control={control}
+                  name="settings.googleMapsApiKey"
+                  render={({ field }) => {
+                    return (
+                      <TextField
+                        autoComplete="off"
+                        label="Google Maps API key"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        error={errors.settings?.googleMapsApiKey?.message}
+                      />
+                    );
+                  }}
+                />
+              </Layout.Section>
+            </Layout>
           </Card>
-        </Layout.AnnotatedSection>
+        </Layout.Section>
 
-        <Layout.AnnotatedSection title="General">
+        <Layout.Section>
           <Card>
-            <Controller
-              control={control}
-              name="settings.timezone"
-              render={({ field }) => {
-                return (
-                  <Select
-                    label="Timezone"
-                    options={timezones.map((tz) => {
-                      return {
-                        label: tz,
-                        value: tz,
-                      };
-                    })}
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    error={errors.settings?.timezone?.message}
-                    helpText="This is used for analytics to display data in your timezone. Choose the location closest to you."
-                  />
-                );
-              }}
-            />
+            <Layout>
+              <Layout.Section>
+                <Text variant="headingMd" as="h2">
+                  Appearance
+                </Text>
+              </Layout.Section>
+              <Layout.Section>
+                <Text as="p">Customize the look and feel of the locator.</Text>
+              </Layout.Section>
+            </Layout>
           </Card>
-        </Layout.AnnotatedSection>
+        </Layout.Section>
 
-        <Layout.AnnotatedSection
-          title="Search filters"
-          description="You can use search filters to allow users to filter locations based on a certain criteria. For example, you can add a Wheelchair Accessible filter to allow users to easily find wheelchair accessible locations."
-        >
-          <Card>
-            <Controller
-              control={control}
-              name="searchFilters"
-              render={({ field }) => {
-                return (
-                  <SearchFilters
-                    searchFilters={field.value}
-                    onChange={(searchFilters) => {
-                      field.onChange(searchFilters);
+        <Layout.Section>
+          <Controller
+            control={control}
+            name="searchFilters"
+            render={({ field }) => {
+              return (
+                <SearchFilters
+                  searchFilters={field.value}
+                  onChange={(searchFilters) => {
+                    field.onChange(searchFilters);
 
-                      const searchFilterIds = searchFilters.map((sf) => sf.id);
-                      const { languages, translations } = getValues();
-                      const newTranslations: typeof translations = [];
+                    const searchFilterIds = searchFilters.map((sf) => sf.id);
+                    const { languages, translations } = getValues();
+                    const newTranslations: typeof translations = [];
 
-                      languages.forEach((language) => {
-                        let languageTranslations = translations.filter(
-                          (t) => t.languageId === language.id,
+                    languages.forEach((language) => {
+                      let languageTranslations = translations.filter(
+                        (t) => t.languageId === language.id,
+                      );
+
+                      searchFilterIds.forEach((searchFilterId) => {
+                        const translation = languageTranslations.find(
+                          (t) => t.searchFilterId === searchFilterId,
                         );
 
-                        searchFilterIds.forEach((searchFilterId) => {
-                          const translation = languageTranslations.find(
-                            (t) => t.searchFilterId === searchFilterId,
-                          );
-
-                          if (!translation) {
-                            languageTranslations.push({
-                              id: v4(),
-                              languageId: language.id,
-                              value: '',
-                              target: null,
-                              searchFilterId,
-                              customFieldId: null,
-                              customActionId: null,
-                            });
-                          }
-                        });
-
-                        languageTranslations = languageTranslations.filter(
-                          (translation) => {
-                            return (
-                              translation.searchFilterId === null ||
-                              searchFilterIds.includes(
-                                translation.searchFilterId,
-                              )
-                            );
-                          },
-                        );
-
-                        newTranslations.push(...languageTranslations);
+                        if (!translation) {
+                          languageTranslations.push({
+                            id: v4(),
+                            languageId: language.id,
+                            value: '',
+                            target: null,
+                            searchFilterId,
+                            customFieldId: null,
+                            customActionId: null,
+                          });
+                        }
                       });
 
-                      setValue('translations', newTranslations);
-                    }}
-                  />
-                );
-              }}
-            />
-          </Card>
-        </Layout.AnnotatedSection>
-
-        <Layout.AnnotatedSection
-          title="Custom fields"
-          description="Use custom fields to add custom data to each location. Give it a default value to apply to all stores that haven't set their own value."
-        >
-          <Card>
-            <Controller
-              control={control}
-              name="customFields"
-              render={({ field }) => {
-                return (
-                  <CustomFields
-                    customFields={field.value}
-                    onChange={(customFields) => {
-                      field.onChange(customFields);
-
-                      const customFieldIds = customFields.map((cf) => cf.id);
-                      const { languages, translations } = getValues();
-                      const newTranslations: typeof translations = [];
-
-                      languages.forEach((language) => {
-                        let languageTranslations = translations.filter(
-                          (t) => t.languageId === language.id,
-                        );
-
-                        customFieldIds.forEach((customFieldId) => {
-                          const translation = languageTranslations.find(
-                            (t) => t.customFieldId === customFieldId,
+                      languageTranslations = languageTranslations.filter(
+                        (translation) => {
+                          return (
+                            translation.searchFilterId === null ||
+                            searchFilterIds.includes(translation.searchFilterId)
                           );
+                        },
+                      );
 
-                          if (!translation) {
-                            languageTranslations.push({
-                              id: v4(),
-                              languageId: language.id,
-                              value: '',
-                              target: null,
-                              searchFilterId: null,
-                              customFieldId,
-                              customActionId: null,
-                            });
-                          }
-                        });
+                      newTranslations.push(...languageTranslations);
+                    });
 
-                        languageTranslations = languageTranslations.filter(
-                          (translation) => {
-                            return (
-                              translation.customFieldId === null ||
-                              customFieldIds.includes(translation.customFieldId)
-                            );
-                          },
+                    setValue('translations', newTranslations);
+                  }}
+                />
+              );
+            }}
+          />
+        </Layout.Section>
+
+        <Layout.Section>
+          <Controller
+            control={control}
+            name="customFields"
+            render={({ field }) => {
+              return (
+                <CustomFields
+                  customFields={field.value}
+                  onChange={(customFields) => {
+                    field.onChange(customFields);
+
+                    const customFieldIds = customFields.map((cf) => cf.id);
+                    const { languages, translations } = getValues();
+                    const newTranslations: typeof translations = [];
+
+                    languages.forEach((language) => {
+                      let languageTranslations = translations.filter(
+                        (t) => t.languageId === language.id,
+                      );
+
+                      customFieldIds.forEach((customFieldId) => {
+                        const translation = languageTranslations.find(
+                          (t) => t.customFieldId === customFieldId,
                         );
 
-                        newTranslations.push(...languageTranslations);
+                        if (!translation) {
+                          languageTranslations.push({
+                            id: v4(),
+                            languageId: language.id,
+                            value: '',
+                            target: null,
+                            searchFilterId: null,
+                            customFieldId,
+                            customActionId: null,
+                          });
+                        }
                       });
 
-                      setValue('translations', newTranslations);
-                    }}
-                  />
-                );
-              }}
-            />
-          </Card>
-        </Layout.AnnotatedSection>
-
-        <Layout.AnnotatedSection
-          title="Custom actions"
-          description="Use custom actions to add custom buttons that open links or execute custom JavaScript."
-        >
-          <Card>
-            <Controller
-              control={control}
-              name="customActions"
-              render={({ field }) => {
-                return (
-                  <CustomActions
-                    customActions={field.value}
-                    onChange={(customActions) => {
-                      field.onChange(customActions);
-
-                      const customActionIds = customActions.map((ca) => ca.id);
-                      const { languages, translations } = getValues();
-                      const newTranslations: typeof translations = [];
-
-                      languages.forEach((language) => {
-                        let languageTranslations = translations.filter(
-                          (t) => t.languageId === language.id,
-                        );
-
-                        customActionIds.forEach((customActionId) => {
-                          const translation = languageTranslations.find(
-                            (t) => t.customActionId === customActionId,
+                      languageTranslations = languageTranslations.filter(
+                        (translation) => {
+                          return (
+                            translation.customFieldId === null ||
+                            customFieldIds.includes(translation.customFieldId)
                           );
+                        },
+                      );
 
-                          if (!translation) {
-                            languageTranslations.push({
-                              id: v4(),
-                              languageId: language.id,
-                              value: '',
-                              target: null,
-                              searchFilterId: null,
-                              customFieldId: null,
-                              customActionId,
-                            });
-                          }
-                        });
+                      newTranslations.push(...languageTranslations);
+                    });
 
-                        languageTranslations = languageTranslations.filter(
-                          (translation) => {
-                            return (
-                              translation.customActionId === null ||
-                              customActionIds.includes(
-                                translation.customActionId,
-                              )
-                            );
-                          },
+                    setValue('translations', newTranslations);
+                  }}
+                />
+              );
+            }}
+          />
+        </Layout.Section>
+
+        <Layout.Section>
+          <Controller
+            control={control}
+            name="customActions"
+            render={({ field }) => {
+              return (
+                <CustomActions
+                  customActions={field.value}
+                  onChange={(customActions) => {
+                    field.onChange(customActions);
+
+                    const customActionIds = customActions.map((ca) => ca.id);
+                    const { languages, translations } = getValues();
+                    const newTranslations: typeof translations = [];
+
+                    languages.forEach((language) => {
+                      let languageTranslations = translations.filter(
+                        (t) => t.languageId === language.id,
+                      );
+
+                      customActionIds.forEach((customActionId) => {
+                        const translation = languageTranslations.find(
+                          (t) => t.customActionId === customActionId,
                         );
 
-                        newTranslations.push(...languageTranslations);
+                        if (!translation) {
+                          languageTranslations.push({
+                            id: v4(),
+                            languageId: language.id,
+                            value: '',
+                            target: null,
+                            searchFilterId: null,
+                            customFieldId: null,
+                            customActionId,
+                          });
+                        }
                       });
 
-                      setValue('translations', newTranslations);
-                    }}
-                  />
-                );
-              }}
-            />
-          </Card>
-        </Layout.AnnotatedSection>
+                      languageTranslations = languageTranslations.filter(
+                        (translation) => {
+                          return (
+                            translation.customActionId === null ||
+                            customActionIds.includes(translation.customActionId)
+                          );
+                        },
+                      );
 
-        <Layout.AnnotatedSection title="Appearance">
-          <Card>Appearance</Card>
-        </Layout.AnnotatedSection>
+                      newTranslations.push(...languageTranslations);
+                    });
+
+                    setValue('translations', newTranslations);
+                  }}
+                />
+              );
+            }}
+          />
+        </Layout.Section>
 
         <Layout.Section>
           <Controller
