@@ -1583,6 +1583,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/color-convert@npm:^2":
+  version: 2.0.3
+  resolution: "@types/color-convert@npm:2.0.3"
+  dependencies:
+    "@types/color-name": "npm:*"
+  checksum: 10/39fe4036c0fb27e796f962eb19e4640aaa7f55cdb05cb8d4b21ef48d4a6f82fc281c06a6664ef1dfb11d9d6d2051a988a0ffa0b7a2f71b3a9418ebced12a9f38
+  languageName: node
+  linkType: hard
+
+"@types/color-name@npm:*":
+  version: 1.1.4
+  resolution: "@types/color-name@npm:1.1.4"
+  checksum: 10/be275af06d32e6f09c8f1b8c15d35d2b8194736af980569b2fa572720339a19b3d5ccb63ce5950105d859d5c6226c98b8d8ecd613d626e757667037a90b9b47f
+  languageName: node
+  linkType: hard
+
 "@types/connect@npm:*":
   version: 3.4.38
   resolution: "@types/connect@npm:3.4.38"
@@ -5982,6 +5998,7 @@ __metadata:
     "@trpc/next": "npm:^11.0.0-rc.403"
     "@trpc/react-query": "npm:^11.0.0-rc.403"
     "@trpc/server": "npm:^11.0.0-rc.403"
+    "@types/color-convert": "npm:^2"
     "@types/cors": "npm:^2"
     "@types/jsonwebtoken": "npm:^9.0.6"
     "@types/lodash": "npm:^4"
@@ -5996,6 +6013,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^7.13.1"
     "@typescript-eslint/parser": "npm:^7.13.1"
     "@vis.gl/react-google-maps": "npm:^1.1.0"
+    color-convert: "npm:^2.0.1"
     commitizen: "npm:^4.3.0"
     cors: "npm:^2.8.5"
     cz-conventional-changelog: "npm:^3.3.0"

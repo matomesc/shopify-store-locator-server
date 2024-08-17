@@ -39,13 +39,65 @@ export type PlansGetAllOutput = RouterOutput['plans']['getAll'];
 /**
  * Settings
  */
+const HexColor = z
+  .string()
+  .regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/, 'Value must be a valid hex color');
+
+const MapMarkerType = z.enum(['pin', 'image']);
 
 export const SettingsUpdateInput = z.object({
   googleMapsApiKey: z.string(),
   timezone: z.string().refine((val) => {
     return timezones.includes(val);
   }, 'Invalid timezone'),
+  borderRadius: z
+    .string()
+    .min(3)
+    .max(100)
+    .regex(/^\d+(\.\d+)?px$/),
+  searchInputBorderColor: HexColor,
+  searchInputBackgroundColor: HexColor,
+  searchInputPlaceholderColor: HexColor,
+  searchButtonTextColor: HexColor,
+  searchButtonBackgroundColor: HexColor,
+  searchButtonHoverBackgroundColor: HexColor,
+  searchFilterTextColor: HexColor,
+  searchFilterBackgroundColor: HexColor,
+  searchFilterHoverBackgroundColor: HexColor,
+  searchFilterSelectedBorderColor: HexColor,
+  searchFilterSelectedBackgroundColor: HexColor,
+  searchFilterSelectedHoverBackgroundColor: HexColor,
+  listLocationNameColor: HexColor,
+  listTextColor: HexColor,
+  listLinkColor: HexColor,
+  listSearchFilterColor: HexColor,
+  listCustomActionTextColor: HexColor,
+  listCustomActionBackgroundColor: HexColor,
+  listCustomActionHoverBackgroundColor: HexColor,
+  mapMarkerType: MapMarkerType,
+  mapMarkerBackgroundColor: HexColor,
+  mapMarkerBorderColor: HexColor,
+  mapMarkerGlyphColor: HexColor,
+  // You need 4*(n/3) chars to represent n bytes. So for max 5MB we need about
+  // 6666667 characters
+  mapMarkerImage: z.string().max(6666667),
+  mapLocationNameColor: HexColor,
+  mapTextColor: HexColor,
+  mapLinkColor: HexColor,
+  mapSearchFilterColor: HexColor,
+  mapCustomActionTextColor: HexColor,
+  mapCustomActionBackgroundColor: HexColor,
+  mapCustomActionHoverBackgroundColor: HexColor,
 });
+// We can't use .refine() here because the resulting schema is a ZodEffects
+// type which doesn't allow calling .pick() or .omit(). See this issue for
+// more details https://github.com/colinhacks/zod/issues/2474.
+// .refine((val) => {
+//   if (val.mapMarkerType === 'image') {
+//     return val.mapMarkerImage.length > 0;
+//   }
+//   return true;
+// })
 export type SettingsUpdateInput = z.infer<typeof SettingsUpdateInput>;
 
 /**

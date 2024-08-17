@@ -76,10 +76,7 @@ const Settings: NextPage = () => {
       shop={shopsGetQuery.data.shop}
       plans={plansGetAllQuery.data.plans}
       defaultFormValues={{
-        settings: {
-          googleMapsApiKey: settingsGetQuery.data.settings.googleMapsApiKey,
-          timezone: settingsGetQuery.data.settings.timezone,
-        },
+        settings: settingsGetQuery.data.settings,
         searchFilters: searchFiltersGetAllQuery.data.searchFilters,
         customFields: customFieldsGetAllQuery.data.customFields,
         customActions: customActionsGetAllQuery.data.customActions,
