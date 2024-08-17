@@ -7,26 +7,39 @@ import { trpc } from '@/lib/trpc';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Script from 'next/script';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
-    <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <Component {...pageProps} />
-      <ToastContainer
-        position="bottom-center"
-        autoClose={5000}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
+    <>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-JRKJYM4TJP"
+        strategy="lazyOnload"
       />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </PolarisAppProvider>
+      <Script id="GoogleAnalyticsInit" strategy="lazyOnload">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JRKJYM4TJP');
+      `}</Script>
+      <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <Component {...pageProps} />
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </PolarisAppProvider>
+    </>
   );
 };
 
