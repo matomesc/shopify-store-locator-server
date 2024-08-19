@@ -26,7 +26,7 @@ export const CustomActionValues: React.FC<CustomActionValuesProps> = ({
 
           return { customAction, customActionValue };
         })
-        .filter((v) => !!v)
+        .filter((v) => v !== null)
         .sort((valueA, valueB) => {
           return valueA.customAction.position - valueB.customAction.position;
         })

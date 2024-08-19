@@ -11,7 +11,10 @@
     "start:next": "node --require reflect-metadata ./node_modules/.bin/next start",
     "dev:server": "env-cmd tsc-watch -p tsconfig.server.json --onSuccess \"node --require reflect-metadata --require tsconfig-paths/register --enable-source-maps dist/server/src/server/server.js\"",
     "build:server": "tsc -p tsconfig.server.json",
-    "start:server": "node --enable-source-maps --require reflect-metadata --require tsconfig-paths/register --optimize_for_size --max_old_space_size=2000 dist/server/src/server/server.js",
+    "start:server": "node --enable-source-maps --require reflect-metadata --require tsconfig-paths/register --optimize_for_size --max_old_space_size=500 dist/server/src/server/server.js",
+    "dev:workers": "env-cmd tsc-watch -p tsconfig.workers.json --onSuccess \"node --require reflect-metadata --require tsconfig-paths/register --enable-source-maps dist/workers/src/server/workers/workers.js\"",
+    "build:workers": "tsc -p tsconfig.workers.json",
+    "start:workers": "node --enable-source-maps --require reflect-metadata --require tsconfig-paths/register --optimize_for_size --max_old_space_size=500 dist/workers/src/server/workers/workers.js",
     "lint": "next lint",
     "commit": "lint-staged && cz",
     "ngrok": "ngrok start --all --config ngrok.yml"
@@ -31,10 +34,12 @@
     "@trpc/react-query": "^11.0.0-rc.403",
     "@trpc/server": "^11.0.0-rc.403",
     "@vis.gl/react-google-maps": "^1.1.0",
+    "bullmq": "^5.12.9",
     "color-convert": "^2.0.1",
     "cors": "^2.8.5",
     "got": "^12.6.1",
     "http-terminator": "^3.2.0",
+    "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
@@ -91,7 +96,7 @@
     "ts-essentials": "^10.0.1",
     "tsc-watch": "^6.2.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   },
   "packageManager": "yarn@4.3.0"
 }

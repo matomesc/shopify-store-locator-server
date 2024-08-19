@@ -13,6 +13,7 @@ const Config = z.object({
   SHOPIFY_API_VERSION: z.string(),
   NEXT_PUBLIC_SENTRY_DSN: z.string(),
   WIDGET_BASE_URL: z.string(),
+  REDIS_URL: z.string(),
 });
 
 export const config = Config.parse(process.env);

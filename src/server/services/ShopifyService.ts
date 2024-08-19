@@ -1,4 +1,3 @@
-import got from 'got';
 import { singleton } from 'tsyringe';
 import { z } from 'zod';
 import { Plan } from '@prisma/client';
@@ -10,10 +9,14 @@ const ExchangeCodeForAccessTokenResponse = z.object({
 });
 
 const GetShopResponse = z.object({
-  shop: z.object({
-    email: z.string(),
-    iana_timezone: z.string(),
-  }),
+  shop: z
+    .object({
+      name: z.string(),
+      email: z.string(),
+      iana_timezone: z.string(),
+      shop_owner: z.string(),
+    })
+    .passthrough(),
 });
 
 const GetWebhooksResponse = z.object({
@@ -52,6 +55,11 @@ const GetRecurringApplicationChargeResponse = z.object({
 
 @singleton()
 export class ShopifyService {
+  public async getClient() {
+    const gotImport = await import('got');
+    return gotImport.got;
+  }
+
   public async exchangeCodeForAccessToken({
     shopDomain,
     code,
@@ -61,7 +69,8 @@ export class ShopifyService {
   }) {
     const cliendId = config.NEXT_PUBLIC_SHOPIFY_CLIENT_ID;
     const clientSecret = config.SHOPIFY_CLIENT_SECRET;
-    const json = await got
+    const client = await this.getClient();
+    const json = await client
       .post(
         `https://${shopDomain}/admin/oauth/access_token?client_id=${cliendId}&client_secret=${clientSecret}&code=${code}`,
       )
@@ -78,7 +87,8 @@ export class ShopifyService {
     shopDomain: string;
     accessToken: string;
   }) {
-    const json = await got
+    const client = await this.getClient();
+    const json = await client
       .get(
         `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/shop.json`,
         {
@@ -100,7 +110,8 @@ export class ShopifyService {
     shopDomain: string;
     accessToken: string;
   }) {
-    const json = await got
+    const client = await this.getClient();
+    const json = await client
       .get(
         `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/webhooks.json`,
         {
@@ -124,7 +135,8 @@ export class ShopifyService {
     accessToken: string;
     topic: string;
   }) {
-    await got.post(
+    const client = await this.getClient();
+    await client.post(
       `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/webhooks.json`,
       {
         headers: {
@@ -152,7 +164,8 @@ export class ShopifyService {
     trialDays: number;
     plan: Plan;
   }) {
-    const json = await got
+    const client = await this.getClient();
+    const json = await client
       .post(
         `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges.json`,
         {
@@ -185,7 +198,8 @@ export class ShopifyService {
     accessToken: string;
     chargeId: bigint;
   }) {
-    const json = await got
+    const client = await this.getClient();
+    const json = await client
       .get(
         `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges/${chargeId}.json`,
         {
@@ -209,7 +223,8 @@ export class ShopifyService {
     accessToken: string;
     chargeId: bigint;
   }) {
-    await got.delete(
+    const client = await this.getClient();
+    await client.delete(
       `https://${shopDomain}/admin/api/${config.SHOPIFY_API_VERSION}/recurring_application_charges/${chargeId}.json`,
       {
         headers: {

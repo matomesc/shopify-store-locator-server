@@ -10,7 +10,9 @@ generator client {
 model Shop {
   id                String    @id @default(uuid())
   domain            String    @unique
+  name              String
   email             String
+  ownerName         String
   accessToken       String
   accessTokenScope  String
   installedAt       DateTime  @db.Timestamptz(3)
@@ -21,6 +23,7 @@ model Shop {
   lastTrialAt       DateTime? @db.Timestamptz(3)
   showPlansModal    Boolean
   showOnboarding    Boolean
+  shopifyRawData    Json
   locations         Location[]
   settings          Settings?
   searchFilters     SearchFilter[]
@@ -62,7 +65,6 @@ model Settings {
   listCustomActionTextColor String
   listCustomActionBackgroundColor String
   listCustomActionHoverBackgroundColor  String
-
   mapMarkerType MapMarkerType
   mapMarkerBackgroundColor  String
   mapMarkerBorderColor String

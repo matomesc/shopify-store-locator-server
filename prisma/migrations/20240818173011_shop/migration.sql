@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Shop" ADD COLUMN     "shopifyRawData" JSONB NOT NULL DEFAULT '{}',
+ALTER COLUMN "name" DROP DEFAULT,
+ALTER COLUMN "ownerName" DROP DEFAULT;

@@ -10,6 +10,7 @@ import { errorHandler, sendError } from '@/server/lib/api';
 import { GetShopifyAuthCallbackInput } from '@/dto/api';
 import * as Sentry from '@sentry/nextjs';
 import { timezones } from '@/lib/timezones';
+import { Prisma } from '@prisma/client';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -94,13 +95,16 @@ router.get(async (req, res) => {
     shop = await prisma.shop.create({
       data: {
         domain: shopDomain,
+        name: shopifyShop.shop.name,
         email: shopifyShop.shop.email,
+        ownerName: shopifyShop.shop.shop_owner,
         accessToken: result.access_token,
         accessTokenScope: result.scope,
         installedAt: new Date(),
         planId: 'free',
         showPlansModal: true,
         showOnboarding: true,
+        shopifyRawData: shopifyShop.shop as Prisma.JsonObject,
         settings: {
           create: {
             googleMapsApiKey: '',
