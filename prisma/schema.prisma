@@ -112,6 +112,7 @@ model Location {
   updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)
 
   @@index([shopId])
+  @@index([active])
 }
 
 model SearchFilter {
@@ -130,6 +131,7 @@ model SearchFilter {
 
   @@unique([shopId, name])
   @@index([shopId])
+  @@index([enabled])
 }
 
 enum CustomFieldLabelPosition {
@@ -156,6 +158,7 @@ model CustomField {
 
   @@unique([shopId, name])
   @@index([shopId])
+  @@index([enabled])
 }
 
 model CustomFieldValue {
@@ -194,6 +197,7 @@ model CustomAction {
 
   @@unique([shopId, name])
   @@index([shopId])
+  @@index([enabled])
 }
 
 model CustomActionValue {
@@ -220,6 +224,7 @@ model Language {
 
   @@unique([shopId, code])
   @@index([shopId])
+  @@index([enabled])
 }
 
 model Translation {
