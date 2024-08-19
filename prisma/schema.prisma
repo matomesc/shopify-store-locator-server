@@ -80,12 +80,15 @@ model Settings {
 }
 
 model Plan {
-  id        String  @id
-  name      String
-  price     Decimal
-  enabled   Boolean
-  trialDays Int
-  shops     Shop[]
+  id              String  @id
+  name            String
+  price           Decimal
+  enabled         Boolean
+  trialDays       Int
+  locationsLimit  Int
+  languagesLimit  Int
+  analytics       Boolean
+  shops           Shop[]
 }
 
 model Location {
