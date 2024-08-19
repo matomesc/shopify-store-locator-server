@@ -40,43 +40,43 @@ enum MapMarkerType {
 }
 
 model Settings {
-  id                String  @id @default(uuid())
-  shopId            String  @unique
-  shop              Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  googleMapsApiKey  String
-  timezone          String
-  borderRadius      String
-  searchInputBorderColor  String
-  searchInputBackgroundColor  String
-  searchInputPlaceholderColor String
-  searchButtonTextColor String
-  searchButtonBackgroundColor String
-  searchButtonHoverBackgroundColor  String
-  searchFilterTextColor String
-  searchFilterBackgroundColor String
-  searchFilterHoverBackgroundColor  String
-  searchFilterSelectedBorderColor String
-  searchFilterSelectedBackgroundColor String
+  id                                        String  @id @default(uuid())
+  shopId                                    String  @unique
+  shop                                      Shop    @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  googleMapsApiKey                          String
+  timezone                                  String
+  borderRadius                              String
+  searchInputBorderColor                    String
+  searchInputBackgroundColor                String
+  searchInputPlaceholderColor               String
+  searchButtonTextColor                     String
+  searchButtonBackgroundColor               String
+  searchButtonHoverBackgroundColor          String
+  searchFilterTextColor                     String
+  searchFilterBackgroundColor               String
+  searchFilterHoverBackgroundColor          String
+  searchFilterSelectedBorderColor           String
+  searchFilterSelectedBackgroundColor       String
   searchFilterSelectedHoverBackgroundColor  String
-  listLocationNameColor String
-  listTextColor String
-  listLinkColor String
-  listSearchFilterColor String
-  listCustomActionTextColor String
-  listCustomActionBackgroundColor String
-  listCustomActionHoverBackgroundColor  String
-  mapMarkerType MapMarkerType
-  mapMarkerBackgroundColor  String
-  mapMarkerBorderColor String
-  mapMarkerGlyphColor String
-  mapMarkerImage  String
-  mapLocationNameColor String
-  mapTextColor String
-  mapLinkColor String
-  mapSearchFilterColor String
-  mapCustomActionTextColor String
-  mapCustomActionBackgroundColor String
-  mapCustomActionHoverBackgroundColor  String
+  listLocationNameColor                     String
+  listTextColor                             String
+  listLinkColor                             String
+  listSearchFilterColor                     String
+  listCustomActionTextColor                 String
+  listCustomActionBackgroundColor           String
+  listCustomActionHoverBackgroundColor      String
+  mapMarkerType                             MapMarkerType
+  mapMarkerBackgroundColor                  String
+  mapMarkerBorderColor                      String
+  mapMarkerGlyphColor                       String
+  mapMarkerImage                            String
+  mapLocationNameColor                      String
+  mapTextColor                              String
+  mapLinkColor                              String
+  mapSearchFilterColor                      String
+  mapCustomActionTextColor                  String
+  mapCustomActionBackgroundColor            String
+  mapCustomActionHoverBackgroundColor       String
 }
 
 model Plan {
