@@ -102,4 +102,18 @@ export const languagesRouter = router({
         };
       });
     }),
+  count: privateProcedure.query(async ({ ctx }) => {
+    const { shop } = ctx;
+
+    const count = await prisma.language.count({
+      where: {
+        shopId: shop.id,
+        enabled: true,
+      },
+    });
+
+    return {
+      count,
+    };
+  }),
 });

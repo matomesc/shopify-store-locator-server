@@ -163,6 +163,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
         </Button>
       }
       height="fit-content"
+      width="fit-content"
     >
       <div
         style={{
@@ -186,12 +187,17 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                   <div>
                     <div>
                       <Text as="span" fontWeight="bold">
-                        5
+                        {plan.locationsLimit}
                       </Text>{' '}
                       locations
                     </div>
                     <Divider />
-                    <div>1 display language</div>
+                    <div>
+                      <Text as="span" fontWeight="bold">
+                        {plan.languagesLimit}
+                      </Text>{' '}
+                      display language
+                    </div>
                     <Divider />
                     <div>Spreadsheet bulk import</div>
                     <Divider />
@@ -199,9 +205,11 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>Unlimited custom fields</div>
                     <Divider />
-                    <div>Custom theme colors</div>
+                    <div>Unlimited custom actions</div>
                     <Divider />
-                    <div>Custom map pin icons</div>
+                    <div>Customize appearance</div>
+                    <Divider />
+                    <div>Customize map markers</div>
                   </div>
                 );
                 break;
@@ -212,12 +220,17 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>
                       <Text as="span" fontWeight="bold">
-                        300
+                        {plan.locationsLimit}
                       </Text>{' '}
                       locations
                     </div>
                     <Divider />
-                    <div>2 display languages</div>
+                    <div>
+                      <Text as="span" fontWeight="bold">
+                        {plan.languagesLimit}
+                      </Text>{' '}
+                      display languages
+                    </div>
                     <Divider />
                     <div>Analytics</div>
                     <Divider />
@@ -232,12 +245,17 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>
                       <Text as="span" fontWeight="bold">
-                        1000
+                        {plan.locationsLimit}
                       </Text>{' '}
                       locations
                     </div>
                     <Divider />
-                    <div>5 display languages</div>
+                    <div>
+                      <Text as="span" fontWeight="bold">
+                        {plan.languagesLimit}
+                      </Text>{' '}
+                      display languages
+                    </div>
                     <Divider />
                     <div>Priority email support</div>
                   </div>
@@ -250,14 +268,19 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <Divider />
                     <div>
                       <Text as="span" fontWeight="bold">
-                        5000
+                        {plan.locationsLimit}
                       </Text>{' '}
                       locations
                     </div>
                     <Divider />
-                    <div>API access (coming soon)</div>
+                    <div>
+                      <Text as="span" fontWeight="bold">
+                        {plan.languagesLimit}
+                      </Text>{' '}
+                      display languages
+                    </div>
                     <Divider />
-                    <div>10 display languages</div>
+                    <div>API access (coming soon)</div>
                   </div>
                 );
                 break;
@@ -273,7 +296,12 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       locations
                     </div>
                     <Divider />
-                    <div>Unlimited display languages</div>
+                    <div>
+                      <Text as="span" fontWeight="bold">
+                        Unlimited
+                      </Text>{' '}
+                      display languages
+                    </div>
                   </div>
                 );
                 break;

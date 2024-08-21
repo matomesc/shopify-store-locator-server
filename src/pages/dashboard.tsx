@@ -48,6 +48,8 @@ const Dashboard: NextPage = () => {
   const searchFiltersGetAllQuery = trpc.searchFilters.getAll.useQuery();
   const customFieldsGetAllQuery = trpc.customFields.getAll.useQuery();
   const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
+  const locationsCountQuery = trpc.locations.count.useQuery();
+  const languagesCountQuery = trpc.languages.count.useQuery();
   useEffect(() => {
     if (shopsGetQuery.isPending || shopsGetQuery.isError) {
       return;
@@ -72,7 +74,9 @@ const Dashboard: NextPage = () => {
     settingsGetQuery.isPending ||
     searchFiltersGetAllQuery.isPending ||
     customFieldsGetAllQuery.isPending ||
-    customActionsGetAllQuery.isPending
+    customActionsGetAllQuery.isPending ||
+    locationsCountQuery.isPending ||
+    languagesCountQuery.isPending
   ) {
     return <Spinner />;
   }
@@ -84,7 +88,9 @@ const Dashboard: NextPage = () => {
     settingsGetQuery.isError ||
     searchFiltersGetAllQuery.isError ||
     customFieldsGetAllQuery.isError ||
-    customActionsGetAllQuery.isError
+    customActionsGetAllQuery.isError ||
+    locationsCountQuery.isError ||
+    languagesCountQuery.isError
   ) {
     return (
       <Page fullWidth>
@@ -108,6 +114,8 @@ const Dashboard: NextPage = () => {
                   searchFiltersGetAllQuery.refetch(),
                   customFieldsGetAllQuery.refetch(),
                   customActionsGetAllQuery.refetch(),
+                  locationsCountQuery.refetch(),
+                  languagesCountQuery.refetch(),
                 ]);
               }}
             >
@@ -258,12 +266,66 @@ const Dashboard: NextPage = () => {
         {!shopsGetQuery.data.shop.showOnboarding &&
           !settingsGetQuery.data.settings.googleMapsApiKey && (
             <Layout.Section>
-              <Banner title="Setup your Google Maps API key now" tone="warning">
+              <Banner
+                title="Setup your Google Maps API key now"
+                tone="critical"
+              >
                 You have not set a Google Maps API key. Go to{' '}
                 <Link url="/setup">setup</Link> to create one.
               </Banner>
             </Layout.Section>
           )}
+
+        {locationsCountQuery.data.count >
+          shopsGetQuery.data.shop.plan.locationsLimit && (
+          <Layout.Section>
+            <Banner
+              title={`You have more active locations (${locationsCountQuery.data.count}) than your plan supports (${shopsGetQuery.data.shop.plan.locationsLimit})`}
+              tone="warning"
+            >
+              Some locations will not show up on your storefront. Upgrade your
+              plan now to support all locations.{' '}
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      plansModalOpen: true,
+                    };
+                  });
+                }}
+              >
+                Upgrade
+              </Button>
+            </Banner>
+          </Layout.Section>
+        )}
+
+        {languagesCountQuery.data.count + 1 >
+          shopsGetQuery.data.shop.plan.languagesLimit && (
+          <Layout.Section>
+            <Banner
+              title={`You have more enabled languages (${languagesCountQuery.data.count + 1}) than your plan supports (${shopsGetQuery.data.shop.plan.languagesLimit})`}
+              tone="warning"
+            >
+              Some languages will not show up on your storefront. Upgrade your
+              plan now to support all languages.{' '}
+              <Button
+                onClick={() => {
+                  setState((prevState) => {
+                    return {
+                      ...prevState,
+                      plansModalOpen: true,
+                    };
+                  });
+                }}
+              >
+                Upgrade
+              </Button>
+            </Banner>
+          </Layout.Section>
+        )}
+
         {(shopsGetQuery.data.shop.showOnboarding ||
           !settingsGetQuery.data.settings.googleMapsApiKey) && (
           <Layout.Section>

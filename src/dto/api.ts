@@ -34,7 +34,66 @@ export type GetLocatorOutput = {
   ok: boolean;
   settings: {
     googleMapsApiKey: string;
+    borderRadius: string;
+    searchInputBorderColor: string;
+    searchInputBackgroundColor: string;
+    searchInputPlaceholderColor: string;
+    searchButtonTextColor: string;
+    searchButtonBackgroundColor: string;
+    searchButtonHoverBackgroundColor: string;
+    searchFilterTextColor: string;
+    searchFilterBackgroundColor: string;
+    searchFilterHoverBackgroundColor: string;
+    searchFilterSelectedBorderColor: string;
+    searchFilterSelectedBackgroundColor: string;
+    searchFilterSelectedHoverBackgroundColor: string;
+    listLocationNameColor: string;
+    listTextColor: string;
+    listLinkColor: string;
+    listSearchFilterColor: string;
+    listCustomActionTextColor: string;
+    listCustomActionBackgroundColor: string;
+    listCustomActionHoverBackgroundColor: string;
+    mapMarkerType: string;
+    mapMarkerBackgroundColor: string;
+    mapMarkerBorderColor: string;
+    mapMarkerGlyphColor: string;
+    mapMarkerImage: string;
+    mapLocationNameColor: string;
+    mapTextColor: string;
+    mapLinkColor: string;
+    mapSearchFilterColor: string;
+    mapCustomActionTextColor: string;
+    mapCustomActionBackgroundColor: string;
+    mapCustomActionHoverBackgroundColor: string;
   };
+  locations: Array<{
+    id: string;
+    name: string;
+    active: boolean;
+    phone: string;
+    email: string;
+    website: string;
+    address1: string;
+    address2: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+    lat: number;
+    lng: number;
+    searchFilters: Array<{ id: string }>;
+    customFieldValues: Array<{
+      id: string;
+      value: string;
+      customFieldId: string;
+    }>;
+    customActionValues: Array<{
+      id: string;
+      value: string;
+      customActionId: string;
+    }>;
+  }>;
   searchFilters: Array<{
     id: string;
     name: string;
@@ -65,33 +124,12 @@ export type GetLocatorOutput = {
     defaultValue: string;
     openInNewTab: boolean;
   }>;
-  locations: Array<{
+  translations: Array<{
     id: string;
-    name: string;
-    active: boolean;
-    phone: string;
-    email: string;
-    website: string;
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zip: string;
-    country: string;
-    lat: number;
-    lng: number;
-    searchFilters: Array<{ id: string }>;
-    customFieldValues: Array<{
-      id: string;
-      value: string;
-      locationId: string;
-      customFieldId: string;
-    }>;
-    customActionValues: Array<{
-      id: string;
-      value: string;
-      locationId: string;
-      customActionId: string;
-    }>;
+    value: string;
+    target: string | null;
+    searchFilterId: string | null;
+    customFieldId: string | null;
+    customActionId: string | null;
   }>;
 };

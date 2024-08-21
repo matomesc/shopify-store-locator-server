@@ -426,4 +426,18 @@ export const locationsRouter = router({
         { isolationLevel: 'ReadCommitted' },
       );
     }),
+  count: privateProcedure.query(async ({ ctx }) => {
+    const { shop } = ctx;
+
+    const count = await prisma.location.count({
+      where: {
+        shopId: shop.id,
+        active: true,
+      },
+    });
+
+    return {
+      count,
+    };
+  }),
 });

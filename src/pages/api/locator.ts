@@ -22,6 +22,9 @@ router.use(cors()).get(async (req, res) => {
     where: {
       id: input.data.id,
     },
+    include: {
+      plan: true,
+    },
   });
 
   if (!shop) {
@@ -29,77 +32,93 @@ router.use(cors()).get(async (req, res) => {
     return;
   }
 
-  let locationLimit = 5;
-
-  if (shop.planId === 'free') {
-    locationLimit = 5;
-  } else if (shop.planId === 'starter') {
-    locationLimit = 300;
-  } else if (shop.planId === 'pro') {
-    locationLimit = 1000;
-  } else if (shop.planId === 'enterprise') {
-    locationLimit = 5000;
-  } else if (shop.planId === 'unlimited') {
-    locationLimit = 100000;
-  }
-
-  const [settings, searchFilters, customFields, customActions, locations] =
-    await Promise.all([
-      prisma.settings.findFirst({
-        where: {
-          shopId: input.data.id,
+  const [
+    settings,
+    locations,
+    searchFilters,
+    customFields,
+    customActions,
+    languages,
+  ] = await Promise.all([
+    prisma.settings.findFirst({
+      where: {
+        shopId: input.data.id,
+      },
+      omit: {
+        timezone: true,
+        shopId: true,
+      },
+    }),
+    prisma.location.findMany({
+      where: {
+        shopId: input.data.id,
+        active: true,
+      },
+      include: {
+        searchFilters: {
+          where: {
+            enabled: true,
+          },
+          select: {
+            id: true,
+          },
         },
-      }),
-      prisma.searchFilter.findMany({
-        where: {
-          shopId: shop.id,
-          enabled: true,
-        },
-      }),
-      prisma.customField.findMany({
-        where: {
-          shopId: input.data.id,
-          enabled: true,
-        },
-      }),
-      prisma.customAction.findMany({
-        where: {
-          shopId: input.data.id,
-          enabled: true,
-        },
-      }),
-      prisma.location.findMany({
-        where: {
-          shopId: input.data.id,
-          active: true,
-        },
-        include: {
-          searchFilters: {
-            where: {
+        customFieldValues: {
+          where: {
+            customField: {
               enabled: true,
             },
-            select: {
-              id: true,
-            },
           },
-          customFieldValues: {
-            where: {
-              customField: {
-                enabled: true,
-              },
-            },
-          },
-          customActionValues: {
-            where: {
-              customAction: {
-                enabled: true,
-              },
-            },
+          select: {
+            id: true,
+            value: true,
+            customFieldId: true,
           },
         },
-        take: locationLimit,
-      }),
-    ]);
+        customActionValues: {
+          where: {
+            customAction: {
+              enabled: true,
+            },
+          },
+          select: {
+            id: true,
+            value: true,
+            customActionId: true,
+          },
+        },
+      },
+      take: shop.plan.locationsLimit,
+    }),
+    prisma.searchFilter.findMany({
+      where: {
+        shopId: shop.id,
+        enabled: true,
+      },
+    }),
+    prisma.customField.findMany({
+      where: {
+        shopId: input.data.id,
+        enabled: true,
+      },
+    }),
+    prisma.customAction.findMany({
+      where: {
+        shopId: input.data.id,
+        enabled: true,
+      },
+    }),
+    prisma.language.findMany({
+      where: {
+        shopId: shop.id,
+        enabled: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+      take: shop.plan.languagesLimit - 1,
+    }),
+  ]);
 
   if (!settings) {
     sendError(res, 'BadRequest', { message: 'MissingSettings' });
@@ -111,15 +130,45 @@ router.use(cors()).get(async (req, res) => {
     return;
   }
 
+  // First try to find a language that matches the whole input language code
+  let language = languages.find((l) => {
+    return l.code.toLowerCase() === input.data.language.toLowerCase();
+  });
+
+  // If no languages was found for the whole input language code, try to find a
+  // language that matches just the part before the -
+  if (!language) {
+    language = languages.find((l) => {
+      return (
+        l.code.toLowerCase() === input.data.language.split('-')[0].toLowerCase()
+      );
+    });
+  }
+
+  const translations = language
+    ? await prisma.translation.findMany({
+        where: {
+          languageId: language.id,
+        },
+        select: {
+          id: true,
+          value: true,
+          target: true,
+          searchFilterId: true,
+          customFieldId: true,
+          customActionId: true,
+        },
+      })
+    : [];
+
   res.json({
     ok: true,
-    settings: {
-      googleMapsApiKey: settings.googleMapsApiKey,
-    },
+    settings,
     searchFilters,
     customFields,
     customActions,
     locations,
+    translations,
   });
 });
 
