@@ -170,7 +170,24 @@ router.use(cors()).get(async (req, res) => {
   const translations = language
     ? await prisma.translation.findMany({
         where: {
-          languageId: language.id,
+          OR: [
+            { target: { not: null }, languageId: language.id },
+            {
+              searchFilterId: { not: null },
+              searchFilter: { enabled: true },
+              languageId: language.id,
+            },
+            {
+              customFieldId: { not: null },
+              customField: { enabled: true },
+              languageId: language.id,
+            },
+            {
+              customActionId: { not: null },
+              customAction: { enabled: true },
+              languageId: language.id,
+            },
+          ],
         },
         select: {
           id: true,
