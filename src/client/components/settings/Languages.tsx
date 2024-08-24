@@ -35,7 +35,7 @@ const supportedLanguages = [
   { code: 'da', name: 'Danish' },
   { code: 'de', name: 'German' },
   { code: 'el', name: 'Greek' },
-  { code: 'en', name: 'English' },
+  // { code: 'en', name: 'English' },
   { code: 'es', name: 'Spanish' },
   { code: 'fi', name: 'Finnish' },
   { code: 'fr', name: 'French' },
@@ -69,6 +69,7 @@ const supportedLanguages = [
 
 const translationTargets = [
   { value: 'directionsLink', label: 'Directions link' },
+  { value: 'searchInputPlaceholder', label: 'Search input placeholder' },
 ].sort((targetA, targetB) => {
   if (targetA.label < targetB.label) {
     return -1;
