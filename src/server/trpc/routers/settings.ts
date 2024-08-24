@@ -90,6 +90,9 @@ export const settingsRouter = router({
             input.listCustomActionBackgroundColor,
           listCustomActionHoverBackgroundColor:
             input.listCustomActionHoverBackgroundColor,
+          listSelectedLocationBorderColor:
+            input.listSelectedLocationBorderColor,
+          listPinAndDistanceColor: input.listPinAndDistanceColor,
           mapMarkerType: input.mapMarkerType,
           mapMarkerBackgroundColor: input.mapMarkerBackgroundColor,
           mapMarkerBorderColor: input.mapMarkerBorderColor,

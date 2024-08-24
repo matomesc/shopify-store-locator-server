@@ -27,7 +27,8 @@ export const Editor: React.FC<EditorProps> = ({
         menubar: false,
         indentation: '5px',
         plugins: 'link',
-        toolbar: 'bold italic link',
+        // toolbar: 'bold italic link',
+        toolbar: 'bold italic',
       }}
       tinymceScriptSrc="/tinymce/tinymce.min.js"
       value={value}

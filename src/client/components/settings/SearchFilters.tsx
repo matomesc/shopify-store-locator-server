@@ -29,10 +29,7 @@ const FormData = SearchFiltersSyncInput.element;
 type FormData = z.infer<typeof FormData>;
 
 const SearchFilterForm: React.FC = () => {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext<FormData>();
+  const { control } = useFormContext<FormData>();
 
   return (
     <form>
@@ -40,13 +37,13 @@ const SearchFilterForm: React.FC = () => {
         <Controller
           control={control}
           name="name"
-          render={({ field }) => {
+          render={({ field, fieldState }) => {
             return (
               <TextField
                 label="Name"
                 autoComplete="off"
                 value={field.value}
-                error={errors.name?.message}
+                error={fieldState.error?.message}
                 onChange={field.onChange}
               />
             );

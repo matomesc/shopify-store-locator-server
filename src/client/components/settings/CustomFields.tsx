@@ -33,11 +33,7 @@ type FormData = z.infer<typeof FormData>;
 interface CustomFieldFormProps {}
 
 const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
-  const {
-    control,
-    formState: { errors },
-    watch,
-  } = useFormContext<FormData>();
+  const { control, watch } = useFormContext<FormData>();
 
   return (
     <form>
@@ -45,14 +41,14 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
         <Controller
           control={control}
           name="name"
-          render={({ field }) => {
+          render={({ field, fieldState }) => {
             return (
               <TextField
                 label="Name"
                 autoComplete="off"
                 value={field.value}
                 onChange={field.onChange}
-                error={errors.name?.message}
+                error={fieldState.error?.message}
               />
             );
           }}
@@ -90,7 +86,7 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
           <Controller
             control={control}
             name="labelPosition"
-            render={({ field }) => {
+            render={({ field, fieldState }) => {
               return (
                 <Select
                   label="Label position"
@@ -106,7 +102,7 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
                   ]}
                   value={field.value}
                   onChange={field.onChange}
-                  error={errors.labelPosition?.message}
+                  error={fieldState.error?.message}
                 />
               );
             }}
@@ -144,14 +140,14 @@ const CustomFieldForm: React.FC<CustomFieldFormProps> = () => {
         <Controller
           control={control}
           name="defaultValue"
-          render={({ field }) => {
+          render={({ field, fieldState }) => {
             return (
               <Editor
                 label="Default value"
                 value={field.value}
                 onChange={field.onChange}
                 height={100}
-                error={errors.defaultValue?.message}
+                error={fieldState.error?.message}
               />
             );
           }}
@@ -200,10 +196,10 @@ const CustomField: React.FC<CustomFieldProps> = ({
         <ButtonGroup>
           <Button icon={ArrowUpIcon} onClick={onUp} />
           <Button icon={ArrowDownIcon} onClick={onDown} />
+          <Button onClick={onEdit}>Edit</Button>
           <Button tone="critical" onClick={onDelete}>
             Delete
           </Button>
-          <Button onClick={onEdit}>Edit</Button>
         </ButtonGroup>
       </div>
     </div>

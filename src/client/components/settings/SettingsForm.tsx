@@ -78,7 +78,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const {
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { isDirty },
     reset,
     watch,
     getValues,
@@ -199,7 +199,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                   <Controller
                     control={control}
                     name="settings.timezone"
-                    render={({ field }) => {
+                    render={({ field, fieldState }) => {
                       return (
                         <Select
                           label="Timezone"
@@ -212,7 +212,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                           value={field.value}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
-                          error={errors.settings?.timezone?.message}
+                          error={fieldState.error?.message}
                           helpText="This is used for analytics to display data in your timezone. Choose the location closest to you."
                         />
                       );
@@ -280,7 +280,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                 <Controller
                   control={control}
                   name="settings.googleMapsApiKey"
-                  render={({ field }) => {
+                  render={({ field, fieldState }) => {
                     return (
                       <TextField
                         autoComplete="off"
@@ -288,7 +288,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                         value={field.value}
                         onChange={field.onChange}
                         onBlur={field.onBlur}
-                        error={errors.settings?.googleMapsApiKey?.message}
+                        error={fieldState.error?.message}
                       />
                     );
                   }}
@@ -682,6 +682,38 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                           return (
                             <ColorPicker
                               label="Custom action hover background color"
+                              value={field.value}
+                              onChange={field.onChange}
+                              error={fieldState.error?.message}
+                            />
+                          );
+                        }}
+                      />
+                    </div>
+                    <div style={{ flexBasis: '32%', minWidth: '130px' }}>
+                      <Controller
+                        control={control}
+                        name="settings.listSelectedLocationBorderColor"
+                        render={({ field, fieldState }) => {
+                          return (
+                            <ColorPicker
+                              label="Selected location border color"
+                              value={field.value}
+                              onChange={field.onChange}
+                              error={fieldState.error?.message}
+                            />
+                          );
+                        }}
+                      />
+                    </div>
+                    <div style={{ flexBasis: '32%', minWidth: '130px' }}>
+                      <Controller
+                        control={control}
+                        name="settings.listPinAndDistanceColor"
+                        render={({ field, fieldState }) => {
+                          return (
+                            <ColorPicker
+                              label="Pin and distance color"
                               value={field.value}
                               onChange={field.onChange}
                               error={fieldState.error?.message}

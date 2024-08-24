@@ -30,11 +30,7 @@ const FormData = CustomActionsSyncInput.element;
 type FormData = z.infer<typeof FormData>;
 
 const CustomActionForm: React.FC = () => {
-  const {
-    control,
-    formState: { errors },
-    watch,
-  } = useFormContext<FormData>();
+  const { control, watch } = useFormContext<FormData>();
 
   return (
     <form>
@@ -42,13 +38,13 @@ const CustomActionForm: React.FC = () => {
         <Controller
           control={control}
           name="name"
-          render={({ field }) => {
+          render={({ field, fieldState }) => {
             return (
               <TextField
                 label="Name"
                 autoComplete="off"
                 value={field.value}
-                error={errors.name?.message}
+                error={fieldState.error?.message}
                 onChange={field.onChange}
               />
             );
@@ -202,10 +198,10 @@ const CustomAction: React.FC<CustomActionProps> = ({
         <ButtonGroup>
           <Button icon={ArrowUpIcon} onClick={onUp} />
           <Button icon={ArrowDownIcon} onClick={onDown} />
+          <Button onClick={onEdit}>Edit</Button>
           <Button tone="critical" onClick={onDelete}>
             Delete
           </Button>
-          <Button onClick={onEdit}>Edit</Button>
         </ButtonGroup>
       </div>
     </div>

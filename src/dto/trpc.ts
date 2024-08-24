@@ -74,13 +74,15 @@ export const SettingsUpdateInput = z.object({
   listCustomActionTextColor: HexColor,
   listCustomActionBackgroundColor: HexColor,
   listCustomActionHoverBackgroundColor: HexColor,
+  listSelectedLocationBorderColor: HexColor,
+  listPinAndDistanceColor: HexColor,
   mapMarkerType: MapMarkerType,
   mapMarkerBackgroundColor: HexColor,
   mapMarkerBorderColor: HexColor,
   mapMarkerGlyphColor: HexColor,
   // You need 4*(n/3) chars to represent n bytes. So for max 5MB we need about
   // 6666667 characters. See https://stackoverflow.com/a/13378842.
-  mapMarkerImage: z.string().max(6666667),
+  mapMarkerImage: z.string().max(6666667, 'Image must be at most 5MB'),
   mapLocationNameColor: HexColor,
   mapTextColor: HexColor,
   mapLinkColor: HexColor,

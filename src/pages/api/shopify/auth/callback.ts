@@ -133,6 +133,8 @@ router.get(async (req, res) => {
             listCustomActionTextColor: '#FFFFFF',
             listCustomActionBackgroundColor: '#000000',
             listCustomActionHoverBackgroundColor: '#000000',
+            listSelectedLocationBorderColor: '#000000',
+            listPinAndDistanceColor: '#000000',
             mapMarkerType: 'pin',
             mapMarkerBackgroundColor: '#E7453C',
             mapMarkerBorderColor: '#CC2E2B',

@@ -62,6 +62,9 @@ router.use(cors()).get(async (req, res) => {
           select: {
             id: true,
           },
+          orderBy: {
+            position: 'asc',
+          },
         },
         customFieldValues: {
           where: {
@@ -73,6 +76,11 @@ router.use(cors()).get(async (req, res) => {
             id: true,
             value: true,
             customFieldId: true,
+          },
+          orderBy: {
+            customField: {
+              position: 'asc',
+            },
           },
         },
         customActionValues: {
@@ -86,6 +94,11 @@ router.use(cors()).get(async (req, res) => {
             value: true,
             customActionId: true,
           },
+          orderBy: {
+            customAction: {
+              position: 'asc',
+            },
+          },
         },
       },
       take: shop.plan.locationsLimit,
@@ -95,17 +108,26 @@ router.use(cors()).get(async (req, res) => {
         shopId: shop.id,
         enabled: true,
       },
+      orderBy: {
+        position: 'asc',
+      },
     }),
     prisma.customField.findMany({
       where: {
         shopId: input.data.id,
         enabled: true,
       },
+      orderBy: {
+        position: 'asc',
+      },
     }),
     prisma.customAction.findMany({
       where: {
         shopId: input.data.id,
         enabled: true,
+      },
+      orderBy: {
+        position: 'asc',
       },
     }),
     prisma.language.findMany({
@@ -167,7 +189,14 @@ router.use(cors()).get(async (req, res) => {
     searchFilters,
     customFields,
     customActions,
-    locations,
+    locations: locations.map((location) => {
+      return {
+        ...location,
+        searchFilters: location.searchFilters.map((searchFilter) => {
+          return searchFilter.id;
+        }),
+      };
+    }),
     translations,
   });
 });

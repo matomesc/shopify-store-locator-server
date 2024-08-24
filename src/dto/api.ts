@@ -54,6 +54,8 @@ export type GetLocatorOutput = {
     listCustomActionTextColor: string;
     listCustomActionBackgroundColor: string;
     listCustomActionHoverBackgroundColor: string;
+    listSelectedLocationBorderColor: string;
+    listPinAndDistanceColor: string;
     mapMarkerType: string;
     mapMarkerBackgroundColor: string;
     mapMarkerBorderColor: string;
@@ -82,7 +84,7 @@ export type GetLocatorOutput = {
     country: string;
     lat: number;
     lng: number;
-    searchFilters: Array<{ id: string }>;
+    searchFilters: string[];
     customFieldValues: Array<{
       id: string;
       value: string;

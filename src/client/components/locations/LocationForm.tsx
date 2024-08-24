@@ -64,14 +64,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   const locationsDeleteMutation = trpc.locations.delete.useMutation();
   const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-    watch,
-    reset,
-  } = useForm({
+  const { handleSubmit, control, setValue, watch, reset } = useForm({
     resolver: zodResolver(LocationsCreateInput),
     defaultValues: defaultFormValues,
   });
@@ -269,7 +262,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                   <Controller
                     control={control}
                     name="name"
-                    render={({ field }) => {
+                    render={({ field, fieldState }) => {
                       return (
                         <TextField
                           label="Name"
@@ -278,7 +271,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           helpText="Give your location a unique name."
-                          error={errors.name?.message}
+                          error={fieldState.error?.message}
                         />
                       );
                     }}
@@ -316,7 +309,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="email"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="Email"
@@ -324,7 +317,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                               value={field.value}
                               onChange={field.onChange}
                               onBlur={field.onBlur}
-                              error={errors.email?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}
@@ -334,7 +327,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="phone"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="Phone"
@@ -342,7 +335,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                               value={field.value}
                               onChange={field.onChange}
                               onBlur={field.onBlur}
-                              error={errors.phone?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}
@@ -352,7 +345,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                   <Controller
                     control={control}
                     name="website"
-                    render={({ field }) => {
+                    render={({ field, fieldState }) => {
                       return (
                         <TextField
                           label="Website"
@@ -360,7 +353,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                           value={field.value}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
-                          error={errors.website?.message}
+                          error={fieldState.error?.message}
                         />
                       );
                     }}
@@ -384,7 +377,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                     <Controller
                       control={control}
                       name="address1"
-                      render={({ field }) => {
+                      render={({ field, fieldState }) => {
                         return (
                           <TextField
                             label="Address"
@@ -398,7 +391,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                             }}
                             onBlur={field.onBlur}
                             placeholder="Search for an address..."
-                            error={errors.address1?.message}
+                            error={fieldState.error?.message}
                           />
                         );
                       }}
@@ -407,7 +400,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                   <Controller
                     control={control}
                     name="address2"
-                    render={({ field }) => {
+                    render={({ field, fieldState }) => {
                       return (
                         <TextField
                           label="Apartment, suite, etc."
@@ -415,7 +408,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                           value={field.value}
                           onChange={field.onChange}
                           onBlur={field.onBlur}
-                          error={errors.address2?.message}
+                          error={fieldState.error?.message}
                         />
                       );
                     }}
@@ -425,7 +418,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="city"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="City"
@@ -438,7 +431,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                                 });
                               }}
                               onBlur={field.onBlur}
-                              error={errors.city?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}
@@ -448,7 +441,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="state"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="State / province"
@@ -461,7 +454,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                                 });
                               }}
                               onBlur={field.onBlur}
-                              error={errors.state?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}
@@ -473,7 +466,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="zip"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="Zip / postal code"
@@ -486,7 +479,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                                 });
                               }}
                               onBlur={field.onBlur}
-                              error={errors.zip?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}
@@ -496,7 +489,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                       <Controller
                         control={control}
                         name="country"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
                             <TextField
                               label="Country"
@@ -509,7 +502,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
                                 });
                               }}
                               onBlur={field.onBlur}
-                              error={errors.country?.message}
+                              error={fieldState.error?.message}
                             />
                           );
                         }}

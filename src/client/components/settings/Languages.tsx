@@ -156,16 +156,10 @@ export const Languages: React.FC<LanguagesProps> = ({
       scope: 'add' as 'add' | 'edit',
     },
   });
-  const {
-    control,
-    handleSubmit,
-    reset,
-    getValues,
-    setError,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(FormData),
-  });
+  const { control, handleSubmit, reset, getValues, setError } =
+    useForm<FormData>({
+      resolver: zodResolver(FormData),
+    });
 
   const sortedSearchFilters = useMemo(() => {
     return [...searchFilters].sort((searchFilterA, searchFilterB) => {
@@ -367,7 +361,7 @@ export const Languages: React.FC<LanguagesProps> = ({
                     existingLanguage &&
                     existingLanguage.id !== getValues().language.id
                   ) {
-                    setError('language', {
+                    setError('language.code', {
                       message: 'This language has already been added',
                     });
                     return;
@@ -432,7 +426,7 @@ export const Languages: React.FC<LanguagesProps> = ({
             <Controller
               control={control}
               name="language.code"
-              render={({ field }) => {
+              render={({ field, fieldState }) => {
                 return (
                   <Select
                     label="Language"
@@ -440,7 +434,7 @@ export const Languages: React.FC<LanguagesProps> = ({
                     options={supportedLanguages.map((language) => {
                       return { label: language.name, value: language.code };
                     })}
-                    error={errors.language?.message}
+                    error={fieldState.error?.message}
                     onChange={(value) => {
                       field.onChange(value);
                     }}

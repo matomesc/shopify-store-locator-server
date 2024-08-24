@@ -66,6 +66,8 @@ model Settings {
   listCustomActionTextColor                 String
   listCustomActionBackgroundColor           String
   listCustomActionHoverBackgroundColor      String
+  listSelectedLocationBorderColor           String
+  listPinAndDistanceColor                   String
   mapMarkerType                             MapMarkerType
   mapMarkerBackgroundColor                  String
   mapMarkerBorderColor                      String
@@ -136,6 +138,7 @@ model SearchFilter {
   @@unique([shopId, name])
   @@index([shopId])
   @@index([enabled])
+  @@index([position])
 }
 
 enum CustomFieldLabelPosition {
@@ -163,6 +166,7 @@ model CustomField {
   @@unique([shopId, name])
   @@index([shopId])
   @@index([enabled])
+  @@index([position])
 }
 
 model CustomFieldValue {
@@ -202,6 +206,7 @@ model CustomAction {
   @@unique([shopId, name])
   @@index([shopId])
   @@index([enabled])
+  @@index([position])
 }
 
 model CustomActionValue {
