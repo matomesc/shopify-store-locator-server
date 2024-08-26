@@ -3,6 +3,7 @@ import { BaseWorker } from './BaseWorker';
 import { logger as baseLogger } from '../lib/logger';
 import '../../../sentry.server.config';
 import { ShopifyShopSyncWorker } from './ShopifyShopSyncWorker';
+import { SessionPruneWorker } from './SessionPruneWorker';
 
 const workers: BaseWorker[] = [];
 
@@ -37,7 +38,7 @@ function setupSignalHandlers() {
 async function main() {
   setupSignalHandlers();
 
-  const classes = [ShopifyShopSyncWorker];
+  const classes = [ShopifyShopSyncWorker, SessionPruneWorker];
 
   logger.info('Starting workers...');
 

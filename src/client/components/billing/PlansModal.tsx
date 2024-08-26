@@ -210,6 +210,10 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                     <div>Customize appearance</div>
                     <Divider />
                     <div>Customize map markers</div>
+                    <Divider />
+                    <div>
+                      Analytics ({plan.analyticsRetention} day retention)
+                    </div>
                   </div>
                 );
                 break;
@@ -232,7 +236,9 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       display languages
                     </div>
                     <Divider />
-                    <div>Analytics</div>
+                    <div>
+                      Analytics ({plan.analyticsRetention} day retention)
+                    </div>
                     <Divider />
                     <div>Basic email support</div>
                   </div>
@@ -255,6 +261,10 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                         {plan.languagesLimit}
                       </Text>{' '}
                       display languages
+                    </div>
+                    <Divider />
+                    <div>
+                      Analytics ({plan.analyticsRetention} day retention)
                     </div>
                     <Divider />
                     <div>Priority email support</div>
@@ -280,6 +290,10 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       display languages
                     </div>
                     <Divider />
+                    <div>
+                      Analytics ({plan.analyticsRetention} day retention)
+                    </div>
+                    <Divider />
                     <div>API access (coming soon)</div>
                   </div>
                 );
@@ -301,6 +315,10 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                         Unlimited
                       </Text>{' '}
                       display languages
+                    </div>
+                    <Divider />
+                    <div>
+                      Analytics ({plan.analyticsRetention} day retention)
                     </div>
                   </div>
                 );

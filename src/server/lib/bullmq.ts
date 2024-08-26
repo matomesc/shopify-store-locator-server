@@ -26,6 +26,9 @@ export const queues = {
   ShopifyShopSync: new Queue('ShopifyShopSync', {
     connection: queueRedisClient,
   }),
+  SessionPrune: new Queue('SessionPrune', {
+    connection: queueRedisClient,
+  }),
 };
 
 export async function clearRepeatableJobs(queueName: keyof typeof queues) {

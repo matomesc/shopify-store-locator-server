@@ -52,7 +52,8 @@ app
 
     const terminator = createHttpTerminator({
       server,
-      gracefulTerminationTimeout: 300,
+      // TODO switch to render blueprints to increase this value to 300
+      gracefulTerminationTimeout: 30,
     });
 
     const gracefulShutdown = async (signal: string) => {
