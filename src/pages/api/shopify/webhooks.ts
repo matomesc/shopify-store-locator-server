@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getRawBody } from '@/server/lib/http';
 import { prisma } from '@/server/lib/prisma';
 import { verifyShopifyWebhook } from '@/server/lib/shopify';
+import { container } from 'tsyringe';
+import { SlackService } from '@/server/services/SlackService';
+import * as Sentry from '@sentry/nextjs';
 
 interface WebhookParams {
   body: unknown;
@@ -22,6 +25,12 @@ async function handleShopRedact({ res }: WebhookParams) {
 }
 
 async function handleAppUninstalled({ shopDomain, res }: WebhookParams) {
+  const shop = await prisma.shop.findFirst({
+    where: {
+      domain: shopDomain,
+    },
+  });
+
   await prisma.shop.update({
     where: {
       domain: shopDomain,
@@ -32,6 +41,22 @@ async function handleAppUninstalled({ shopDomain, res }: WebhookParams) {
       planChargeId: null,
     },
   });
+
+  const slackService = container.resolve(SlackService);
+
+  if (shop) {
+    try {
+      await slackService.postUninstallMessage({
+        domain: shop.domain,
+        email: shop.email,
+        name: shop.name,
+        ownerName: shop.ownerName,
+      });
+    } catch (err) {
+      Sentry.captureException(err);
+    }
+  }
+
   res.status(200).json({});
 }
 

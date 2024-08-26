@@ -14,6 +14,9 @@ const Config = z.object({
   NEXT_PUBLIC_SENTRY_DSN: z.string(),
   WIDGET_BASE_URL: z.string(),
   REDIS_URL: z.string(),
+  SLACK_TOKEN: z.string(),
+  SLACK_INSTALL_CHANNEL: z.string(),
+  SLACK_UNINSTALL_CHANNEL: z.string(),
 });
 
 export const config = Config.parse(process.env);

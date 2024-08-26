@@ -11,6 +11,7 @@ import { GetShopifyAuthCallbackInput } from '@/dto/api';
 import * as Sentry from '@sentry/nextjs';
 import { timezones } from '@/lib/timezones';
 import { Prisma } from '@prisma/client';
+import { SlackService } from '@/server/services/SlackService';
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -64,13 +65,17 @@ router.get(async (req, res) => {
     },
   });
 
+  const slackService = container.resolve(SlackService);
+
   if (shop && shop.uninstalledAt) {
     shop = await prisma.shop.update({
       where: {
         domain: shopDomain,
       },
       data: {
+        name: shopifyShop.shop.name,
         email: shopifyShop.shop.email,
+        ownerName: shopifyShop.shop.shop_owner,
         installedAt: new Date(),
         uninstalledAt: null,
         accessToken: result.access_token,
@@ -78,8 +83,19 @@ router.get(async (req, res) => {
         planId: 'free',
         showPlansModal: true,
         showOnboarding: true,
+        shopifyRawData: shopifyShop.shop as Prisma.JsonObject,
       },
     });
+    try {
+      await slackService.postInstallMessage({
+        domain: shop.domain,
+        email: shop.email,
+        name: shop.name,
+        ownerName: shop.ownerName,
+      });
+    } catch (err) {
+      Sentry.captureException(err);
+    }
   } else if (shop && !shop.uninstalledAt) {
     shop = await prisma.shop.update({
       where: {
@@ -151,6 +167,17 @@ router.get(async (req, res) => {
         },
       },
     });
+
+    try {
+      await slackService.postInstallMessage({
+        domain: shop.domain,
+        email: shop.email,
+        name: shop.name,
+        ownerName: shop.ownerName,
+      });
+    } catch (err) {
+      Sentry.captureException(err);
+    }
   }
 
   // Setup app/uninstalled webhook
