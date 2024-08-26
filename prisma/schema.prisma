@@ -31,6 +31,7 @@ model Shop {
   customFields      CustomField[]
   customActions     CustomAction[]
   languages         Language[]
+  sessions          Session[]
   createdAt         DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime  @updatedAt      @db.Timestamptz(3)
 }
@@ -254,4 +255,41 @@ model Translation {
   @@unique([languageId, customFieldId])
   @@unique([languageId, customActionId])
   @@index([languageId])
+}
+
+model Session {
+  id                    String    @id @default(uuid())
+  shopId                String
+  shop                  Shop      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  ip                    String
+  country               String
+  countryCode           String
+  region                String
+  regionName            String
+  city                  String
+  zip                   String
+  ipGeolocationLat      Float
+  ipGeolocationLng      Float
+  browserGeolocationLat Float?
+  browserGeolocationLng Float?
+  language              String
+  mobile                Boolean
+  searchEvents          SearchEvent[]
+  createdAt             DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt      @db.Timestamptz(3)
+
+  @@index([shopId])
+  @@index([createdAt])
+}
+
+model SearchEvent {
+  id        String    @id @default(uuid())
+  sessionId String
+  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  query     String
+  lat       Float
+  lng       Float
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([sessionId])
 }

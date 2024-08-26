@@ -135,3 +135,61 @@ export type GetLocatorOutput = {
     customActionId: string | null;
   }>;
 };
+
+/**
+ * POST /api/sessions
+ */
+
+export const PostSessionsInput = z.object({
+  id: z.string(),
+  shopId: z.string(),
+  ip: z.string(),
+  country: z.string(),
+  countryCode: z.string(),
+  region: z.string(),
+  regionName: z.string(),
+  city: z.string(),
+  zip: z.string(),
+  ipGeolocationLat: z.number(),
+  ipGeolocationLng: z.number(),
+  browserGeolocationLat: z.number().nullable(),
+  browserGeolocationLng: z.number().nullable(),
+  language: z.string(),
+  mobile: z.boolean(),
+});
+export type PostSessionsInput = z.infer<typeof PostSessionsInput>;
+
+export type PostSessionsOutput = {
+  ok: boolean;
+};
+
+/**
+ * PUT /api/sessions
+ */
+
+export const PutSessionsInput = z.object({
+  id: z.string(),
+  browserGeolocationLat: z.number(),
+  browserGeolocationLng: z.number(),
+});
+export type PutSessionsInput = z.infer<typeof PutSessionsInput>;
+
+export type PutSessionsOutput = {
+  ok: boolean;
+};
+
+/**
+ * POST /api/searchEvents
+ */
+
+export const PostSearchEventsInput = z.object({
+  sessionId: z.string(),
+  query: z.string(),
+  lat: z.number(),
+  lng: z.number(),
+});
+export type PostSearchEventsInput = z.infer<typeof PostSearchEventsInput>;
+
+export type PostSearchEventsOutput = {
+  ok: boolean;
+};
