@@ -326,3 +326,11 @@ export const TranslationsSyncInput = z.array(
     }, 'One of target, searchFilterId, customFieldId or customActionId must be specified'),
 );
 export type TranslationsSyncInput = z.infer<typeof TranslationsSyncInput>;
+
+/**
+ * Location click events
+ */
+
+export const LocationClickEventsGetCountByLocationInput = z.object({
+  createdAfter: z.date(),
+});

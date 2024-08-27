@@ -36,6 +36,13 @@ router.use(corsMiddleware).post(async (req, res) => {
     data: {
       sessionId: input.data.sessionId,
       query: input.data.query,
+      address: input.data.address,
+      city: input.data.city,
+      state: input.data.state,
+      stateCode: input.data.stateCode,
+      zip: input.data.zip,
+      country: input.data.country,
+      countryCode: input.data.countryCode,
       lat: input.data.lat,
       lng: input.data.lng,
     },

@@ -10,6 +10,7 @@ import {
 import { errorHandler, sendError } from '@/server/lib/api';
 import { prisma } from '@/server/lib/prisma';
 import * as Sentry from '@sentry/nextjs';
+import UAParser from 'ua-parser-js';
 
 const corsMiddleware = cors();
 
@@ -39,6 +40,8 @@ router
       return;
     }
 
+    const userAgentParseResult = UAParser(input.data.userAgent);
+
     await prisma.session.create({
       data: {
         id: input.data.id,
@@ -56,6 +59,17 @@ router
         browserGeolocationLng: input.data.browserGeolocationLng,
         language: input.data.language,
         mobile: input.data.mobile,
+        userAgent: input.data.userAgent,
+        browserName: userAgentParseResult.browser.name || '',
+        browserVersion: userAgentParseResult.browser.version || '',
+        deviceType: userAgentParseResult.device.type || '',
+        deviceModel: userAgentParseResult.device.model || '',
+        deviceVendor: userAgentParseResult.device.vendor || '',
+        engineName: userAgentParseResult.engine.name || '',
+        engineVersion: userAgentParseResult.engine.version || '',
+        osName: userAgentParseResult.os.name || '',
+        osVersion: userAgentParseResult.os.version || '',
+        cpuArchitecture: userAgentParseResult.cpu.architecture || '',
       },
     });
 

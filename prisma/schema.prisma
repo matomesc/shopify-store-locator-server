@@ -275,6 +275,17 @@ model Session {
   browserGeolocationLng Float?
   language              String
   mobile                Boolean
+  userAgent             String
+  browserName           String
+  browserVersion        String
+  deviceType            String
+  deviceModel           String
+  deviceVendor          String
+  engineName            String
+  engineVersion         String
+  osName                String
+  osVersion             String
+  cpuArchitecture       String
   searchEvents          SearchEvent[]
   locationClickEvents   LocationClickEvent[]
   createdAt             DateTime  @default(now()) @db.Timestamptz(3)
@@ -285,13 +296,20 @@ model Session {
 }
 
 model SearchEvent {
-  id        String    @id @default(uuid())
-  sessionId String
-  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  query     String
-  lat       Float
-  lng       Float
-  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  id          String    @id @default(uuid())
+  sessionId   String
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  query       String
+  address     String
+  city        String
+  state       String
+  stateCode   String
+  zip         String
+  country     String
+  countryCode String
+  lat         Float
+  lng         Float
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
 
   @@index([sessionId])
 }

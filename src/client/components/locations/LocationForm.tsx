@@ -99,7 +99,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       const street =
         place.address_components.find((c) => {
           return c.types.includes('route');
-        })?.short_name || '';
+        })?.long_name || '';
       const city =
         place.address_components.find((c) => {
           return c.types.includes('locality');

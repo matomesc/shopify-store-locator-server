@@ -141,21 +141,22 @@ export type GetLocatorOutput = {
  */
 
 export const PostSessionsInput = z.object({
-  id: z.string(),
-  shopId: z.string(),
-  ip: z.string(),
-  country: z.string(),
-  countryCode: z.string(),
-  region: z.string(),
-  regionName: z.string(),
-  city: z.string(),
-  zip: z.string(),
+  id: z.string().max(100),
+  shopId: z.string().max(100),
+  ip: z.string().max(100),
+  country: z.string().max(100),
+  countryCode: z.string().max(100),
+  region: z.string().max(100),
+  regionName: z.string().max(100),
+  city: z.string().max(100),
+  zip: z.string().max(100),
   ipGeolocationLat: z.number(),
   ipGeolocationLng: z.number(),
   browserGeolocationLat: z.number().nullable(),
   browserGeolocationLng: z.number().nullable(),
-  language: z.string(),
+  language: z.string().max(100),
   mobile: z.boolean(),
+  userAgent: z.string().max(5000),
 });
 export type PostSessionsInput = z.infer<typeof PostSessionsInput>;
 
@@ -168,7 +169,7 @@ export type PostSessionsOutput = {
  */
 
 export const PutSessionsInput = z.object({
-  id: z.string(),
+  id: z.string().max(100),
   browserGeolocationLat: z.number(),
   browserGeolocationLng: z.number(),
 });
@@ -183,8 +184,15 @@ export type PutSessionsOutput = {
  */
 
 export const PostSearchEventsInput = z.object({
-  sessionId: z.string(),
-  query: z.string(),
+  sessionId: z.string().max(100),
+  query: z.string().max(1000),
+  address: z.string().max(100),
+  city: z.string().max(100),
+  state: z.string().max(100),
+  stateCode: z.string().max(100),
+  zip: z.string().max(100),
+  country: z.string().max(100),
+  countryCode: z.string().max(100),
   lat: z.number(),
   lng: z.number(),
 });
@@ -199,8 +207,8 @@ export type PostSearchEventsOutput = {
  */
 
 export const PostLocationClickEventsInput = z.object({
-  sessionId: z.string(),
-  locationId: z.string(),
+  sessionId: z.string().max(100),
+  locationId: z.string().max(100),
 });
 export type PostLocationClickEventsInput = z.infer<
   typeof PostLocationClickEventsInput
