@@ -1,4 +1,4 @@
-import { Button, Card, Layout, Page, TabProps, Tabs } from '@shopify/polaris';
+import { Button, Card, Page, TabProps, Tabs } from '@shopify/polaris';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';

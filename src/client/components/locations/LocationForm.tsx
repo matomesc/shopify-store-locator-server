@@ -55,6 +55,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   const router = useRouter();
   const [state, setState] = useState({
     deleteModalOpen: false,
+    backModalOpen: false,
   });
   const map = useMap('mainMap');
   const placesLibrary = useMapsLibrary('places');
@@ -64,7 +65,14 @@ export const LocationForm: React.FC<LocationFormProps> = ({
   const locationsDeleteMutation = trpc.locations.delete.useMutation();
   const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const { handleSubmit, control, setValue, watch, reset } = useForm({
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    reset,
+    formState: { isDirty },
+  } = useForm({
     resolver: zodResolver(LocationsCreateInput),
     defaultValues: defaultFormValues,
   });
@@ -133,6 +141,22 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       setValue('lng', lng);
     });
   }, [map, placesLibrary, setValue]);
+  // Handle navigating away from the page
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      if (isDirty) {
+        // Show dialog to confirm navigation
+        return '';
+      }
+
+      // Don't show dialog
+      return undefined;
+    };
+
+    return () => {
+      window.onbeforeunload = null;
+    };
+  }, [isDirty]);
   const onSubmit: SubmitHandler<LocationsCreateInput> = async (data) => {
     try {
       if (mode === 'create') {
@@ -218,7 +242,16 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       backAction={{
         content: 'Dashboard',
         onAction: () => {
-          router.back();
+          if (isDirty) {
+            setState((prevState) => {
+              return {
+                ...prevState,
+                backModalOpen: true,
+              };
+            });
+          } else {
+            router.back();
+          }
         },
       }}
       primaryAction={{
@@ -685,6 +718,49 @@ export const LocationForm: React.FC<LocationFormProps> = ({
         }}
       >
         <p>Are you sure you want to delete this location?</p>
+      </Modal>
+      <Modal
+        open={state.backModalOpen}
+        title="Leave page?"
+        height="fit-content"
+        maxWidth="500px"
+        footer={
+          <ButtonGroup>
+            <Button
+              onClick={() => {
+                setState((prevState) => {
+                  return {
+                    ...prevState,
+                    backModalOpen: false,
+                  };
+                });
+              }}
+            >
+              Stay
+            </Button>
+            <Button
+              tone="critical"
+              onClick={() => {
+                router.back();
+              }}
+            >
+              Leave
+            </Button>
+          </ButtonGroup>
+        }
+        onClose={() => {
+          setState((prevState) => {
+            return {
+              ...prevState,
+              backModalOpen: false,
+            };
+          });
+        }}
+      >
+        <p>
+          Are you sure you want to leave the page? All unsaved changes will be
+          discarded.
+        </p>
       </Modal>
     </Page>
   );
