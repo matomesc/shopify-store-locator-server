@@ -15,7 +15,7 @@ declare global {
 }
 
 export const Tawk: React.FC = () => {
-  const shopsGetQuery = trpc.shops.get.useQuery();
+  const shopsGetQuery = trpc.shops.get.useQuery(undefined, { retry: false });
 
   useEffect(() => {
     window.Tawk_API = window.Tawk_API || {
@@ -25,7 +25,7 @@ export const Tawk: React.FC = () => {
     };
   }, []);
 
-  if (shopsGetQuery.isPending || shopsGetQuery.isError) {
+  if (shopsGetQuery.isPending) {
     return null;
   }
 
@@ -37,11 +37,19 @@ export const Tawk: React.FC = () => {
           if (!window.Tawk_API) {
             return;
           }
-          window.Tawk_API.setAttributes?.({
-            name: `${shopsGetQuery.data.shop.name} - ${shopsGetQuery.data.shop.domain} - ${shopsGetQuery.data.shop.ownerName}`,
-            email: shopsGetQuery.data.shop.email,
-            phone: shopsGetQuery.data.shop.phone || '',
-          });
+
+          if (shopsGetQuery.isError) {
+            // Failed to load the shop. Most likely the user landed on the home page.
+            window.Tawk_API.setAttributes?.({
+              name: 'Unknown user',
+            });
+          } else {
+            window.Tawk_API.setAttributes?.({
+              name: `${shopsGetQuery.data.shop.name} - ${shopsGetQuery.data.shop.domain} - ${shopsGetQuery.data.shop.ownerName}`,
+              email: shopsGetQuery.data.shop.email,
+              phone: shopsGetQuery.data.shop.phone || '',
+            });
+          }
         }, 1000);
       }}
     />
