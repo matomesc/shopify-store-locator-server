@@ -56,7 +56,7 @@ export type GetLocatorOutput = {
     listCustomActionHoverBackgroundColor: string;
     listSelectedLocationBorderColor: string;
     listPinAndDistanceColor: string;
-    mapMarkerType: string;
+    mapMarkerType: 'pin' | 'image';
     mapMarkerBackgroundColor: string;
     mapMarkerBorderColor: string;
     mapMarkerGlyphColor: string;
