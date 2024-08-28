@@ -24,7 +24,7 @@ export const Tawk: React.FC = () => {
         window.Tawk_API?.minimize?.();
       },
     };
-  });
+  }, []);
 
   if (shopsGetQuery.isPending || shopsGetQuery.isError) {
     return null;
