@@ -15,6 +15,8 @@ const GetShopResponse = z.object({
       email: z.string(),
       iana_timezone: z.string(),
       shop_owner: z.string(),
+      phone: z.string().nullable(),
+      domain: z.string(),
     })
     .passthrough(),
 });

@@ -10,10 +10,15 @@ generator client {
 
 model Shop {
   id                String    @id @default(uuid())
+  // The shop's .myshopify.com domain
   domain            String    @unique
   name              String
   email             String
   ownerName         String
+  phone             String?
+  // The shop's custom domain. If not set, Shopify defaults this to the
+  // .myshopify.com domain
+  customDomain      String
   accessToken       String
   accessTokenScope  String
   installedAt       DateTime  @db.Timestamptz(3)

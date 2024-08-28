@@ -6247,6 +6247,7 @@ __metadata:
     react-chartjs-2: "npm:^5.2.0"
     react-dom: "npm:18.3.1"
     react-hook-form: "npm:^7.52.0"
+    react-icons: "npm:^5.3.0"
     react-modal: "npm:^3.16.1"
     react-responsive: "npm:^10.0.0"
     react-toastify: "npm:^10.0.5"
@@ -7171,6 +7172,15 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18 || ^19
   checksum: 10/fc4f92008acc22bcdabf7f472529b29dd29f6305f2b66c8e993c72cbc43eb03b761dd55d5dcb339382fe4bfdd81c4521d3ddcc380d43a3c9a8501aec121e4e7d
+  languageName: node
+  linkType: hard
+
+"react-icons@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "react-icons@npm:5.3.0"
+  peerDependencies:
+    react: "*"
+  checksum: 10/7f315d2a5e0eee7fefe01eac5cbe818b9592d88964f6c99ba454539a78cd2efd4430152e88113585c5a54bca6a5e1e7e7978df9cf69a03d8479a8d3d106a027c
   languageName: node
   linkType: hard
 

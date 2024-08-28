@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Script from 'next/script';
+import { Tawk } from '@/client/components/Tawk';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
@@ -39,6 +40,7 @@ const App: AppType = ({ Component, pageProps }: AppProps) => {
         />
         <ReactQueryDevtools initialIsOpen={false} />
       </PolarisAppProvider>
+      <Tawk />
     </>
   );
 };

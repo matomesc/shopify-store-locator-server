@@ -62,7 +62,10 @@ export class ShopifyShopSyncWorker extends BaseWorker {
                 },
                 data: {
                   name: data.shop.name,
+                  email: data.shop.email,
                   ownerName: data.shop.shop_owner,
+                  phone: data.shop.phone,
+                  customDomain: data.shop.domain,
                   shopifyRawData: data.shop as Prisma.JsonObject,
                 },
               });
