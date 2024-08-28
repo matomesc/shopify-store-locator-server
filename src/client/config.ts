@@ -6,6 +6,7 @@ const Config = z.object({
   NEXT_PUBLIC_SENTRY_DSN: z.string(),
   NEXT_PUBLIC_TAWK_PROPERTY_ID: z.string(),
   NEXT_PUBLIC_TAWK_WIDGET_ID: z.string(),
+  NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID: z.string(),
 });
 
 export const config = Config.parse({
@@ -14,4 +15,6 @@ export const config = Config.parse({
   NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
   NEXT_PUBLIC_TAWK_PROPERTY_ID: process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID,
   NEXT_PUBLIC_TAWK_WIDGET_ID: process.env.NEXT_PUBLIC_TAWK_WIDGET_ID,
+  NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID:
+    process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID,
 });

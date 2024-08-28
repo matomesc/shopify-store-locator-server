@@ -9,19 +9,20 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Script from 'next/script';
 import { Tawk } from '@/client/components/Tawk';
+import { config } from '@/client/config';
 
 const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-JRKJYM4TJP"
+        src={`https://www.googletagmanager.com/gtag/js?id=${config.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID}`}
         strategy="lazyOnload"
       />
       <Script id="GoogleAnalyticsInit" strategy="lazyOnload">{`
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-JRKJYM4TJP');
+          gtag('config', '${config.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID}');
       `}</Script>
       <PolarisAppProvider i18n={enTranslations} linkComponent={LinkWrapper}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
