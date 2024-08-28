@@ -20,7 +20,6 @@ export const Tawk: React.FC = () => {
   useEffect(() => {
     window.Tawk_API = window.Tawk_API || {
       onBeforeLoad: () => {
-        console.log('onBeforeLoad');
         window.Tawk_API?.minimize?.();
       },
     };
