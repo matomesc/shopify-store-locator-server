@@ -240,7 +240,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       Analytics ({plan.analyticsRetention} day retention)
                     </div>
                     <Divider />
-                    <div>Basic email support</div>
+                    <div>Basic support</div>
                   </div>
                 );
                 break;
@@ -267,7 +267,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
                       Analytics ({plan.analyticsRetention} day retention)
                     </div>
                     <Divider />
-                    <div>Priority email support</div>
+                    <div>Priority support</div>
                   </div>
                 );
                 break;
