@@ -13,7 +13,7 @@ ENV NODE_ENV production
 # NEXT_PUBLIC_ environment variables that are injected by Next into the app
 # build. Render makes all environment variables available as Docker ARGs.
 ARG NEXT_PUBLIC_APP_ENV
-ENV NEXT_PUBLIC_APP_ENV ${NEXT_PUBLIC_APP_ENV}}
+ENV NEXT_PUBLIC_APP_ENV ${NEXT_PUBLIC_APP_ENV}
 ARG NEXT_PUBLIC_SHOPIFY_CLIENT_ID
 ENV NEXT_PUBLIC_SHOPIFY_CLIENT_ID ${NEXT_PUBLIC_SHOPIFY_CLIENT_ID}
 ARG SENTRY_AUTH_TOKEN
