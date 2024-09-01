@@ -12,14 +12,23 @@ interface WebhookParams {
   res: NextApiResponse;
 }
 
+/**
+ * https://shopify.dev/docs/apps/build/privacy-law-compliance#customers-data_request-payload
+ */
 async function handleCustomersDataRequest({ res }: WebhookParams) {
   res.status(200).json({ ok: true });
 }
 
+/**
+ * https://shopify.dev/docs/apps/build/privacy-law-compliance#customers-redact
+ */
 async function handleCustomersRedact({ res }: WebhookParams) {
   res.status(200).json({ ok: true });
 }
 
+/**
+ * https://shopify.dev/docs/apps/build/privacy-law-compliance#shop-redact
+ */
 async function handleShopRedact({ res }: WebhookParams) {
   res.status(200).json({ ok: true });
 }
