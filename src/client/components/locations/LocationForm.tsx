@@ -123,7 +123,7 @@ export const LocationForm: React.FC<LocationFormProps> = ({
       const country =
         place.address_components.find((c) => {
           return c.types.includes('country');
-        })?.short_name || '';
+        })?.long_name || '';
       const lat = place.geometry.location?.lat() || 39;
       const lng = place.geometry.location?.lng() || 34;
 
