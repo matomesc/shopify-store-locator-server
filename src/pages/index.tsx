@@ -84,7 +84,7 @@ export default function Home() {
         <title>Neutek Locator</title>
         <meta
           name="description"
-          content="Enhance your Shopify store with Neutek Locator, the ultimate app for showcasing your physical locations. Easily create and customize interactive maps to display your store locations, complete with essential details and directions. Whether you have multiple outlets or a single shop, Neutek Locator helps your customers find you quickly and effortlessly, boosting both visibility and foot traffic."
+          content="Enhance your Shopify store with Neutek Store Locator & Map, the ultimate app for showcasing your physical locations. Easily create and customize interactive maps to display your store locations, complete with essential details and directions. Whether you have multiple outlets or a single shop, Neutek Store Locator & Map helps your customers find you quickly and effortlessly, boosting both visibility and foot traffic."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -117,13 +117,13 @@ export default function Home() {
             paddingRight: '20px',
           }}
         >
-          Enhance your Shopify store with Neutek Locator: Store Locator & Map,
-          the ultimate app for showcasing your physical locations. Easily create
-          and customize interactive maps to display your store locations,
-          complete with essential details and directions. Whether you have
-          multiple outlets or a single shop, Neutek Locator: Store Locator & Map
-          helps your customers find you quickly and effortlessly, boosting both
-          visibility and foot traffic.
+          Enhance your Shopify store with Neutek Store Locator & Map, the
+          ultimate app for showcasing your physical locations. Easily create and
+          customize interactive maps to display your store locations, complete
+          with essential details and directions. Whether you have multiple
+          outlets or a single shop, Neutek Store Locator & Map helps your
+          customers find you quickly and effortlessly, boosting both visibility
+          and foot traffic.
         </p>
 
         <div
