@@ -1,0 +1,14 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.env
+.devcontainer
+.vscode
+.yarn/cache
+.yarn/install-state.gz
+dist
+ngrok.yml
