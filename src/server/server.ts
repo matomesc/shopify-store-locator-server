@@ -48,7 +48,7 @@ app
           }),
         );
       });
-    }).listen(port);
+    }).listen(port, '0.0.0.0');
 
     const terminator = createHttpTerminator({
       server,
@@ -78,7 +78,7 @@ app
       });
     });
 
-    serverLogger.info(`> Server listening at http://localhost:${port}`);
+    serverLogger.info(`> Server listening at http://0.0.0.0:${port}`);
   })
   .catch((err) => {
     Sentry.captureException(err);
