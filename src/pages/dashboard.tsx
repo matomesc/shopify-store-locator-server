@@ -271,7 +271,8 @@ const Dashboard: NextPage = () => {
                 tone="critical"
               >
                 You have not set a Google Maps API key. Go to{' '}
-                <Link url="/setup">setup</Link> to create one.
+                <Link url="/onboarding">onboarding</Link> to see how to create
+                one.
               </Banner>
             </Layout.Section>
           )}
@@ -331,11 +332,11 @@ const Dashboard: NextPage = () => {
           <Layout.Section>
             <Card>
               <EmptyState
-                heading="Complete setup to continue"
+                heading="Complete onboarding to continue"
                 action={{
-                  content: 'Go to setup',
+                  content: 'Go to onboarding',
                   onAction: () => {
-                    router.push('/setup').catch((err) => {
+                    router.push('/onboarding').catch((err) => {
                       Sentry.captureException(err);
                     });
                   },
@@ -343,7 +344,7 @@ const Dashboard: NextPage = () => {
                 image="/checklist.png"
               >
                 <p>
-                  Once you complete the setup you will be able to import
+                  Once you complete the onboarding you will be able to import
                   existing data in CSV format or manually add your locations
                 </p>
               </EmptyState>
