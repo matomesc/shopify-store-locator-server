@@ -7,11 +7,13 @@ export class SlackService {
   public async postInstallMessage({
     name,
     domain,
+    customDomain,
     email,
     ownerName,
   }: {
     name: string;
     domain: string;
+    customDomain: string;
     email: string;
     ownerName: string;
   }) {
@@ -26,7 +28,7 @@ export class SlackService {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: `*New install* :tada:\n*Name:* ${name}\n*Domain:* ${domain}\n*Email:* ${email}\n*Owner name:* ${ownerName}`,
+              text: `*New install* :tada:\n*Name:* ${name}\n*Domain:* ${domain}\n*Custom domain:* ${customDomain}\n*Email:* ${email}\n*Owner name:* ${ownerName}`,
             },
           },
         ],
@@ -37,11 +39,13 @@ export class SlackService {
   public async postUninstallMessage({
     name,
     domain,
+    customDomain,
     email,
     ownerName,
   }: {
     name: string;
     domain: string;
+    customDomain: string;
     email: string;
     ownerName: string;
   }) {
@@ -56,7 +60,7 @@ export class SlackService {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: `*New uninstall* :cry:\n*Name:* ${name}\n*Domain:* ${domain}\n*Email:* ${email}\n*Owner name:* ${ownerName}`,
+              text: `*New uninstall* :cry:\n*Name:* ${name}\n*Domain:* ${domain}\n*Custom domain:* ${customDomain}\n*Email:* ${email}\n*Owner name:* ${ownerName}`,
             },
           },
         ],

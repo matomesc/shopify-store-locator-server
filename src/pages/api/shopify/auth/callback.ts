@@ -91,6 +91,7 @@ router.get(async (req, res) => {
     try {
       await slackService.postInstallMessage({
         domain: shop.domain,
+        customDomain: shop.customDomain,
         email: shop.email,
         name: shop.name,
         ownerName: shop.ownerName,
@@ -175,6 +176,7 @@ router.get(async (req, res) => {
     try {
       await slackService.postInstallMessage({
         domain: shop.domain,
+        customDomain: shop.customDomain,
         email: shop.email,
         name: shop.name,
         ownerName: shop.ownerName,

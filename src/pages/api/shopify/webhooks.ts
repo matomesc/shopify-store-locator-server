@@ -57,6 +57,7 @@ async function handleAppUninstalled({ shopDomain, res }: WebhookParams) {
     try {
       await slackService.postUninstallMessage({
         domain: shop.domain,
+        customDomain: shop.customDomain,
         email: shop.email,
         name: shop.name,
         ownerName: shop.ownerName,
