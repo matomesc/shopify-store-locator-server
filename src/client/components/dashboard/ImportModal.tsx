@@ -151,7 +151,10 @@ export const ImportModal: React.FC<ImportModalProps> = ({
 
                 try {
                   await locationsCreateManyMutation.mutateAsync(state.rows);
-                  await utils.locations.getAll.invalidate();
+                  await Promise.all([
+                    utils.locations.getAll.invalidate(),
+                    utils.locations.count.invalidate(),
+                  ]);
                 } catch (err) {
                   setState((prevState) => {
                     return {
