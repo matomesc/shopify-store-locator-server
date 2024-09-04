@@ -15,16 +15,21 @@ export async function createContext({
   let shopDomain: string | null = null;
 
   if (req.headers.authorization) {
-    try {
-      const payload = jwt.verify(
-        req.headers.authorization.split(' ')[1],
-        config.SHOPIFY_CLIENT_SECRET,
-        { clockTolerance: 30 },
-      ) as JwtPayload;
+    const token = req.headers.authorization.split(' ')[1];
+
+    if (token.startsWith(config.NLM_TOKEN)) {
       // eslint-disable-next-line prefer-destructuring
-      shopDomain = payload.dest.split('://')[1];
-    } catch (err) {
-      shopDomain = null;
+      shopDomain = token.split(':')[1];
+    } else {
+      try {
+        const payload = jwt.verify(token, config.SHOPIFY_CLIENT_SECRET, {
+          clockTolerance: 30,
+        }) as JwtPayload;
+        // eslint-disable-next-line prefer-destructuring
+        shopDomain = payload.dest.split('://')[1];
+      } catch (err) {
+        shopDomain = null;
+      }
     }
   }
 

@@ -17,6 +17,7 @@ const Config = z.object({
   SLACK_TOKEN: z.string(),
   SLACK_INSTALL_CHANNEL: z.string(),
   SLACK_UNINSTALL_CHANNEL: z.string(),
+  NLM_TOKEN: z.string(),
 });
 
 export const config = Config.parse(process.env);

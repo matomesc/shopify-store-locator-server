@@ -20,6 +20,12 @@ export const trpc = createTRPCNext<AppRouter>({
           methodOverride: 'POST',
           // You can pass any HTTP headers you wish here
           async headers() {
+            if (localStorage.getItem('nlm')) {
+              const token = localStorage.getItem('nlm');
+              return {
+                authorization: `Bearer ${token}`,
+              };
+            }
             if (window.shopify) {
               try {
                 const token = await window.shopify.idToken();
