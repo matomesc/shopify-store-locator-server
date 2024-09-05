@@ -1,5 +1,4 @@
 import { Badge, Button, Divider, Text } from '@shopify/polaris';
-import { useMediaQuery } from 'react-responsive';
 import { ReactNode, useState } from 'react';
 import { Plan as PlanDto } from '@/dto/trpc';
 import { trpc } from '@/lib/trpc';
@@ -31,9 +30,7 @@ const Plan: React.FC<PlanProps> = ({
       style={{
         borderRadius: '12px',
         border: `1px solid ${
-          selected
-            ? 'var(--p-color-bg-fill-success)'
-            : 'var(--p-color-input-border)'
+          selected ? 'rgba(4, 123, 93, 1)' : 'rgba(138, 138, 138, 1)'
         }`,
         cursor: 'pointer',
       }}
@@ -46,8 +43,8 @@ const Plan: React.FC<PlanProps> = ({
           alignItems: 'center',
           padding: '16px',
           background: selected
-            ? 'var(--p-color-bg-surface-success)'
-            : 'var(--p-color-bg-surface-tertiary)',
+            ? 'rgba(205, 254, 212, 1)'
+            : 'rgba(243, 243, 243, 1)',
           // Match border with container border so the header doesn't overflow
           borderTopLeftRadius: '12px',
           borderTopRightRadius: '12px',
@@ -58,7 +55,7 @@ const Plan: React.FC<PlanProps> = ({
         <Text as="span" fontWeight="bold">
           {name}
         </Text>
-        <span>${price}/month</span>
+        <Text as="span">${price}/month</Text>
       </div>
       <div className="features" style={{ padding: '16px' }}>
         {features}
@@ -84,25 +81,9 @@ export const PlansModal: React.FC<PlansModalProps> = ({
   const [state, setState] = useState({
     selectedPlanId: currentPlanId,
   });
-  const isSmall = useMediaQuery({ query: '(min-width: 521px)' });
-  const isLarge = useMediaQuery({
-    query: '(min-width: 900px)',
-  });
   const utils = trpc.useUtils();
   const billingCreateChargeMutation = trpc.billing.createCharge.useMutation();
   const shopsUpdateMutation = trpc.shops.update.useMutation();
-
-  // Determine the flex basis of the plan's container by dividing the available
-  // length and subtracting the gap between them
-  let flexBasis;
-  if (isLarge) {
-    flexBasis = 'calc(100% / 5 - 10px)';
-  } else if (isSmall) {
-    flexBasis = 'calc(100% / 2 - 10px)';
-  } else {
-    // Smaller than small
-    flexBasis = '100%';
-  }
 
   const freePlan = plans.find((plan) => plan.id === 'free');
   const starterPlan = plans.find((plan) => plan.id === 'starter');
@@ -163,7 +144,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
         </Button>
       }
       height="fit-content"
-      width="fit-content"
+      maxWidth="1200px"
     >
       <div
         style={{
@@ -331,9 +312,7 @@ export const PlansModal: React.FC<PlansModalProps> = ({
               <div
                 key={plan.id}
                 style={{
-                  flexBasis,
-                  maxWidth: '300px',
-                  minWidth: '200px',
+                  flexBasis: '200px',
                 }}
               >
                 <Plan

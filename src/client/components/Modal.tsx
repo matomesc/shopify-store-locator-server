@@ -84,7 +84,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
           // The max height of children is 100vh minus the header, footer and
           // divider heights. This is necessary in order for the children to
           // be scrollable.
-          childrenEl.style.maxHeight = `calc(100vh - ${headerHeight}px - ${footerHeight}px - 4px)`;
+          childrenEl.style.maxHeight = `calc(100vh - ${headerHeight}px - ${footerHeight}px - 10px)`;
         }}
       >
         <style jsx>{`
