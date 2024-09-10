@@ -9,6 +9,7 @@ import { Spinner } from '@/client/components/Spinner';
 import { Loads } from '@/client/components/analytics/Loads';
 import { Searches } from '@/client/components/analytics/Searches';
 import { Locations } from '@/client/components/analytics/Locations';
+import Head from 'next/head';
 
 const tabs: TabProps[] = [
   {
@@ -85,35 +86,40 @@ const Analytics: NextPage = () => {
   }
 
   return (
-    <Page title="Analytics">
-      <APIProvider apiKey={settingsGetQuery.data.settings.googleMapsApiKey}>
-        <Tabs
-          tabs={tabs}
-          selected={state.selectedTab}
-          onSelect={(tabIndex) => {
-            setState((prevState) => {
-              return {
-                ...prevState,
-                selectedTab: tabIndex,
-              };
-            });
-            router
-              .push(
-                { query: { ...router.query, tab: tabs[tabIndex].id } },
-                undefined,
-                { shallow: true },
-              )
-              .catch((err) => {
-                Sentry.captureException(err);
+    <>
+      <Head>
+        <title>Analytics</title>
+      </Head>
+      <Page title="Analytics">
+        <APIProvider apiKey={settingsGetQuery.data.settings.googleMapsApiKey}>
+          <Tabs
+            tabs={tabs}
+            selected={state.selectedTab}
+            onSelect={(tabIndex) => {
+              setState((prevState) => {
+                return {
+                  ...prevState,
+                  selectedTab: tabIndex,
+                };
               });
-          }}
-        >
-          {state.selectedTab === 0 && <Loads />}
-          {state.selectedTab === 1 && <Searches />}
-          {state.selectedTab === 2 && <Locations />}
-        </Tabs>
-      </APIProvider>
-    </Page>
+              router
+                .push(
+                  { query: { ...router.query, tab: tabs[tabIndex].id } },
+                  undefined,
+                  { shallow: true },
+                )
+                .catch((err) => {
+                  Sentry.captureException(err);
+                });
+            }}
+          >
+            {state.selectedTab === 0 && <Loads />}
+            {state.selectedTab === 1 && <Searches />}
+            {state.selectedTab === 2 && <Locations />}
+          </Tabs>
+        </APIProvider>
+      </Page>
+    </>
   );
 };
 

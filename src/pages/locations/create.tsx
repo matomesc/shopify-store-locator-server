@@ -4,6 +4,7 @@ import { trpc } from '@/lib/trpc';
 import { Button, Card, Link, Page } from '@shopify/polaris';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { NextPage } from 'next';
+import Head from 'next/head';
 import { v4 } from 'uuid';
 
 const LocationsCreate: NextPage = () => {
@@ -74,52 +75,57 @@ const LocationsCreate: NextPage = () => {
   }
 
   return (
-    <APIProvider
-      apiKey={settingsGetQuery.data.settings.googleMapsApiKey}
-      libraries={['marker']}
-    >
-      <LocationForm
-        mode="create"
-        defaultFormValues={{
-          id: v4(),
-          name: '',
-          active: true,
-          phone: '',
-          email: '',
-          website: '',
-          address1: '',
-          address2: '',
-          city: '',
-          state: '',
-          zip: '',
-          country: '',
-          lat: 39,
-          lng: 34,
-          searchFilters: [],
-          customFieldValues: customFieldsGetAllQuery.data.customFields.map(
-            (customField) => {
-              return {
-                id: v4(),
-                customFieldId: customField.id,
-                value: '',
-              };
-            },
-          ),
-          customActionValues: customActionsGetAllQuery.data.customActions.map(
-            (customAction) => {
-              return {
-                id: v4(),
-                customActionId: customAction.id,
-                value: '',
-              };
-            },
-          ),
-        }}
-        searchFilters={searchFiltersGetAllQuery.data.searchFilters}
-        customFields={customFieldsGetAllQuery.data.customFields}
-        customActions={customActionsGetAllQuery.data.customActions}
-      />
-    </APIProvider>
+    <>
+      <Head>
+        <title>Create Location</title>
+      </Head>
+      <APIProvider
+        apiKey={settingsGetQuery.data.settings.googleMapsApiKey}
+        libraries={['marker']}
+      >
+        <LocationForm
+          mode="create"
+          defaultFormValues={{
+            id: v4(),
+            name: '',
+            active: true,
+            phone: '',
+            email: '',
+            website: '',
+            address1: '',
+            address2: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: '',
+            lat: 39,
+            lng: 34,
+            searchFilters: [],
+            customFieldValues: customFieldsGetAllQuery.data.customFields.map(
+              (customField) => {
+                return {
+                  id: v4(),
+                  customFieldId: customField.id,
+                  value: '',
+                };
+              },
+            ),
+            customActionValues: customActionsGetAllQuery.data.customActions.map(
+              (customAction) => {
+                return {
+                  id: v4(),
+                  customActionId: customAction.id,
+                  value: '',
+                };
+              },
+            ),
+          }}
+          searchFilters={searchFiltersGetAllQuery.data.searchFilters}
+          customFields={customFieldsGetAllQuery.data.customFields}
+          customActions={customActionsGetAllQuery.data.customActions}
+        />
+      </APIProvider>
+    </>
   );
 };
 

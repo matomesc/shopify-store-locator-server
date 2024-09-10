@@ -25,6 +25,7 @@ import {
 } from '@/client/components/dashboard/ImportModal';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import Papa from 'papaparse';
+import Head from 'next/head';
 
 const Dashboard: NextPage = () => {
   const router = useRouter();
@@ -128,329 +129,334 @@ const Dashboard: NextPage = () => {
   }
 
   return (
-    <Page
-      fullWidth
-      title="Dashboard"
-      primaryAction={
-        shopsGetQuery.data.shop.showOnboarding ||
-        !settingsGetQuery.data.settings.googleMapsApiKey
-          ? undefined
-          : {
-              content: 'Add location',
-              onAction: () => {
-                router.push('/locations/create').catch((err) => {
-                  Sentry.captureException(err);
-                });
-              },
-            }
-      }
-      secondaryActions={
-        // eslint-disable-next-line no-nested-ternary
-        shopsGetQuery.data.shop.showOnboarding ||
-        !settingsGetQuery.data.settings.googleMapsApiKey
-          ? []
-          : [
-              {
-                content: 'Import',
+    <>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
+      <Page
+        fullWidth
+        title="Dashboard"
+        primaryAction={
+          shopsGetQuery.data.shop.showOnboarding ||
+          !settingsGetQuery.data.settings.googleMapsApiKey
+            ? undefined
+            : {
+                content: 'Add location',
                 onAction: () => {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      import: {
-                        ...prevState.import,
-                        modalOpen: true,
-                      },
-                    };
+                  router.push('/locations/create').catch((err) => {
+                    Sentry.captureException(err);
                   });
                 },
-              },
-              {
-                content: 'Export',
-                onAction: () => {
-                  const searchFilters = [
-                    ...searchFiltersGetAllQuery.data.searchFilters,
-                  ].sort((searchFilterA, searchFilterB) => {
-                    return searchFilterA.position - searchFilterB.position;
-                  });
-                  const customFields = [
-                    ...customFieldsGetAllQuery.data.customFields,
-                  ].sort((customFieldA, customFieldB) => {
-                    return customFieldA.position - customFieldB.position;
-                  });
-                  const customActions = [
-                    ...customActionsGetAllQuery.data.customActions,
-                  ].sort((customActionA, customActionB) => {
-                    return customActionA.position - customActionB.position;
-                  });
+              }
+        }
+        secondaryActions={
+          // eslint-disable-next-line no-nested-ternary
+          shopsGetQuery.data.shop.showOnboarding ||
+          !settingsGetQuery.data.settings.googleMapsApiKey
+            ? []
+            : [
+                {
+                  content: 'Import',
+                  onAction: () => {
+                    setState((prevState) => {
+                      return {
+                        ...prevState,
+                        import: {
+                          ...prevState.import,
+                          modalOpen: true,
+                        },
+                      };
+                    });
+                  },
+                },
+                {
+                  content: 'Export',
+                  onAction: () => {
+                    const searchFilters = [
+                      ...searchFiltersGetAllQuery.data.searchFilters,
+                    ].sort((searchFilterA, searchFilterB) => {
+                      return searchFilterA.position - searchFilterB.position;
+                    });
+                    const customFields = [
+                      ...customFieldsGetAllQuery.data.customFields,
+                    ].sort((customFieldA, customFieldB) => {
+                      return customFieldA.position - customFieldB.position;
+                    });
+                    const customActions = [
+                      ...customActionsGetAllQuery.data.customActions,
+                    ].sort((customActionA, customActionB) => {
+                      return customActionA.position - customActionB.position;
+                    });
 
-                  const rows = locationsGetAllQuery.data.locations.map(
-                    (location) => {
-                      const row: Record<string, string> = {
-                        Name: location.name,
-                        Active: location.active ? 'yes' : 'no',
-                        Phone: location.phone,
-                        Email: location.email,
-                        Website: location.website,
-                        Address: location.address1,
-                        'Apartment, suite, etc.': location.address2,
-                        City: location.city,
-                        'State/Province': location.state,
-                        'Zip/Postal code': location.zip,
-                        Country: location.country,
-                        Latitude: String(location.lat),
-                        Longitude: String(location.lng),
-                        'Search filters': searchFilters
-                          .map((searchFilter) => {
-                            const included = location.searchFilters.find(
-                              (sf) => sf.id === searchFilter.id,
+                    const rows = locationsGetAllQuery.data.locations.map(
+                      (location) => {
+                        const row: Record<string, string> = {
+                          Name: location.name,
+                          Active: location.active ? 'yes' : 'no',
+                          Phone: location.phone,
+                          Email: location.email,
+                          Website: location.website,
+                          Address: location.address1,
+                          'Apartment, suite, etc.': location.address2,
+                          City: location.city,
+                          'State/Province': location.state,
+                          'Zip/Postal code': location.zip,
+                          Country: location.country,
+                          Latitude: String(location.lat),
+                          Longitude: String(location.lng),
+                          'Search filters': searchFilters
+                            .map((searchFilter) => {
+                              const included = location.searchFilters.find(
+                                (sf) => sf.id === searchFilter.id,
+                              );
+
+                              if (included) {
+                                return searchFilter.name;
+                              }
+
+                              return null;
+                            })
+                            .filter((v) => !!v)
+                            .join(' | '),
+                        };
+
+                        customFields.forEach((customField) => {
+                          const customFieldValue =
+                            location.customFieldValues.find(
+                              (cfv) => cfv.customFieldId === customField.id,
                             );
 
-                            if (included) {
-                              return searchFilter.name;
-                            }
+                          if (!customFieldValue || !customFieldValue.value) {
+                            row[getCustomFieldHeaderName(customField.name)] =
+                              customField.defaultValue;
+                          } else {
+                            row[getCustomFieldHeaderName(customField.name)] =
+                              customFieldValue.value;
+                          }
+                        });
 
-                            return null;
-                          })
-                          .filter((v) => !!v)
-                          .join(' | '),
-                      };
+                        customActions.forEach((customAction) => {
+                          const customActionValue =
+                            location.customActionValues.find(
+                              (cav) => cav.customActionId === customAction.id,
+                            );
 
-                      customFields.forEach((customField) => {
-                        const customFieldValue =
-                          location.customFieldValues.find(
-                            (cfv) => cfv.customFieldId === customField.id,
-                          );
+                          if (!customActionValue || !customActionValue.value) {
+                            row[getCustomActionHeaderName(customAction.name)] =
+                              customAction.defaultValue;
+                          } else {
+                            row[getCustomActionHeaderName(customAction.name)] =
+                              customActionValue.value;
+                          }
+                        });
 
-                        if (!customFieldValue || !customFieldValue.value) {
-                          row[getCustomFieldHeaderName(customField.name)] =
-                            customField.defaultValue;
-                        } else {
-                          row[getCustomFieldHeaderName(customField.name)] =
-                            customFieldValue.value;
-                        }
-                      });
+                        return row;
+                      },
+                    );
 
-                      customActions.forEach((customAction) => {
-                        const customActionValue =
-                          location.customActionValues.find(
-                            (cav) => cav.customActionId === customAction.id,
-                          );
-
-                        if (!customActionValue || !customActionValue.value) {
-                          row[getCustomActionHeaderName(customAction.name)] =
-                            customAction.defaultValue;
-                        } else {
-                          row[getCustomActionHeaderName(customAction.name)] =
-                            customActionValue.value;
-                        }
-                      });
-
-                      return row;
-                    },
-                  );
-
-                  const csv = Papa.unparse(rows);
-                  const url = window.URL.createObjectURL(new Blob([csv]));
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.setAttribute('download', 'export.csv');
-                  document.body.appendChild(link);
-                  link.click();
-                  link.parentNode?.removeChild(link);
+                    const csv = Papa.unparse(rows);
+                    const url = window.URL.createObjectURL(new Blob([csv]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', 'export.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode?.removeChild(link);
+                  },
                 },
-              },
-            ]
-      }
-    >
-      <Layout>
-        {!shopsGetQuery.data.shop.showOnboarding &&
-          !settingsGetQuery.data.settings.googleMapsApiKey && (
+              ]
+        }
+      >
+        <Layout>
+          {!shopsGetQuery.data.shop.showOnboarding &&
+            !settingsGetQuery.data.settings.googleMapsApiKey && (
+              <Layout.Section>
+                <Banner
+                  title="Setup your Google Maps API key now"
+                  tone="critical"
+                >
+                  You have not set a Google Maps API key. Go to{' '}
+                  <Link url="/onboarding">onboarding</Link> to see how to create
+                  one.
+                </Banner>
+              </Layout.Section>
+            )}
+
+          {locationsCountQuery.data.count >
+            shopsGetQuery.data.shop.plan.locationsLimit && (
             <Layout.Section>
               <Banner
-                title="Setup your Google Maps API key now"
-                tone="critical"
+                title={`You have more active locations (${locationsCountQuery.data.count}) than your plan supports (${shopsGetQuery.data.shop.plan.locationsLimit})`}
+                tone="warning"
               >
-                You have not set a Google Maps API key. Go to{' '}
-                <Link url="/onboarding">onboarding</Link> to see how to create
-                one.
+                Some locations will not show up on your storefront. Upgrade your
+                plan now to support all locations.{' '}
+                <Button
+                  onClick={() => {
+                    setState((prevState) => {
+                      return {
+                        ...prevState,
+                        plansModalOpen: true,
+                      };
+                    });
+                  }}
+                >
+                  Upgrade
+                </Button>
               </Banner>
             </Layout.Section>
           )}
 
-        {locationsCountQuery.data.count >
-          shopsGetQuery.data.shop.plan.locationsLimit && (
-          <Layout.Section>
-            <Banner
-              title={`You have more active locations (${locationsCountQuery.data.count}) than your plan supports (${shopsGetQuery.data.shop.plan.locationsLimit})`}
-              tone="warning"
-            >
-              Some locations will not show up on your storefront. Upgrade your
-              plan now to support all locations.{' '}
-              <Button
-                onClick={() => {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      plansModalOpen: true,
-                    };
-                  });
-                }}
+          {languagesCountQuery.data.count + 1 >
+            shopsGetQuery.data.shop.plan.languagesLimit && (
+            <Layout.Section>
+              <Banner
+                title={`You have more enabled languages (${languagesCountQuery.data.count + 1}) than your plan supports (${shopsGetQuery.data.shop.plan.languagesLimit})`}
+                tone="warning"
               >
-                Upgrade
-              </Button>
-            </Banner>
-          </Layout.Section>
-        )}
-
-        {languagesCountQuery.data.count + 1 >
-          shopsGetQuery.data.shop.plan.languagesLimit && (
-          <Layout.Section>
-            <Banner
-              title={`You have more enabled languages (${languagesCountQuery.data.count + 1}) than your plan supports (${shopsGetQuery.data.shop.plan.languagesLimit})`}
-              tone="warning"
-            >
-              Some languages will not show up on your storefront. Upgrade your
-              plan now to support all languages.{' '}
-              <Button
-                onClick={() => {
-                  setState((prevState) => {
-                    return {
-                      ...prevState,
-                      plansModalOpen: true,
-                    };
-                  });
-                }}
-              >
-                Upgrade
-              </Button>
-            </Banner>
-          </Layout.Section>
-        )}
-
-        {(shopsGetQuery.data.shop.showOnboarding ||
-          !settingsGetQuery.data.settings.googleMapsApiKey) && (
-          <Layout.Section>
-            <Card>
-              <EmptyState
-                heading="Complete onboarding to continue"
-                action={{
-                  content: 'Go to onboarding',
-                  onAction: () => {
-                    router.push('/onboarding').catch((err) => {
-                      Sentry.captureException(err);
+                Some languages will not show up on your storefront. Upgrade your
+                plan now to support all languages.{' '}
+                <Button
+                  onClick={() => {
+                    setState((prevState) => {
+                      return {
+                        ...prevState,
+                        plansModalOpen: true,
+                      };
                     });
-                  },
-                }}
-                image="/checklist.png"
-              >
-                <p>
-                  Once you complete the onboarding you will be able to import
-                  existing data in CSV format or manually add your locations
-                </p>
-              </EmptyState>
-            </Card>
-          </Layout.Section>
-        )}
-        {/* Empty state */}
-        {settingsGetQuery.data.settings.googleMapsApiKey &&
-          !shopsGetQuery.data.shop.showOnboarding &&
-          locationsGetAllQuery.data.locations.length === 0 && (
+                  }}
+                >
+                  Upgrade
+                </Button>
+              </Banner>
+            </Layout.Section>
+          )}
+
+          {(shopsGetQuery.data.shop.showOnboarding ||
+            !settingsGetQuery.data.settings.googleMapsApiKey) && (
             <Layout.Section>
               <Card>
                 <EmptyState
-                  heading="Create your first location now"
+                  heading="Complete onboarding to continue"
                   action={{
-                    content: 'Add location',
+                    content: 'Go to onboarding',
                     onAction: () => {
-                      router.push('/locations/create').catch((err) => {
+                      router.push('/onboarding').catch((err) => {
                         Sentry.captureException(err);
                       });
                     },
                   }}
-                  secondaryAction={{
-                    content: 'Import locations',
-                    onAction: () => {
-                      setState((prevState) => {
-                        return {
-                          ...prevState,
-                          import: {
-                            ...prevState.import,
-                            modalOpen: true,
-                          },
-                        };
-                      });
-                    },
-                  }}
-                  image="/emptystate.png"
+                  image="/checklist.png"
                 >
                   <p>
-                    You can import existing data in CSV format or manually add
-                    your locations
+                    Once you complete the onboarding you will be able to import
+                    existing data in CSV format or manually add your locations
                   </p>
                 </EmptyState>
               </Card>
             </Layout.Section>
           )}
-        {/* Locations table */}
-        {settingsGetQuery.data.settings.googleMapsApiKey &&
-          !shopsGetQuery.data.shop.showOnboarding &&
-          locationsGetAllQuery.data.locations.length > 0 && (
-            <Layout.Section>
-              <Card padding="0">
-                <LocationsTable
-                  locations={locationsGetAllQuery.data.locations}
-                />
-              </Card>
-            </Layout.Section>
-          )}
-      </Layout>
-      <PlansModal
-        open={state.plansModalOpen}
-        currentPlanId={shopsGetQuery.data.shop.planId}
-        plans={plansGetAllQuery.data.plans}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onClose={async () => {
-          setState((prevState) => {
-            return {
-              ...prevState,
-              plansModalOpen: false,
-            };
-          });
-
-          try {
-            await shopsUpdateMutation.mutateAsync({
-              showPlansModal: false,
+          {/* Empty state */}
+          {settingsGetQuery.data.settings.googleMapsApiKey &&
+            !shopsGetQuery.data.shop.showOnboarding &&
+            locationsGetAllQuery.data.locations.length === 0 && (
+              <Layout.Section>
+                <Card>
+                  <EmptyState
+                    heading="Create your first location now"
+                    action={{
+                      content: 'Add location',
+                      onAction: () => {
+                        router.push('/locations/create').catch((err) => {
+                          Sentry.captureException(err);
+                        });
+                      },
+                    }}
+                    secondaryAction={{
+                      content: 'Import locations',
+                      onAction: () => {
+                        setState((prevState) => {
+                          return {
+                            ...prevState,
+                            import: {
+                              ...prevState.import,
+                              modalOpen: true,
+                            },
+                          };
+                        });
+                      },
+                    }}
+                    image="/emptystate.png"
+                  >
+                    <p>
+                      You can import existing data in CSV format or manually add
+                      your locations
+                    </p>
+                  </EmptyState>
+                </Card>
+              </Layout.Section>
+            )}
+          {/* Locations table */}
+          {settingsGetQuery.data.settings.googleMapsApiKey &&
+            !shopsGetQuery.data.shop.showOnboarding &&
+            locationsGetAllQuery.data.locations.length > 0 && (
+              <Layout.Section>
+                <Card padding="0">
+                  <LocationsTable
+                    locations={locationsGetAllQuery.data.locations}
+                  />
+                </Card>
+              </Layout.Section>
+            )}
+        </Layout>
+        <PlansModal
+          open={state.plansModalOpen}
+          currentPlanId={shopsGetQuery.data.shop.planId}
+          plans={plansGetAllQuery.data.plans}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onClose={async () => {
+            setState((prevState) => {
+              return {
+                ...prevState,
+                plansModalOpen: false,
+              };
             });
-            await utils.shops.get.invalidate();
-          } catch (err) {
-            Sentry.captureException(err);
-          }
-        }}
-      />
-      {settingsGetQuery.data.settings.googleMapsApiKey && (
-        <APIProvider apiKey={settingsGetQuery.data.settings.googleMapsApiKey}>
-          <ImportModal
-            key={state.import.modalKey}
-            open={state.import.modalOpen}
-            searchFilters={searchFiltersGetAllQuery.data.searchFilters}
-            customFields={customFieldsGetAllQuery.data.customFields}
-            customActions={customActionsGetAllQuery.data.customActions}
-            onClose={() => {
-              setState((prevState) => {
-                return {
-                  ...prevState,
-                  import: {
-                    ...prevState.import,
-                    modalOpen: false,
-                    modalKey: prevState.import.modalKey + 1,
-                  },
-                };
+
+            try {
+              await shopsUpdateMutation.mutateAsync({
+                showPlansModal: false,
               });
-            }}
-          />
-        </APIProvider>
-      )}
-    </Page>
+              await utils.shops.get.invalidate();
+            } catch (err) {
+              Sentry.captureException(err);
+            }
+          }}
+        />
+        {settingsGetQuery.data.settings.googleMapsApiKey && (
+          <APIProvider apiKey={settingsGetQuery.data.settings.googleMapsApiKey}>
+            <ImportModal
+              key={state.import.modalKey}
+              open={state.import.modalOpen}
+              searchFilters={searchFiltersGetAllQuery.data.searchFilters}
+              customFields={customFieldsGetAllQuery.data.customFields}
+              customActions={customActionsGetAllQuery.data.customActions}
+              onClose={() => {
+                setState((prevState) => {
+                  return {
+                    ...prevState,
+                    import: {
+                      ...prevState.import,
+                      modalOpen: false,
+                      modalKey: prevState.import.modalKey + 1,
+                    },
+                  };
+                });
+              }}
+            />
+          </APIProvider>
+        )}
+      </Page>
+    </>
   );
 };
 

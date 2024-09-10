@@ -2,6 +2,7 @@ import { Spinner } from '@/client/components/Spinner';
 import { trpc } from '@/lib/trpc';
 import { Button, Card, Divider, Page, Text } from '@shopify/polaris';
 import { NextPage } from 'next';
+import Head from 'next/head';
 import { ReactNode } from 'react';
 
 interface PlanProps {
@@ -89,18 +90,27 @@ const Pricing: NextPage = () => {
   );
 
   return (
-    <Page title="Pricing" fullWidth>
-      <Card>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '10px',
-            justifyContent: 'center',
-          }}
-        >
-          {[freePlan, starterPlan, proPlan, enterprisePlan, unlimitedPlan].map(
-            (plan) => {
+    <>
+      <Head>
+        <title>Pricing</title>
+      </Head>
+      <Page title="Pricing" fullWidth>
+        <Card>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '10px',
+              justifyContent: 'center',
+            }}
+          >
+            {[
+              freePlan,
+              starterPlan,
+              proPlan,
+              enterprisePlan,
+              unlimitedPlan,
+            ].map((plan) => {
               if (!plan) {
                 return null;
               }
@@ -267,11 +277,11 @@ const Pricing: NextPage = () => {
                   />
                 </div>
               );
-            },
-          )}
-        </div>
-      </Card>
-    </Page>
+            })}
+          </div>
+        </Card>
+      </Page>
+    </>
   );
 };
 

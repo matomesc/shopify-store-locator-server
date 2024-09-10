@@ -3,6 +3,7 @@ import { Spinner } from '@/client/components/Spinner';
 import { trpc } from '@/lib/trpc';
 import { Button, Card, Page } from '@shopify/polaris';
 import { NextPage } from 'next';
+import Head from 'next/head';
 
 const Settings: NextPage = () => {
   const shopsGetQuery = trpc.shops.get.useQuery();
@@ -72,18 +73,23 @@ const Settings: NextPage = () => {
   }
 
   return (
-    <SettingsForm
-      shop={shopsGetQuery.data.shop}
-      plans={plansGetAllQuery.data.plans}
-      defaultFormValues={{
-        settings: settingsGetQuery.data.settings,
-        searchFilters: searchFiltersGetAllQuery.data.searchFilters,
-        customFields: customFieldsGetAllQuery.data.customFields,
-        customActions: customActionsGetAllQuery.data.customActions,
-        languages: languagesGetAllQuery.data.languages,
-        translations: translationsGetAllQuery.data.translations,
-      }}
-    />
+    <>
+      <Head>
+        <title>Settings</title>
+      </Head>
+      <SettingsForm
+        shop={shopsGetQuery.data.shop}
+        plans={plansGetAllQuery.data.plans}
+        defaultFormValues={{
+          settings: settingsGetQuery.data.settings,
+          searchFilters: searchFiltersGetAllQuery.data.searchFilters,
+          customFields: customFieldsGetAllQuery.data.customFields,
+          customActions: customActionsGetAllQuery.data.customActions,
+          languages: languagesGetAllQuery.data.languages,
+          translations: translationsGetAllQuery.data.translations,
+        }}
+      />
+    </>
   );
 };
 
