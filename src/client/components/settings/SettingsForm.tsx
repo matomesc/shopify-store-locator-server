@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   FormLayout,
   Layout,
@@ -8,7 +7,7 @@ import {
   Text,
   TextField,
 } from '@shopify/polaris';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   CustomActionsSyncInput,
   CustomFieldsSyncInput,
@@ -24,10 +23,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as Sentry from '@sentry/nextjs';
 import { trpc } from '@/lib/trpc';
 import { toast } from '@/client/lib/toast';
-import { timezones } from '@/lib/timezones';
 import { z } from 'zod';
 import { v4 } from 'uuid';
-import { PlansModal } from '../billing/PlansModal';
 import { SearchFilters } from './SearchFilters';
 import { CustomFields } from './CustomFields';
 import { CustomActions } from './CustomActions';
@@ -61,14 +58,14 @@ export interface SettingsFormProps {
 }
 
 export const SettingsForm: React.FC<SettingsFormProps> = ({
-  shop,
-  plans,
+  // shop,
+  // plans,
   defaultFormValues,
 }) => {
   const utils = trpc.useUtils();
-  const [state, setState] = useState({
-    plansModalOpen: false,
-  });
+  // const [state, setState] = useState({
+  //   plansModalOpen: false,
+  // });
   const settingsUpdateMutation = trpc.settings.update.useMutation();
   const searchFiltersSyncMutation = trpc.searchFilters.sync.useMutation();
   const customFieldsSyncMutation = trpc.customFields.sync.useMutation();
@@ -186,7 +183,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
       }}
     >
       <Layout>
-        <Layout.Section>
+        {/* <Layout.Section>
           <Card>
             <Layout>
               <Layout.Section>
@@ -222,9 +219,9 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               </Layout.Section>
             </Layout>
           </Card>
-        </Layout.Section>
+        </Layout.Section> */}
 
-        <Layout.Section>
+        {/* <Layout.Section>
           <Card>
             <Layout>
               <Layout.Section>
@@ -266,7 +263,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               });
             }}
           />
-        </Layout.Section>
+        </Layout.Section> */}
 
         <Layout.Section>
           <Card>

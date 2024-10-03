@@ -13,7 +13,7 @@ import { verifyScopes, verifyShopifyRequest } from '@/server/lib/shopify';
 import { config } from '@/server/config';
 import { trpc } from '@/lib/trpc';
 import { Spinner } from '@/client/components/Spinner';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PlansModal } from '@/client/components/billing/PlansModal';
 import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
@@ -51,22 +51,22 @@ const Dashboard: NextPage = () => {
   const customActionsGetAllQuery = trpc.customActions.getAll.useQuery();
   const locationsCountQuery = trpc.locations.count.useQuery();
   const languagesCountQuery = trpc.languages.count.useQuery();
-  useEffect(() => {
-    if (shopsGetQuery.isPending || shopsGetQuery.isError) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (shopsGetQuery.isPending || shopsGetQuery.isError) {
+  //     return;
+  //   }
 
-    setState((prevState) => {
-      return {
-        ...prevState,
-        plansModalOpen: shopsGetQuery.data.shop.showPlansModal,
-      };
-    });
-  }, [
-    shopsGetQuery.data?.shop.showPlansModal,
-    shopsGetQuery.isError,
-    shopsGetQuery.isPending,
-  ]);
+  //   setState((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       plansModalOpen: shopsGetQuery.data.shop.showPlansModal,
+  //     };
+  //   });
+  // }, [
+  //   shopsGetQuery.data?.shop.showPlansModal,
+  //   shopsGetQuery.isError,
+  //   shopsGetQuery.isPending,
+  // ]);
 
   if (
     shopsGetQuery.isPending ||
