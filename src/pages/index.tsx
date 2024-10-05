@@ -197,7 +197,10 @@ export default function Home() {
           <Button
             size="large"
             onClick={() => {
-              window.open('https://apps.shopify.com/', '_blank');
+              window.open(
+                'https://apps.shopify.com/neutek-store-locator-map',
+                '_blank',
+              );
             }}
           >
             Install from the Shopify App Store
